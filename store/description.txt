@@ -1,0 +1,50 @@
+Stop wasting hours manually entering items into Monday.com. Monday.com Inspector lets you bulk import hundreds of parent items and subitems from CSV or Excel files — in seconds, not hours.
+
+No account needed. No row limits. Just install, add your Monday.com API token, and start importing.
+
+YOUR DATA STAYS WITH YOU
+We take privacy seriously. Your API token is stored locally in your browser and never leaves your device. We don't collect, store, or transmit any of your data to external servers. Zero tracking, zero analytics, zero data collection. Period.
+
+WHAT CAN YOU DO WITH IT?
+
+- Import parent items AND subitems from CSV, TSV, or Excel files
+- Auto-detect Monday.com board exports (.xlsx) — your hierarchy is preserved automatically
+- Smart column mapping — visually match your file columns to Monday.com board columns
+- Two-phase import — creates parents first, then nests subitems under them
+- Batch processing that respects Monday.com API rate limits (no more 429 errors)
+- Automatic retry with exponential backoff for any failed API calls
+- Real-time progress tracking — watch every item get imported live
+- Detailed error reporting — know exactly which rows failed and why
+- Match parents by name or ID — flexible, works with any board structure
+- Group-aware import — preserves your Monday.com board groups
+- One-click access — "Import Subitems" button appears right inside Monday.com
+- Create everything from scratch OR import only subitems under existing parents
+
+HOW IT WORKS (4 simple steps):
+
+1. Install the extension and go to any Monday.com board
+2. Click "Import Subitems" in the toolbar (or use the popup)
+3. Upload your CSV or Excel file — format is auto-detected
+4. Map columns, preview data, and hit Import. Done.
+
+WHO IS THIS FOR?
+
+- Monday.com admins migrating data from spreadsheets
+- Project managers moving from Asana, Trello, Jira, or Excel to Monday.com
+- Teams that need to bulk-create items with subitems regularly
+- Developers and consultants setting up Monday.com boards for clients
+- Anyone tired of manually entering items one by one
+
+OPEN SOURCE & TRANSPARENT
+This is an open-source tool. You can inspect every line of code on GitHub: https://github.com/sametivon/monday.inspector
+
+NEED MORE HELP WITH MONDAY.COM?
+Built by Sam @ Fruition Services — Platinum monday.com consulting partner with 500+ implementations across Australia, US, and UK. Whether you need board setup, CRM configuration, workflow automation, or team training — we've got you covered.
+
+Book a consultation: https://calendly.com/sam-fruitionservices/30min
+Visit us: https://www.fruitionservices.io
+
+FOUND A BUG?
+Report issues on GitHub: https://github.com/sametivon/monday.inspector/issues
+
+If this tool saves you time, consider buying me a coffee: https://buymeacoffee.com/sametivon

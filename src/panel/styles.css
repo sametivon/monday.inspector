@@ -1,0 +1,489 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Retained styles for ColumnMapper, DataPreview, ImportProgress
+   components that are not refactored to Tailwind.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes progressMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── Data preview table ────────────────────────────────────────────── */
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 10px;
+  border-radius: 0.625rem;
+  border: 1px solid hsl(240 6% 90%);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  padding: 8px 12px;
+  border: 1px solid hsl(240 6% 90%);
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  background: hsl(210 20% 98%);
+  font-weight: 600;
+  color: hsl(240 8% 46%);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+tr {
+  transition: background 0.12s ease;
+}
+
+tr:hover td {
+  background: hsl(254 97% 97%);
+}
+
+.row-num {
+  color: hsl(240 8% 46%);
+  text-align: center;
+  width: 40px;
+  font-size: 11px;
+}
+
+.preview-note {
+  color: hsl(240 8% 46%);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* ── Column mapper ─────────────────────────────────────────────────── */
+
+fieldset {
+  border: 1px solid hsl(240 6% 90%);
+  border-radius: 0.625rem;
+  padding: 16px;
+  margin: 0 0 12px;
+  background: hsl(210 20% 98%);
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+fieldset:hover {
+  border-color: hsl(240 6% 82%);
+}
+
+legend {
+  font-weight: 650;
+  font-size: 13px;
+  padding: 0 8px;
+  color: hsl(240 8% 46%);
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.form-row label {
+  min-width: 180px;
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(240 8% 46%);
+}
+
+.form-row select,
+.form-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid hsl(240 6% 90%);
+  border-radius: 0.5rem;
+  font-size: 13px;
+  background: #fff;
+  color: hsl(240 24% 14%);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-row select:hover,
+.form-row input:hover {
+  border-color: hsl(240 6% 82%);
+}
+
+.form-row select:focus,
+.form-row input:focus {
+  border-color: hsl(254 97% 74%);
+  box-shadow: 0 0 0 3px hsla(254, 97%, 68%, 0.12);
+}
+
+.mapping-grid {
+  display: grid;
+  grid-template-columns: 1fr 30px 1fr;
+  gap: 6px 4px;
+  align-items: center;
+}
+
+.mapping-header {
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: hsl(240 8% 46%);
+  text-align: center;
+}
+
+.mapping-arrow {
+  text-align: center;
+  color: hsl(254 97% 74%);
+}
+
+.mapping-cell select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid hsl(240 6% 90%);
+  border-radius: 0.5rem;
+  font-size: 13px;
+  background: #fff;
+  color: hsl(240 24% 14%);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mapping-cell select:hover {
+  border-color: hsl(240 6% 82%);
+}
+
+.mapping-cell select:focus {
+  border-color: hsl(254 97% 74%);
+  box-shadow: 0 0 0 3px hsla(254, 97%, 68%, 0.12);
+}
+
+.hint {
+  color: hsl(240 8% 46%);
+  font-size: 12px;
+  margin: 4px 0 10px;
+  line-height: 1.5;
+}
+
+.hint a {
+  color: hsl(254 97% 68%);
+  text-decoration: none;
+}
+
+.hint a:hover {
+  text-decoration: underline;
+}
+
+/* ── Progress bar ──────────────────────────────────────────────────── */
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: hsl(254 97% 95%);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, hsl(254 97% 74%), hsl(254 97% 68%), hsl(254 97% 74%));
+  background-size: 200% 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  animation: progressMove 2.5s linear infinite;
+}
+
+.progress-text {
+  font-size: 13px;
+  margin: 8px 0;
+  color: hsl(240 8% 46%);
+}
+
+.summary-chips {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+}
+
+.chip:hover {
+  transform: scale(1.04);
+}
+
+.chip.success {
+  background: hsl(142 76% 97%);
+  color: hsl(142 71% 45%);
+  border: 1px solid hsl(142 69% 84%);
+}
+
+.chip.error {
+  background: hsl(0 86% 97%);
+  color: hsl(0 84% 60%);
+  border: 1px solid hsl(0 94% 82%);
+}
+
+.error-details {
+  margin-top: 12px;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  color: hsl(0 84% 60%);
+  padding: 4px 0;
+  transition: opacity 0.12s;
+  user-select: none;
+}
+
+.error-details summary:hover {
+  opacity: 0.8;
+}
+
+.error-table {
+  margin-top: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  display: block;
+}
+
+.error-text {
+  color: hsl(0 84% 60%);
+  font-size: 12px;
+}
+
+/* ── Monday export: tree view ──────────────────────────────────────── */
+
+.preview-badges {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 14px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: hsl(210 20% 98%);
+  border: 1px solid hsl(240 6% 90%);
+  color: hsl(240 8% 46%);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.badge:hover {
+  transform: scale(1.04);
+}
+
+.badge.accent {
+  background: hsl(254 97% 95%);
+  border-color: hsla(254, 97%, 68%, 0.2);
+  color: hsl(254 97% 68%);
+}
+
+.export-tree {
+  margin-top: 8px;
+}
+
+.tree-group {
+  margin-bottom: 12px;
+}
+
+.tree-group-name {
+  font-weight: 700;
+  font-size: 14px;
+  padding: 4px 0;
+  border-bottom: 2px solid hsl(254 97% 74%);
+  margin-bottom: 6px;
+}
+
+.tree-item {
+  margin-left: 16px;
+  margin-bottom: 6px;
+}
+
+.tree-item-name {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 3px 4px;
+  border-radius: 0.5rem;
+  transition: background 0.12s ease;
+}
+
+.tree-item-name:hover {
+  background: hsl(254 97% 97%);
+}
+
+.subitem-count {
+  font-weight: 500;
+  color: hsl(254 97% 68%);
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.no-subitems {
+  font-weight: 400;
+  color: hsl(240 8% 46%);
+  margin-left: 6px;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.tree-subitem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 20px;
+  padding: 3px 6px;
+  font-size: 13px;
+  border-radius: 0.5rem;
+  transition: background 0.12s ease;
+}
+
+.tree-subitem:hover {
+  background: hsl(254 97% 97%);
+}
+
+.tree-connector {
+  color: hsl(240 8% 46%);
+  font-family: monospace;
+  user-select: none;
+  opacity: 0.5;
+}
+
+.tree-subitem-name {
+  font-weight: 500;
+}
+
+.tree-subitem-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: hsl(210 20% 98%);
+  border: 1px solid hsl(240 6% 90%);
+  color: hsl(240 8% 46%);
+}
+
+/* ── Auto-detect banner ────────────────────────────────────────────── */
+
+.auto-detect-banner {
+  background: hsl(142 76% 97%);
+  border: 1px solid hsl(142 69% 84%);
+  border-radius: 0.625rem;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: #16a34a;
+}
+
+/* ── Toggle row (include parents checkbox) ─────────────────────────── */
+
+.toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 0.5rem;
+  transition: background 0.12s ease;
+  color: hsl(240 8% 46%);
+}
+
+.toggle-row:hover {
+  background: hsl(254 97% 97%);
+}
+
+.toggle-row input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: hsl(254 97% 68%);
+  cursor: pointer;
+}
+
+/* ── Phase breakdown in progress ───────────────────────────────────── */
+
+.phase-breakdown {
+  margin: 10px 0;
+  padding: 10px 14px;
+  background: hsl(210 20% 98%);
+  border-radius: 0.625rem;
+  border: 1px solid hsl(240 6% 90%);
+}
+
+.phase-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 13px;
+}
+
+.phase-label {
+  font-weight: 600;
+  color: hsl(240 24% 14%);
+}
+
+.phase-count {
+  color: hsl(240 8% 46%);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Kind badge in error table ─────────────────────────────────────── */
+
+.kind-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.kind-badge.parent {
+  background: hsl(254 97% 95%);
+  color: hsl(254 97% 68%);
+}
+
+.kind-badge.subitem {
+  background: hsl(142 76% 97%);
+  color: hsl(142 71% 45%);
+  border: 1px solid hsl(142 69% 84%);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(240 6% 90%);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(240 6% 82%);
+}

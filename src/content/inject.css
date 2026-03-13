@@ -1,0 +1,40 @@
+/* ── Import Subitems button injected into monday.com ──────────────── */
+
+#msi-import-subitems-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  margin: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #fff;
+  background: #6161ff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+#msi-import-subitems-btn:hover {
+  background: #4b4bd4;
+  transform: translateY(-1px);
+}
+
+#msi-import-subitems-btn:active {
+  transform: translateY(0);
+}
+
+/* Floating fallback position */
+#msi-import-subitems-btn.msi-floating {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}

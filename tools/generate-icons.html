@@ -1,0 +1,20 @@
+<!-- Open this file in a browser to generate PNG icons, or use any 16/48/128px PNGs -->
+<canvas id="c"></canvas>
+<script>
+[16, 48, 128].forEach(s => {
+  const c = document.createElement('canvas');
+  c.width = c.height = s;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#6161ff';
+  ctx.fillRect(0, 0, s, s);
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${s * 0.5}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('M', s/2, s/2);
+  const a = document.createElement('a');
+  a.download = `icon${s}.png`;
+  a.href = c.toDataURL();
+  a.click();
+});
+</script>

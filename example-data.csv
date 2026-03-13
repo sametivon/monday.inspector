@@ -1,0 +1,10 @@
+Parent Item Name,Subitem Name,Status,Date,Person,Text
+Website Redesign,Design mockups,Working on it,2024-06-15,john@company.com,Homepage design v2
+Website Redesign,Frontend development,Not started,2024-07-01,jane@company.com,React implementation
+Website Redesign,QA testing,Not started,2024-07-15,bob@company.com,Cross-browser testing
+Mobile App,API integration,Working on it,2024-06-20,jane@company.com,REST endpoints
+Mobile App,UI components,Done,2024-06-10,john@company.com,Shared component library
+Mobile App,Push notifications,Not started,2024-08-01,bob@company.com,Firebase setup
+CRM Migration,Data export,Done,2024-05-01,alice@company.com,Export from legacy system
+CRM Migration,Data mapping,Working on it,2024-06-01,alice@company.com,Field mapping document
+CRM Migration,Import validation,Not started,2024-07-01,bob@company.com,Validate imported records
