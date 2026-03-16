@@ -59,14 +59,33 @@ export const ColumnMapper: React.FC<ColumnMapperProps> = ({
     onParentMappingsChange(updated);
   };
 
-  // Filter out "name" (auto-generated) and subitems column from target options
+  // Column types that are read-only and cannot be set via the Monday.com API
+  const READ_ONLY_TYPES = new Set([
+    "name",
+    "subtasks",
+    "mirror",
+    "board_relation",
+    "dependency",
+    "creation_log",
+    "formula",
+    "auto_number",
+    "item_id",
+    "last_updated",
+    "lookup",
+    "color_picker",
+    "button",
+    "file",
+  ]);
+
+  // Filter out read-only columns from subitem mapping options
   const mappableSubitemColumns = subitemColumns.filter(
-    (c) => c.type !== "name" && c.type !== "subtasks",
+    (c) => !READ_ONLY_TYPES.has(c.type),
   );
 
-  // For parent mapping: exclude name and subtasks columns
+  // For parent mapping: exclude read-only types (includes mirror columns
+  // which are auto-populated from subitems and can't be set directly)
   const mappableBoardColumns = boardColumns.filter(
-    (c) => c.type !== "name" && c.type !== "subtasks",
+    (c) => !READ_ONLY_TYPES.has(c.type),
   );
 
   // For flat files, get headers for dropdowns

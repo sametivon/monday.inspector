@@ -44,20 +44,39 @@ export const WelcomeCard: React.FC = () => {
               Welcome to {BRAND.name}!
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              This tool lets you bulk import parent items and subitems into
-              Monday.com from CSV or Excel files — no limits, no account
-              required.
+              This tool lets
+              you bulk import parent items and subitems into Monday.com from CSV
+              or Excel files — no limits, no account required.
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Open source and free to use.{" "}
+              Built by{" "}
+              <a
+                href={BRAND.authorUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium"
+              >
+                {BRAND.author}
+              </a>
+              {" "}@{" "}
               <a
                 href={BRAND.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-medium"
               >
-                View on GitHub
+                {BRAND.company}
               </a>
+              . Need custom workflows or implementation support?{" "}
+              <a
+                href={BRAND.consultationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium"
+              >
+                Book a consultation
+              </a>
+              .
             </p>
           </div>
         </div>

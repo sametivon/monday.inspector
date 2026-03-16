@@ -1,15 +1,15 @@
 export const BRAND = {
   name: "Monday.com Inspector",
-  author: "Monday Inspector Team",
-  authorUrl: "https://github.com/sametivon/monday.inspector",
-  company: "Monday Inspector",
-  tagline: "Bulk import for Monday.com",
-  website: "https://github.com/sametivon/monday.inspector",
-  consultationUrl: "https://github.com/sametivon/monday.inspector/issues",
-  servicesUrl: "https://github.com/sametivon/monday.inspector",
+  author: "Sam",
+  authorUrl: "https://www.linkedin.com/in/sametivon/",
+  company: "Fruition Services",
+  tagline: "Platinum monday.com Consulting Partner",
+  website: "https://www.fruitionservices.io",
+  consultationUrl: "https://calendly.com/sam-fruitionservices/30min",
+  servicesUrl: "https://www.fruitionservices.io",
   chromeStoreUrl: "https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg",
-  email: "",
-  buyMeACoffeeUrl: "",
+  email: "sam@fruitionservices.io",
+  buyMeACoffeeUrl: "https://buymeacoffee.com/sametivon",
 } as const;
 
 export const LEAD_STORAGE_KEYS = {

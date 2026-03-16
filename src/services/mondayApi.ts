@@ -76,12 +76,12 @@ async function withRetry<T>(
   fn: () => Promise<T>,
   retries = MAX_RETRIES,
 ): Promise<T> {
-  let lastError: Error | undefined;
+  let lastError: Error = new Error("Unknown error");
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       return await fn();
     } catch (err) {
-      lastError = err as Error;
+      lastError = err instanceof Error ? err : new Error(String(err));
       if (attempt === retries) break;
 
       const isRateLimit = lastError instanceof RateLimitError;

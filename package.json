@@ -1,6 +1,6 @@
 {
   "name": "monday-inspector",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Chrome extension to bulk import parent items and subitems into Monday.com boards via CSV/XLSX",
   "type": "module",
   "scripts": {

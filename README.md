@@ -33,6 +33,8 @@ Productivity tool for Monday.com users, administrators, and developers to bulk i
 
 ## Features
 
+Monday.com Inspector contains lots of powerful features:
+
 - **Bulk import parent items and subitems** from CSV, TSV, or Excel files
 - **Auto-detect Monday.com board export format** (.xlsx) — hierarchical structure is preserved automatically
 - **Smart column mapping** — map file columns to Monday.com board/subitem columns with an intuitive interface
@@ -49,6 +51,8 @@ Productivity tool for Monday.com users, administrators, and developers to bulk i
 - **Supports flat CSV and Monday.com export formats** — two different workflows for different use cases
 - **Include or exclude parent items** — choose whether to create new parents or only import subitems under existing ones
 - **Open source** — no account required, no limits
+
+And more to come!
 
 ---
 
@@ -116,6 +120,16 @@ Contributions are welcome! Please follow these steps:
 5. Open a Pull Request
 
 For bug reports and feature requests, please use [GitHub Issues](https://github.com/sametivon/monday.inspector/issues).
+
+---
+
+## Built by Sam @ Fruition Services
+
+Built by [Sam](https://www.linkedin.com/in/sametivon/) @ [Fruition Services](https://www.fruitionservices.io) — Platinum monday.com consulting partner with 500+ implementations across Australia, US, and UK. Need help with monday.com implementation, CRM setup, workflow automation, or team training? [Book a consultation](https://calendly.com/sam-fruitionservices/30min).
+
+If you find this tool useful, consider supporting the development:
+
+<a href="https://buymeacoffee.com/sametivon" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40"></a>
 
 ---
 

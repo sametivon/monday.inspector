@@ -298,6 +298,9 @@ legend {
 
 .export-tree {
   margin-top: 8px;
+  overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .tree-group {
@@ -346,7 +349,8 @@ legend {
 
 .tree-subitem {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 6px;
   margin-left: 20px;
   padding: 3px 6px;
@@ -378,6 +382,10 @@ legend {
   background: hsl(210 20% 98%);
   border: 1px solid hsl(240 6% 90%);
   color: hsl(240 8% 46%);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ── Auto-detect banner ────────────────────────────────────────────── */

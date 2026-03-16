@@ -9,5 +9,4 @@ Thumbs.db
 .idea/
 .claude/
 *.tsbuildinfo
-landing/
-*.zip
+landing/email-sequences.md

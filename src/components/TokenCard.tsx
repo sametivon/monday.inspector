@@ -107,15 +107,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ onTokenSaved }) => {
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          Get your token: Monday.com → Profile → Developers → API token. Or{" "}
-          <a
-            href="https://monday.com/developers/apps"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline font-medium"
-          >
-            Monday.com Developer Center
-          </a>
+          Get your token: Monday.com → Profile → Developers → API token.
         </p>
       </CardContent>
     </Card>

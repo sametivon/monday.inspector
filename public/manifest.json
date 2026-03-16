@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Monday.com Inspector",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Bulk import parent items and subitems into Monday.com boards from CSV or Excel files.",
   "permissions": ["storage"],
   "host_permissions": ["https://*.monday.com/*"],

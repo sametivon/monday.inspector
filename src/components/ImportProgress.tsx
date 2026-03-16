@@ -15,7 +15,7 @@ export const ImportProgress: React.FC<ImportProgressProps> = ({
 }) => {
   const pct =
     progress.total > 0
-      ? Math.round((progress.completed / progress.total) * 100)
+      ? Math.min(100, Math.round((progress.completed / progress.total) * 100))
       : 0;
 
   // Split by kind for two-phase display

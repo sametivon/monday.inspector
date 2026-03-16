@@ -21,6 +21,7 @@ import {
   runMondayExportImport,
   runFullMondayExportImport,
 } from "../services/mondayApi";
+import { SUBITEM_NAME_SENTINEL } from "../utils/constants";
 import type {
   ParsedFile,
   ColumnMapping,
@@ -96,6 +97,26 @@ export const Panel: React.FC = () => {
           } else {
             setSubitemColumns([]);
           }
+
+          // Filter out parent export columns that correspond to read-only board
+          // column types (mirror, formula, auto_number, etc.) — they can't be
+          // set via the API, so showing them in the mapper is misleading.
+          if (parsed.kind === "monday_export") {
+            const READ_ONLY_TYPES = new Set([
+              "mirror", "board_relation", "dependency", "creation_log",
+              "formula", "auto_number", "item_id", "last_updated",
+              "lookup", "color_picker", "button", "file",
+            ]);
+            const readOnlyTitles = new Set(
+              bCols
+                .filter((c) => READ_ONLY_TYPES.has(c.type))
+                .map((c) => c.title.toLowerCase()),
+            );
+            setParentMappings((prev) =>
+              prev.filter((m) => !readOnlyTitles.has(m.fileColumn.toLowerCase())),
+            );
+          }
+
           setStep("map");
         } catch (err) {
           setError(`Failed to fetch board data: ${(err as Error).message}`);
@@ -149,7 +170,7 @@ export const Panel: React.FC = () => {
     setStep("importing");
 
     const activeSubitemMappings = mappings.filter(
-      (m) => m.mondayColumnId && m.mondayColumnId !== "__subitem_name__",
+      (m) => m.mondayColumnId && m.mondayColumnId !== SUBITEM_NAME_SENTINEL,
     );
     const activeParentMappings = parentMappings.filter(
       (m) => m.mondayColumnId,

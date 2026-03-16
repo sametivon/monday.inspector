@@ -8,9 +8,18 @@ import type { ExtensionSettings } from "./types";
 export async function getApiToken(): Promise<string> {
   if (typeof chrome !== "undefined" && chrome.storage?.local) {
     return new Promise((resolve) => {
-      chrome.storage.local.get(STORAGE_KEY_TOKEN, (result) => {
-        resolve((result[STORAGE_KEY_TOKEN] as string) ?? "");
-      });
+      try {
+        chrome.storage.local.get(STORAGE_KEY_TOKEN, (result) => {
+          if (chrome.runtime.lastError) {
+            console.warn("Storage read error:", chrome.runtime.lastError.message);
+            resolve("");
+            return;
+          }
+          resolve((result[STORAGE_KEY_TOKEN] as string) ?? "");
+        });
+      } catch {
+        resolve("");
+      }
     });
   }
   // Dev fallback
@@ -22,8 +31,17 @@ export async function getApiToken(): Promise<string> {
  */
 export async function setApiToken(token: string): Promise<void> {
   if (typeof chrome !== "undefined" && chrome.storage?.local) {
-    return new Promise((resolve) => {
-      chrome.storage.local.set({ [STORAGE_KEY_TOKEN]: token }, resolve);
+    return new Promise<void>((resolve) => {
+      try {
+        chrome.storage.local.set({ [STORAGE_KEY_TOKEN]: token }, () => {
+          if (chrome.runtime.lastError) {
+            console.warn("Storage write error:", chrome.runtime.lastError.message);
+          }
+          resolve();
+        });
+      } catch {
+        resolve();
+      }
     });
   }
   localStorage.setItem(STORAGE_KEY_TOKEN, token);
