@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Monday.com Inspector</title>
+  <meta name="description" content="Privacy Policy for Monday.com Inspector Chrome extension." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { DEFAULT: '#7c5cfc', light: '#9b83fd', dark: '#5a3de8' },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+  <!-- Nav -->
+  <nav class="sticky top-0 z-10 bg-white/90 backdrop-blur-lg border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+      <a href="index.html" class="font-extrabold text-xl text-brand">Monday.com Inspector</a>
+      <a
+        class="px-5 py-2 rounded-lg text-sm font-semibold bg-brand text-white hover:bg-brand-dark transition-colors"
+        href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"
+        target="_blank"
+      >
+        Add to Chrome
+      </a>
+    </div>
+  </nav>
+
+  <!-- Privacy Policy -->
+  <section class="max-w-3xl mx-auto px-6 pt-16 pb-20">
+    <h1 class="text-3xl font-extrabold tracking-tight mb-2">Privacy Policy</h1>
+    <p class="text-sm text-gray-400 mb-10">Last updated: March 14, 2026</p>
+
+    <div class="space-y-8 text-sm text-gray-600 leading-relaxed">
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Overview</h2>
+        <p>
+          Monday.com Inspector ("the Extension") is a Chrome extension that helps users bulk import
+          parent items and subitems into Monday.com boards from CSV or Excel files. Your privacy is
+          important to us. This policy explains what data the Extension accesses, how it is used,
+          and how it is stored.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Data We Collect</h2>
+        <p class="font-semibold text-gray-800 mb-1">We do not collect, transmit, or store any personal data on external servers.</p>
+        <p>The Extension operates entirely within your browser. Specifically:</p>
+        <ul class="list-disc list-inside mt-2 space-y-1">
+          <li><strong>Monday.com API Token:</strong> Stored locally in your browser using <code class="bg-gray-100 px-1 rounded">chrome.storage.local</code>. It is never sent anywhere except directly to the Monday.com API (<code class="bg-gray-100 px-1 rounded">https://api.monday.com/v2</code>) to perform the import operations you initiate.</li>
+          <li><strong>Uploaded Files (CSV/Excel):</strong> Parsed entirely in your browser's memory. File contents are never uploaded to any server.</li>
+          <li><strong>Usage Counters:</strong> A simple numeric counter of completed imports is stored locally in your browser to display helpful prompts (e.g., a review reminder). This data never leaves your device.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Data We Do NOT Collect</h2>
+        <ul class="list-disc list-inside space-y-1">
+          <li>No personal information (name, email, address)</li>
+          <li>No analytics or tracking data</li>
+          <li>No cookies for advertising or profiling</li>
+          <li>No browsing history</li>
+          <li>No data shared with third parties</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Third-Party Services</h2>
+        <p>The Extension communicates only with the <strong>Monday.com API</strong> (<code class="bg-gray-100 px-1 rounded">https://api.monday.com/v2</code>) using the API token you provide. No other third-party services, analytics platforms, or advertising networks are used.</p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Permissions</h2>
+        <p>The Extension requests the following Chrome permissions:</p>
+        <ul class="list-disc list-inside mt-2 space-y-1">
+          <li><strong>storage:</strong> To save your API token and usage preferences locally in your browser.</li>
+          <li><strong>host_permissions (https://*.monday.com/*):</strong> To inject the "Import Subitems" button into the Monday.com interface and communicate with the Monday.com API.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Data Retention</h2>
+        <p>All data is stored locally in your browser via <code class="bg-gray-100 px-1 rounded">chrome.storage.local</code>. You can clear this data at any time by:</p>
+        <ul class="list-disc list-inside mt-2 space-y-1">
+          <li>Removing the extension from Chrome</li>
+          <li>Clearing your browser's extension storage</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Changes to This Policy</h2>
+        <p>If we update this privacy policy, the revised version will be posted on this page with an updated "Last updated" date. Continued use of the Extension after changes constitutes acceptance of the updated policy.</p>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Contact</h2>
+        <p>
+          If you have questions about this privacy policy, contact us at
+          <a href="mailto:sam@fruitionservices.io" class="text-brand hover:underline font-medium">sam@fruitionservices.io</a>.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 py-7 text-center text-sm text-gray-400">
+    <p>
+      &copy; 2026 <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="hover:text-brand transition-colors">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" class="hover:text-brand transition-colors">Fruition Services</a>. All rights reserved.
+      &nbsp;&middot;&nbsp;
+      <a href="mailto:sam@fruitionservices.io" class="hover:text-brand transition-colors">sam@fruitionservices.io</a>
+      &nbsp;&middot;&nbsp;
+      <a href="index.html" class="hover:text-brand transition-colors">Home</a>
+    </p>
+  </footer>
+
+</body>
+</html>
