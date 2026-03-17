@@ -7,13 +7,13 @@
   <meta name="description" content="Free Chrome extension to bulk import subitems and parent items into Monday.com boards from CSV or Excel files. Smart column mapping, batch processing, re-import board exports. No limits." />
   <meta name="keywords" content="monday.com import subitems, monday.com bulk import, import csv into monday.com, monday.com excel import, monday.com subitem import, monday.com inspector, monday.com import tool, bulk create subitems monday, monday.com board import, import spreadsheet monday.com, monday.com chrome extension, monday.com data migration" />
   <!-- Canonical -->
-  <link rel="canonical" href="https://sametivon.github.io/monday.inspector/" />
+  <link rel="canonical" href="https://mondayinspector.com/" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Monday.com Inspector — Bulk Import Items & Subitems from CSV/Excel" />
   <meta property="og:description" content="Free Chrome extension to bulk import parent items and subitems into Monday.com boards from CSV or Excel files. Smart column mapping, batch processing, all column types." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sametivon.github.io/monday.inspector/" />
+  <meta property="og:url" content="https://mondayinspector.com/" />
   <meta property="og:site_name" content="Monday.com Inspector" />
   <meta property="og:locale" content="en_US" />
 
@@ -46,7 +46,7 @@
       "name": "Fruition Services",
       "url": "https://www.fruitionservices.io"
     },
-    "url": "https://sametivon.github.io/monday.inspector",
+    "url": "https://mondayinspector.com",
     "installUrl": "https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg",
     "featureList": [
       "Bulk import subitems into Monday.com",
@@ -128,23 +128,126 @@
   </script>
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Fade-in on scroll */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger children */
+    .stagger > *:nth-child(1) { transition-delay: 0ms; }
+    .stagger > *:nth-child(2) { transition-delay: 80ms; }
+    .stagger > *:nth-child(3) { transition-delay: 160ms; }
+    .stagger > *:nth-child(4) { transition-delay: 240ms; }
+    .stagger > *:nth-child(5) { transition-delay: 320ms; }
+    .stagger > *:nth-child(6) { transition-delay: 400ms; }
+    .stagger > *:nth-child(7) { transition-delay: 480ms; }
+
+    /* Card hover lift */
+    .card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(124, 92, 252, 0.1);
+      border-color: rgba(124, 92, 252, 0.3);
+    }
+
+    /* Icon float on hover */
+    .card-hover:hover .card-icon {
+      transform: scale(1.15);
+      transition: transform 0.3s ease;
+    }
+    .card-icon {
+      transition: transform 0.3s ease;
+    }
+
+    /* Step number pulse on hover */
+    .step-num {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .step-row:hover .step-num {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 6px rgba(124, 92, 252, 0.15);
+    }
+
+    /* Button shine effect */
+    .btn-shine {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-shine::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+    .btn-shine:hover::after {
+      left: 120%;
+    }
+
+    /* Hero gradient text shimmer */
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .text-shimmer {
+      background: linear-gradient(90deg, #7c5cfc, #a78bfa, #7c5cfc);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    /* FAQ arrow */
+    details summary .faq-arrow {
+      transition: transform 0.3s ease;
+    }
+    details[open] summary .faq-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* FAQ content slide */
+    details .faq-content {
+      animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Smooth nav shadow on scroll */
+    nav.scrolled {
+      box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">
 
   <!-- Nav -->
-  <nav class="sticky top-0 z-10 bg-white/90 backdrop-blur-lg border-b border-gray-200">
+  <nav id="navbar" class="sticky top-0 z-10 bg-white/90 backdrop-blur-lg border-b border-gray-200 transition-shadow duration-300">
     <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
       <span class="font-extrabold text-xl text-brand">Monday.com Inspector</span>
       <div class="hidden md:flex gap-7 text-sm font-medium text-gray-500">
-        <a href="#features" class="hover:text-brand transition-colors">Features</a>
-        <a href="#how" class="hover:text-brand transition-colors">How It Works</a>
-        <a href="#use-cases" class="hover:text-brand transition-colors">Use Cases</a>
-        <a href="#faq" class="hover:text-brand transition-colors">FAQ</a>
-        <a href="#services" class="hover:text-brand transition-colors">Services</a>
+        <a href="#features" class="hover:text-brand transition-colors duration-200">Features</a>
+        <a href="#how" class="hover:text-brand transition-colors duration-200">How It Works</a>
+        <a href="#use-cases" class="hover:text-brand transition-colors duration-200">Use Cases</a>
+        <a href="#faq" class="hover:text-brand transition-colors duration-200">FAQ</a>
+        <a href="#services" class="hover:text-brand transition-colors duration-200">Services</a>
       </div>
       <a
-        class="px-5 py-2 rounded-lg text-sm font-semibold bg-brand text-white hover:bg-brand-dark transition-colors"
+        class="btn-shine px-5 py-2 rounded-lg text-sm font-semibold bg-brand text-white hover:bg-brand-dark transition-colors duration-200"
         href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"
         target="_blank"
       >
@@ -154,26 +257,26 @@
   </nav>
 
   <!-- Hero -->
-  <section class="max-w-3xl mx-auto px-6 pt-20 pb-16 text-center">
+  <section class="max-w-3xl mx-auto px-6 pt-24 pb-20 text-center fade-up">
     <span class="inline-block px-3.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 mb-6">
-      Open Source • No Limits
+      Open Source &bull; No Limits
     </span>
-    <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-4 tracking-tight">
-      Bulk Import <span class="text-brand">Items & Subitems</span> into Monday.com
+    <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-5 tracking-tight">
+      Bulk Import <span class="text-shimmer">Items & Subitems</span> into Monday.com
     </h1>
-    <p class="text-lg text-gray-500 max-w-xl mx-auto mb-8">
+    <p class="text-lg text-gray-500 max-w-xl mx-auto mb-10">
       Import parent items and subitems from CSV or Excel files into any Monday.com board. No account needed, no row limits.
     </p>
     <div class="flex gap-3 justify-center flex-wrap">
       <a
-        class="px-8 py-3.5 rounded-xl text-base font-bold bg-brand text-white hover:bg-brand-dark transition-colors shadow-sm hover:shadow-md"
+        class="btn-shine px-8 py-3.5 rounded-xl text-base font-bold bg-brand text-white hover:bg-brand-dark transition-all duration-200 shadow-sm hover:shadow-lg hover:scale-[1.02]"
         href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"
         target="_blank"
       >
-        Add to Chrome
+        Add to Chrome — It's Free
       </a>
       <a
-        class="px-8 py-3.5 rounded-xl text-base font-bold border-2 border-brand text-brand hover:bg-brand/5 transition-colors"
+        class="px-8 py-3.5 rounded-xl text-base font-bold border-2 border-brand text-brand hover:bg-brand hover:text-white transition-all duration-200"
         href="https://calendly.com/sam-fruitionservices/30min"
         target="_blank"
       >
@@ -184,35 +287,35 @@
 
   <!-- Features -->
   <section class="max-w-6xl mx-auto px-6 py-16" id="features">
-    <h2 class="text-3xl font-extrabold text-center mb-10">Why Monday.com Inspector?</h2>
-    <div class="grid md:grid-cols-3 gap-5">
-      <div class="bg-white border border-gray-200 rounded-xl p-7 hover:shadow-md transition-shadow">
-        <div class="text-2xl mb-3">📄</div>
+    <h2 class="text-3xl font-extrabold text-center mb-12 fade-up">Why Monday.com Inspector?</h2>
+    <div class="grid md:grid-cols-3 gap-5 stagger">
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">📄</div>
         <h3 class="text-base font-bold mb-2">CSV & Excel Support</h3>
         <p class="text-sm text-gray-500">Upload flat CSV/TSV files or Monday.com board exports (.xlsx). Both formats are auto-detected.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7 hover:shadow-md transition-shadow">
-        <div class="text-2xl mb-3">🔗</div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🔗</div>
         <h3 class="text-base font-bold mb-2">Smart Column Mapping</h3>
         <p class="text-sm text-gray-500">Map your file columns to Monday.com subitem columns with an intuitive interface.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7 hover:shadow-md transition-shadow">
-        <div class="text-2xl mb-3">⚡</div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">⚡</div>
         <h3 class="text-base font-bold mb-2">Batch Processing</h3>
         <p class="text-sm text-gray-500">Rate-limit-aware batch import with automatic retry and exponential backoff.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7 hover:shadow-md transition-shadow">
-        <div class="text-2xl mb-3">🌳</div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🌳</div>
         <h3 class="text-base font-bold mb-2">Monday.com Export Support</h3>
         <p class="text-sm text-gray-500">Auto-detects hierarchical exports. Preserves groups, parent items, and subitems structure.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7 hover:shadow-md transition-shadow">
-        <div class="text-2xl mb-3">📊</div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">📊</div>
         <h3 class="text-base font-bold mb-2">Real-Time Progress</h3>
         <p class="text-sm text-gray-500">Watch your import with detailed progress tracking, success/failure counts, and error reports.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7 hover:shadow-md transition-shadow">
-        <div class="text-2xl mb-3">🔒</div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🔒</div>
         <h3 class="text-base font-bold mb-2">Privacy First</h3>
         <p class="text-sm text-gray-500">Your API token stays in your browser. No data is sent to third-party servers.</p>
       </div>
@@ -221,31 +324,31 @@
 
   <!-- How It Works -->
   <section class="max-w-3xl mx-auto px-6 py-16" id="how">
-    <h2 class="text-3xl font-extrabold text-center mb-10">How It Works</h2>
-    <div class="flex flex-col gap-5">
-      <div class="flex items-start gap-5 bg-white border border-gray-200 rounded-xl p-6">
-        <div class="shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">1</div>
+    <h2 class="text-3xl font-extrabold text-center mb-12 fade-up">How It Works</h2>
+    <div class="flex flex-col gap-5 stagger">
+      <div class="step-row flex items-start gap-5 card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <div class="step-num shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">1</div>
         <div>
           <h3 class="font-bold mb-1">Install & Open</h3>
           <p class="text-sm text-gray-500">Install the Chrome extension, navigate to your Monday.com board, and click "Import Subitems" in the toolbar.</p>
         </div>
       </div>
-      <div class="flex items-start gap-5 bg-white border border-gray-200 rounded-xl p-6">
-        <div class="shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">2</div>
+      <div class="step-row flex items-start gap-5 card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <div class="step-num shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">2</div>
         <div>
           <h3 class="font-bold mb-1">Upload Your File</h3>
           <p class="text-sm text-gray-500">Drag and drop your CSV or Excel file. The tool auto-detects Monday.com export format vs flat files.</p>
         </div>
       </div>
-      <div class="flex items-start gap-5 bg-white border border-gray-200 rounded-xl p-6">
-        <div class="shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">3</div>
+      <div class="step-row flex items-start gap-5 card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <div class="step-num shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">3</div>
         <div>
           <h3 class="font-bold mb-1">Map Columns</h3>
           <p class="text-sm text-gray-500">Preview your data and map file columns to Monday.com subitem columns. Set parent item matching.</p>
         </div>
       </div>
-      <div class="flex items-start gap-5 bg-white border border-gray-200 rounded-xl p-6">
-        <div class="shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">4</div>
+      <div class="step-row flex items-start gap-5 card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <div class="step-num shrink-0 w-10 h-10 flex items-center justify-center bg-brand text-white font-extrabold text-lg rounded-lg">4</div>
         <div>
           <h3 class="font-bold mb-1">Import</h3>
           <p class="text-sm text-gray-500">Hit "Start Import" and watch the progress in real-time. Failed rows are reported with detailed error messages.</p>
@@ -254,162 +357,174 @@
     </div>
   </section>
 
-  <!-- Services -->
-  <section class="max-w-6xl mx-auto px-6 py-16" id="services">
-    <h2 class="text-3xl font-extrabold text-center mb-3">Need More? Fruition Can Help.</h2>
-    <p class="text-center text-gray-500 mb-10">Built by <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="text-brand font-semibold hover:underline">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" class="text-brand font-semibold hover:underline">Fruition Services</a> — Platinum monday.com Partner with 500+ implementations.</p>
-    <div class="grid md:grid-cols-3 gap-5">
-      <div class="bg-white border border-gray-200 rounded-xl p-7">
-        <h3 class="font-bold mb-1">Board Setup & Optimization</h3>
-        <p class="text-sm text-gray-500 mb-2">Design and optimize your Monday.com boards for maximum efficiency.</p>
-        <span class="text-sm font-bold text-brand">From $500</span>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7">
-        <h3 class="font-bold mb-1">Custom API Integrations</h3>
-        <p class="text-sm text-gray-500 mb-2">Connect Monday.com to your existing tools — CRM, ERP, databases.</p>
-        <span class="text-sm font-bold text-brand">From $2,000</span>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7">
-        <h3 class="font-bold mb-1">Data Migration</h3>
-        <p class="text-sm text-gray-500 mb-2">Migrate from Asana, Trello, Jira, or spreadsheets to Monday.com.</p>
-        <span class="text-sm font-bold text-brand">From $1,000</span>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7">
-        <h3 class="font-bold mb-1">Workflow Automation</h3>
-        <p class="text-sm text-gray-500 mb-2">Automate tasks with Monday.com automations and custom recipes.</p>
-        <span class="text-sm font-bold text-brand">From $2,000</span>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7">
-        <h3 class="font-bold mb-1">Team Training</h3>
-        <p class="text-sm text-gray-500 mb-2">On-site or remote training tailored to your team's workflows.</p>
-        <span class="text-sm font-bold text-brand">From $500/session</span>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-7">
-        <h3 class="font-bold mb-1">Monthly Admin Support</h3>
-        <p class="text-sm text-gray-500 mb-2">Ongoing Monday.com administration — boards, users, optimization.</p>
-        <span class="text-sm font-bold text-brand">From $500/month</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Use Cases (SEO long-tail keyword content) -->
+  <!-- Use Cases -->
   <section class="max-w-4xl mx-auto px-6 py-16" id="use-cases">
-    <h2 class="text-3xl font-extrabold text-center mb-3">Built for Real Monday.com Workflows</h2>
-    <p class="text-center text-gray-500 mb-10">Whether you're migrating data, restoring a board, or onboarding a team — Inspector handles it.</p>
-    <div class="grid md:grid-cols-2 gap-5">
-      <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <h3 class="font-bold mb-2">📥 Import Subitems from a Spreadsheet</h3>
+    <h2 class="text-3xl font-extrabold text-center mb-3 fade-up">Built for Real Monday.com Workflows</h2>
+    <p class="text-center text-gray-500 mb-12 fade-up">Whether you're migrating data, restoring a board, or onboarding a team — Inspector handles it.</p>
+    <div class="grid md:grid-cols-2 gap-5 stagger">
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <h3 class="font-bold mb-2"><span class="card-icon inline-block">📥</span> Import Subitems from a Spreadsheet</h3>
         <p class="text-sm text-gray-500">Have hundreds of subitems in a CSV or Excel file? Upload, map columns, and bulk create them under the right parent items — no manual entry needed.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <h3 class="font-bold mb-2">🔄 Re-import a Monday.com Board Export</h3>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <h3 class="font-bold mb-2"><span class="card-icon inline-block">🔄</span> Re-import a Monday.com Board Export</h3>
         <p class="text-sm text-gray-500">Export a board as XLSX, then re-import it into another board or workspace. Groups, parent items, and subitems are all preserved.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <h3 class="font-bold mb-2">🚀 Migrate Data into Monday.com</h3>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <h3 class="font-bold mb-2"><span class="card-icon inline-block">🚀</span> Migrate Data into Monday.com</h3>
         <p class="text-sm text-gray-500">Moving from another tool? Export your data as CSV, map it to your Monday.com board columns, and import everything in bulk — including subitems.</p>
       </div>
-      <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <h3 class="font-bold mb-2">📋 Bulk Create Items with Subitems</h3>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-6 fade-up">
+        <h3 class="font-bold mb-2"><span class="card-icon inline-block">📋</span> Bulk Create Items with Subitems</h3>
         <p class="text-sm text-gray-500">Create parent items and their subitems together from a single file. Perfect for project templates, product catalogs, or recurring task structures.</p>
       </div>
     </div>
   </section>
 
-  <!-- FAQ (matches JSON-LD for rich snippets) -->
+  <!-- FAQ -->
   <section class="max-w-3xl mx-auto px-6 py-16" id="faq">
-    <h2 class="text-3xl font-extrabold text-center mb-10">Frequently Asked Questions</h2>
-    <div class="flex flex-col gap-4">
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group" open>
+    <h2 class="text-3xl font-extrabold text-center mb-12 fade-up">Frequently Asked Questions</h2>
+    <div class="flex flex-col gap-4 stagger">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up" open>
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           How do I bulk import subitems into Monday.com?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Install the Monday.com Inspector Chrome extension, navigate to your board, upload your CSV or Excel file, map the columns, and click Import. The tool creates subitems under the correct parent items automatically.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Install the Monday.com Inspector Chrome extension, navigate to your board, upload your CSV or Excel file, map the columns, and click Import. The tool creates subitems under the correct parent items automatically.</p>
       </details>
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up">
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           Can I import parent items and subitems at the same time?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Yes. Monday.com Inspector supports two-phase import: it first creates parent items with their column values, then creates subitems underneath them. You can also import subitems only if the parent items already exist.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Yes. Monday.com Inspector supports two-phase import: it first creates parent items with their column values, then creates subitems underneath them. You can also import subitems only if the parent items already exist.</p>
       </details>
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up">
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           Does this work with Monday.com board exports?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Yes. The extension auto-detects Monday.com's hierarchical XLSX export format, preserving groups, parent items, and subitems. You can export from one board and re-import into another.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Yes. The extension auto-detects Monday.com's hierarchical XLSX export format, preserving groups, parent items, and subitems. You can export from one board and re-import into another.</p>
       </details>
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up">
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           Is the Monday.com Inspector extension free?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Yes, the extension is completely free and open source. There are no row limits, no account required, and your API token stays securely in your browser.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Yes, the extension is completely free and open source. There are no row limits, no account required, and your API token stays securely in your browser.</p>
       </details>
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up">
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           What column types are supported?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Monday.com Inspector supports all writable column types including text, numbers, status, people, date, timeline, dropdown, checkbox, link, and more. Read-only columns like formulas and mirrors are automatically excluded.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Monday.com Inspector supports all writable column types including text, numbers, status, people, date, timeline, dropdown, checkbox, link, and more. Read-only columns like formulas and mirrors are automatically excluded.</p>
       </details>
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up">
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           How do I import CSV data into Monday.com subitems?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Prepare your CSV with columns matching your Monday.com subitem columns. Install the extension, enter your API token and board ID, upload the file, map CSV columns to board columns, and click Start Import. The tool handles batching and rate limits automatically.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Prepare your CSV with columns matching your Monday.com subitem columns. Install the extension, enter your API token and board ID, upload the file, map CSV columns to board columns, and click Start Import. The tool handles batching and rate limits automatically.</p>
       </details>
-      <details class="bg-white border border-gray-200 rounded-xl p-5 group">
+      <details class="card-hover bg-white border border-gray-200 rounded-xl p-5 group fade-up">
         <summary class="font-bold cursor-pointer flex items-center justify-between">
           Can I import Excel files into Monday.com?
-          <span class="text-gray-400 group-open:rotate-180 transition-transform">▾</span>
+          <span class="faq-arrow text-gray-400">&#9662;</span>
         </summary>
-        <p class="text-sm text-gray-500 mt-3">Yes. The extension supports both .xlsx and .csv files. It also recognizes Monday.com's native board export format, so you can re-import exported boards directly.</p>
+        <p class="faq-content text-sm text-gray-500 mt-3">Yes. The extension supports both .xlsx and .csv files. It also recognizes Monday.com's native board export format, so you can re-import exported boards directly.</p>
       </details>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="max-w-2xl mx-auto px-6 py-16 text-center" id="contact">
-    <h2 class="text-3xl font-extrabold mb-3">Ready to Supercharge Your Monday.com?</h2>
-    <p class="text-gray-500 mb-8">Get Monday.com tips, import guides, and exclusive offers straight to your inbox.</p>
-    <form class="flex gap-2.5 justify-center max-w-md mx-auto mb-4" action="https://www.fruitionservices.io" method="GET">
-      <input
-        type="email"
-        name="email"
-        placeholder="your@email.com"
-        required
-        class="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-      />
-      <button type="submit" class="px-6 py-3 rounded-lg text-sm font-semibold bg-brand text-white hover:bg-brand-dark transition-colors">
-        Subscribe
-      </button>
-    </form>
-    <p class="text-xs text-gray-400 mb-6">No spam, unsubscribe anytime.</p>
-    <a
-      class="inline-block px-8 py-3.5 rounded-xl text-base font-bold bg-brand text-white hover:bg-brand-dark transition-colors shadow-sm"
-      href="https://calendly.com/sam-fruitionservices/30min"
-      target="_blank"
-    >
-      Schedule a Consultation with Fruition
-    </a>
+  <!-- Services (no pricing) -->
+  <section class="max-w-6xl mx-auto px-6 py-16" id="services">
+    <h2 class="text-3xl font-extrabold text-center mb-3 fade-up">Need More? Fruition Can Help.</h2>
+    <p class="text-center text-gray-500 mb-12 fade-up">Built by <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="text-brand font-semibold hover:underline transition-colors duration-200">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" class="text-brand font-semibold hover:underline transition-colors duration-200">Fruition Services</a> — Platinum monday.com Partner with 500+ implementations.</p>
+    <div class="grid md:grid-cols-3 gap-5 stagger">
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🛠</div>
+        <h3 class="font-bold mb-1">Board Setup & Optimization</h3>
+        <p class="text-sm text-gray-500">Design and optimize your Monday.com boards for maximum efficiency.</p>
+      </div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🔌</div>
+        <h3 class="font-bold mb-1">Custom API Integrations</h3>
+        <p class="text-sm text-gray-500">Connect Monday.com to your existing tools — CRM, ERP, databases.</p>
+      </div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">📦</div>
+        <h3 class="font-bold mb-1">Data Migration</h3>
+        <p class="text-sm text-gray-500">Migrate from Asana, Trello, Jira, or spreadsheets to Monday.com.</p>
+      </div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">⚙️</div>
+        <h3 class="font-bold mb-1">Workflow Automation</h3>
+        <p class="text-sm text-gray-500">Automate tasks with Monday.com automations and custom recipes.</p>
+      </div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🎓</div>
+        <h3 class="font-bold mb-1">Team Training</h3>
+        <p class="text-sm text-gray-500">On-site or remote training tailored to your team's workflows.</p>
+      </div>
+      <div class="card-hover bg-white border border-gray-200 rounded-xl p-7 fade-up">
+        <div class="card-icon text-2xl mb-3">🤝</div>
+        <h3 class="font-bold mb-1">Monthly Admin Support</h3>
+        <p class="text-sm text-gray-500">Ongoing Monday.com administration — boards, users, optimization.</p>
+      </div>
+    </div>
+    <div class="text-center mt-10 fade-up">
+      <a
+        class="btn-shine inline-block px-8 py-3.5 rounded-xl text-base font-bold bg-brand text-white hover:bg-brand-dark transition-all duration-200 shadow-sm hover:shadow-lg hover:scale-[1.02]"
+        href="https://calendly.com/sam-fruitionservices/30min"
+        target="_blank"
+      >
+        Schedule a Free Consultation
+      </a>
+    </div>
   </section>
 
   <!-- Footer -->
   <footer class="border-t border-gray-200 py-7 text-center text-sm text-gray-400">
     <p>
-      &copy; 2026 <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="hover:text-brand transition-colors">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" class="hover:text-brand transition-colors">Fruition Services</a>. All rights reserved.
+      &copy; 2026 <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="hover:text-brand transition-colors duration-200">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" class="hover:text-brand transition-colors duration-200">Fruition Services</a>. All rights reserved.
       &nbsp;&middot;&nbsp;
-      <a href="mailto:sam@fruitionservices.io" class="hover:text-brand transition-colors">sam@fruitionservices.io</a>
+      <a href="mailto:sam@fruitionservices.io" class="hover:text-brand transition-colors duration-200">sam@fruitionservices.io</a>
       &nbsp;&middot;&nbsp;
-      <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" class="hover:text-brand transition-colors">Chrome Web Store</a>
+      <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" class="hover:text-brand transition-colors duration-200">Chrome Web Store</a>
       &nbsp;&middot;&nbsp;
-      <a href="privacy.html" class="hover:text-brand transition-colors">Privacy Policy</a>
+      <a href="privacy.html" class="hover:text-brand transition-colors duration-200">Privacy Policy</a>
     </p>
   </footer>
+
+  <!-- Scroll animations + nav shadow -->
+  <script>
+    // IntersectionObserver for fade-up elements
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Nav shadow on scroll
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
 
 </body>
 </html>

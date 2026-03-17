@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sametivon.github.io/monday.inspector/sitemap.xml
+Sitemap: https://mondayinspector.com/sitemap.xml
