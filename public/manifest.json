@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Monday.com Inspector",
   "version": "1.2.0",
-  "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, import/export, bulk update, smart column inputs, and more.",
+  "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, import/export, and more.",
   "permissions": ["storage"],
   "host_permissions": ["https://*.monday.com/*"],
   "content_security_policy": {
