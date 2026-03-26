@@ -18,12 +18,14 @@ export interface MondayItem {
   name: string;
   group?: { id: string; title: string };
   column_values?: MondayColumnValue[];
+  subitems?: MondayItem[];
 }
 
 export interface MondayColumnValue {
   id: string;
   text: string;
   value: string | null;
+  type?: string;
 }
 
 export interface CreateItemResult {

@@ -28,12 +28,10 @@ export default defineConfig({
         popup: resolve(__dirname, "src/popup/index.html"),
         panel: resolve(__dirname, "src/panel/index.html"),
         background: resolve(__dirname, "src/background/index.ts"),
-        content: resolve(__dirname, "src/content/index.ts"),
       },
       output: {
         entryFileNames: (chunkInfo) => {
-          // Keep background & content scripts at expected paths
-          if (chunkInfo.name === "background" || chunkInfo.name === "content") {
+          if (chunkInfo.name === "background") {
             return "[name]/index.js";
           }
           return "assets/[name]-[hash].js";
@@ -43,7 +41,6 @@ export default defineConfig({
       },
     },
   },
-  // Dev server points to the panel for rapid UI iteration
   server: {
     port: 5173,
     open: "/src/panel/index.html",

@@ -63,6 +63,48 @@ async function gql<T = unknown>(
   return json.data as T;
 }
 
+// ── Raw query execution (for Query Editor) ───────────────────────────
+
+export interface RawQueryResult {
+  data: unknown;
+  complexity?: { before: number; after: number; query: number };
+  errors?: { message: string }[];
+}
+
+/**
+ * Execute an arbitrary GraphQL query and return the full response
+ * (data + complexity + errors). Used by the Query Editor tab.
+ */
+export async function executeRawQuery(
+  token: string,
+  query: string,
+  variables?: Record<string, unknown>,
+): Promise<RawQueryResult> {
+  const res = await fetch(MONDAY_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token,
+      "API-Version": "2024-10",
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (res.status === 429) {
+    throw new RateLimitError("Rate limited by monday.com API");
+  }
+  if (!res.ok) {
+    throw new Error(`monday.com API HTTP ${res.status}: ${res.statusText}`);
+  }
+
+  const json = await res.json();
+  return {
+    data: json.data ?? null,
+    complexity: json.complexity ?? undefined,
+    errors: json.errors ?? undefined,
+  };
+}
+
 class RateLimitError extends Error {
   constructor(message: string) {
     super(message);
@@ -107,7 +149,7 @@ export function clearUsersCache(): void {
   usersCacheByToken.clear();
 }
 
-async function getWorkspaceUsers(token: string): Promise<{ id: number; name: string; email?: string }[]> {
+export async function getWorkspaceUsers(token: string): Promise<{ id: number; name: string; email?: string }[]> {
   const cached = usersCacheByToken.get(token);
   if (cached) return cached;
   try {
@@ -235,11 +277,16 @@ function resolveStatusLabel(value: string, column?: MondayColumn): string {
   if (!column?.settings_str) return value;
   try {
     const settings = JSON.parse(column.settings_str);
-    const labels: Record<string, { label?: string }> = settings.labels ?? {};
+    const labels = settings.labels ?? {};
     const lower = value.toLowerCase();
     for (const entry of Object.values(labels)) {
-      if (entry.label && entry.label.toLowerCase() === lower) {
-        return entry.label;
+      // monday.com stores labels as either plain strings or { label: "..." } objects
+      if (typeof entry === "string" && entry.toLowerCase() === lower) {
+        return entry;
+      }
+      if (entry && typeof entry === "object" && (entry as { label?: string }).label) {
+        const label = (entry as { label: string }).label;
+        if (label.toLowerCase() === lower) return label;
       }
     }
   } catch {
@@ -612,6 +659,25 @@ export async function createSubitem(
   return data.create_subitem;
 }
 
+/**
+ * Delete an item by ID.
+ */
+export async function deleteItem(
+  token: string,
+  itemId: string,
+): Promise<void> {
+  const mutation = `
+    mutation ($itemId: ID!) {
+      delete_item(item_id: $itemId) {
+        id
+      }
+    }
+  `;
+  await withRetry(() =>
+    gql<{ delete_item: { id: string } }>(token, mutation, { itemId }),
+  );
+}
+
 // ── Batch import orchestrators ────────────────────────────────────────
 
 export interface ImportCallbacks {
@@ -978,4 +1044,146 @@ export async function runFullMondayExportImport(
   }
 
   return progress;
+}
+
+// ── Inspector read/write APIs ────────────────────────────────────────
+
+/**
+ * Fetch all items on a board with full column values (paginated).
+ */
+export async function fetchBoardItemsWithColumns(
+  token: string,
+  boardId: string,
+): Promise<MondayItem[]> {
+  const allItems: MondayItem[] = [];
+  let cursor: string | null = null;
+
+  const firstQuery = `
+    query ($boardId: [ID!]!) {
+      boards(ids: $boardId) {
+        items_page(limit: 100) {
+          cursor
+          items {
+            id
+            name
+            group { id title }
+            column_values { id text value type }
+          }
+        }
+      }
+    }
+  `;
+  const first = await withRetry(() =>
+    gql<{ boards: { items_page: { cursor: string | null; items: MondayItem[] } }[] }>(
+      token,
+      firstQuery,
+      { boardId: [boardId] },
+    ),
+  );
+  const page = first.boards?.[0]?.items_page;
+  if (page) {
+    allItems.push(...page.items);
+    cursor = page.cursor;
+  }
+
+  while (cursor) {
+    const nextQuery = `
+      query ($cursor: String!) {
+        next_items_page(limit: 100, cursor: $cursor) {
+          cursor
+          items {
+            id
+            name
+            group { id title }
+            column_values { id text value type }
+          }
+        }
+      }
+    `;
+    const next = await withRetry(() =>
+      gql<{ next_items_page: { cursor: string | null; items: MondayItem[] } }>(
+        token,
+        nextQuery,
+        { cursor },
+      ),
+    );
+    allItems.push(...next.next_items_page.items);
+    cursor = next.next_items_page.cursor;
+  }
+
+  return allItems;
+}
+
+/**
+ * Fetch subitems for a specific parent item, including column values.
+ */
+export async function fetchSubitems(
+  token: string,
+  parentItemId: string,
+): Promise<MondayItem[]> {
+  const query = `
+    query ($itemId: [ID!]!) {
+      items(ids: $itemId) {
+        subitems {
+          id
+          name
+          column_values { id text value type }
+        }
+      }
+    }
+  `;
+  const data = await withRetry(() =>
+    gql<{ items: { subitems: MondayItem[] }[] }>(token, query, {
+      itemId: [parentItemId],
+    }),
+  );
+  return data.items?.[0]?.subitems ?? [];
+}
+
+/**
+ * Change a single column value on an item.
+ */
+export async function changeColumnValue(
+  token: string,
+  boardId: string,
+  itemId: string,
+  columnId: string,
+  value: unknown,
+): Promise<void> {
+  const mutation = `
+    mutation ($boardId: ID!, $itemId: ID!, $columnId: String!, $value: JSON!) {
+      change_column_value(
+        board_id: $boardId
+        item_id: $itemId
+        column_id: $columnId
+        value: $value
+      ) { id }
+    }
+  `;
+  await withRetry(() =>
+    gql(token, mutation, {
+      boardId,
+      itemId,
+      columnId,
+      value: JSON.stringify(value),
+    }),
+  );
+}
+
+/**
+ * Fetch board name.
+ */
+export async function fetchBoardName(
+  token: string,
+  boardId: string,
+): Promise<string> {
+  const query = `
+    query ($boardId: [ID!]!) {
+      boards(ids: $boardId) { name }
+    }
+  `;
+  const data = await withRetry(() =>
+    gql<{ boards: { name: string }[] }>(token, query, { boardId: [boardId] }),
+  );
+  return data.boards?.[0]?.name ?? "Unknown Board";
 }

@@ -1,6 +1,6 @@
-/* ── Import Subitems button injected into monday.com ──────────────── */
+/* ── Inspector button injected into monday.com ──────────────── */
 
-#msi-import-subitems-btn {
+#msi-inspector-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -19,17 +19,25 @@
   white-space: nowrap;
 }
 
-#msi-import-subitems-btn:hover {
+#msi-inspector-btn:hover {
   background: #4b4bd4;
   transform: translateY(-1px);
 }
 
-#msi-import-subitems-btn:active {
+#msi-inspector-btn:active {
   transform: translateY(0);
 }
 
+#msi-inspector-btn.msi-active {
+  background: #e53e3e;
+}
+
+#msi-inspector-btn.msi-active:hover {
+  background: #c53030;
+}
+
 /* Floating fallback position */
-#msi-import-subitems-btn.msi-floating {
+#msi-inspector-btn.msi-floating {
   position: fixed;
   bottom: 24px;
   right: 24px;
