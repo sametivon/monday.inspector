@@ -20,6 +20,7 @@ function copyCssFiles(): Plugin {
 
 export default defineConfig({
   plugins: [react(), copyCssFiles()],
+  publicDir: false, // Don't copy public/ into dist/content/
   base: "",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
