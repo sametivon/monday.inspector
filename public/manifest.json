@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Monday.com Inspector",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, import/export, and more.",
-  "permissions": ["storage"],
+  "homepage_url": "https://mondayinspector.eu",
+  "permissions": ["storage", "activeTab"],
   "host_permissions": ["https://*.monday.com/*"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
