@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monday.com Bulk Update Items (2026): The Complete Guide</title>
+  <meta name="description" content="Learn how to bulk update monday.com items — status, assignee, dates, and more — without clicking one by one. Free Chrome extension, no limits, works on any board." />
+  <meta name="keywords" content="monday.com bulk update, bulk update monday.com items, monday.com mass update, monday.com update multiple items, monday.com bulk edit" />
+  <link rel="canonical" href="https://mondayinspector.eu/monday-bulk-update.html" />
+  <meta property="og:title" content="Monday.com Bulk Update Items — Complete Guide (2026)" />
+  <meta property="og:description" content="Update hundreds of monday.com items at once. Status, assignee, dates, and 12+ column types. Free Chrome extension." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://mondayinspector.eu/monday-bulk-update.html" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Sam @ Fruition Services" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Bulk Update Items in Monday.com",
+    "description": "Step-by-step guide to updating hundreds of monday.com items at once using the free Monday.com Inspector Chrome extension.",
+    "totalTime": "PT5M",
+    "tool": { "@type": "HowToTool", "name": "Monday.com Inspector Chrome Extension" },
+    "step": [
+      { "@type": "HowToStep", "position": 1, "name": "Prepare your update file", "text": "Create a CSV with an Item ID column (or item name) and the columns you want to update. Only include columns that need changing." },
+      { "@type": "HowToStep", "position": 2, "name": "Install Monday.com Inspector", "text": "Install the free Monday.com Inspector Chrome extension from the Chrome Web Store. No account needed." },
+      { "@type": "HowToStep", "position": 3, "name": "Open Inspector on your board", "text": "Navigate to your monday.com board, click the extension icon, and open the Inspector Panel." },
+      { "@type": "HowToStep", "position": 4, "name": "Upload and configure update", "text": "Go to the Import tab, upload your CSV, and enable Update Mode. Map the ID column and the columns to update." },
+      { "@type": "HowToStep", "position": 5, "name": "Run the bulk update", "text": "Click Start Update. Watch live per-row progress. Rows that fail show the exact error so you can fix and retry." }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Can monday.com bulk update items natively?", "acceptedAnswer": { "@type": "Answer", "text": "Monday.com has a limited bulk action feature in the board view that lets you select multiple items and change a single column at a time. It doesn't support updating from a file, updating multiple columns at once, or updating subitems. Monday.com Inspector fills this gap." } },
+      { "@type": "Question", "name": "What columns can I bulk update in monday.com?", "acceptedAnswer": { "@type": "Answer", "text": "Monday.com Inspector supports bulk updating Status, People, Date, Timeline, Dropdown, Checkbox, Text, Numbers, Link, Phone, Email, and Rating columns — for both parent items and subitems." } },
+      { "@type": "Question", "name": "Can I bulk update subitems in monday.com?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Monday.com Inspector supports bulk updating subitems. Include the subitem ID column in your CSV update file and enable subitem mode. You can update any subitem column type." } },
+      { "@type": "Question", "name": "How do I find item IDs in monday.com for bulk update?", "acceptedAnswer": { "@type": "Answer", "text": "You can find item IDs by exporting your board (Board menu → Export → Excel). The export includes item IDs in a column. You can also use Monday.com Inspector's Schema tab to query item IDs via the GraphQL engine." } },
+      { "@type": "Question", "name": "Is there a limit to how many items I can bulk update?", "acceptedAnswer": { "@type": "Answer", "text": "Monday.com Inspector has no row limit for bulk updates. It handles batching and monday.com API rate limits automatically, so you can safely update thousands of items." } }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mondayinspector.eu/" },
+      { "@type": "ListItem", "position": 2, "name": "Monday.com Bulk Update Guide", "item": "https://mondayinspector.eu/monday-bulk-update.html" }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .article-hero { background: #fff; padding: 64px 0 48px; border-bottom: 1px solid #e4e4e7; }
+    .article-hero h1 { font-size: clamp(1.875rem, 3.5vw, 2.75rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin: 16px 0 18px; }
+    .article-hero .lead { font-size: 1.0625rem; color: #52525b; line-height: 1.75; max-width: 680px; }
+    .article-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #71717a; flex-wrap: wrap; margin-top: 20px; }
+    .article-meta span { display: flex; align-items: center; gap: 5px; }
+    .article-layout { display: grid; grid-template-columns: 1fr 280px; gap: 56px; align-items: flex-start; padding: 56px 0 96px; }
+    .article-toc { position: sticky; top: 88px; background: #fff; border: 1px solid #e4e4e7; border-radius: 14px; padding: 24px; }
+    .article-toc h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #52525b; margin-bottom: 16px; }
+    .article-toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 10px; }
+    .article-toc ol li { counter-increment: toc; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+    .article-toc ol li::before { content: counter(toc); width: 20px; height: 20px; border-radius: 50%; background: #ede9fe; color: #7c5cfc; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .article-toc ol li a { color: #52525b; text-decoration: none; line-height: 1.5; }
+    .article-toc ol li a:hover { color: #7c5cfc; }
+    .related-card { display: block; background: #f5f3ff; border: 1px solid #c4b5fd40; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.2s; margin-top: 12px; }
+    .related-card:hover { background: #ede9fe; border-color: #c4b5fd; }
+    .related-card h4 { font-size: 13px; font-weight: 600; color: #09090b; margin-bottom: 3px; }
+    .related-card p { font-size: 12px; color: #71717a; }
+    @media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } .article-toc { display: none; } }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/"><div class="nav-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>monday<span style="color:#7c5cfc">.inspector</span></a>
+    <ul class="nav-links">
+      <li><a href="/#features">Features</a></li>
+      <li><a href="import-subitems-monday.html">Import Subitems</a></li>
+      <li><a href="monday-csv-import-guide.html">CSV Guide</a></li>
+      <li><a href="monday-bulk-update.html" class="active">Bulk Update</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+      <li><a href="/#services">Services</a></li>
+    </ul>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome</a>
+  </div>
+</nav>
+
+<!-- Article Hero -->
+<div class="article-hero">
+  <div class="container-sm">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Monday.com Bulk Update</span>
+    </nav>
+    <div class="badge badge-brand" style="margin-bottom:16px">Guide · 6 min read</div>
+    <h1>Monday.com Bulk Update Items (2026 Guide)</h1>
+    <p class="lead">Monday.com's built-in bulk actions let you change one column at a time — and only for items you can manually select. This guide shows you how to bulk update hundreds of items across multiple columns at once, from a CSV file, using the free Monday.com Inspector extension.</p>
+    <div class="article-meta">
+      <span>📅 Updated April 2026</span>
+      <span>✍️ Sam @ Fruition Services</span>
+      <span>🕐 6 min read</span>
+    </div>
+  </div>
+</div>
+
+<!-- Article Layout -->
+<div class="container">
+  <div class="article-layout">
+
+    <!-- Main content -->
+    <article class="prose">
+
+      <h2 id="the-problem">The Problem with Monday.com's Native Bulk Actions</h2>
+      <p>Monday.com does have a bulk action feature: you select multiple items using the checkboxes on the left, then choose an action from the toolbar that appears at the bottom of the screen. You can change status, assignee, or move items to a different group. But this approach has significant limitations for real-world bulk updates:</p>
+      <ul>
+        <li><strong>One column at a time</strong> — you can only change one field per bulk action, not update status + assignee + date in a single operation.</li>
+        <li><strong>Manual selection required</strong> — you have to scroll and check boxes individually, which is impractical for hundreds of items.</li>
+        <li><strong>No file-based updates</strong> — there's no way to paste a list of item IDs and new values; you can't update from a spreadsheet.</li>
+        <li><strong>No subitem support</strong> — bulk actions don't apply to subitems.</li>
+        <li><strong>No audit trail per row</strong> — if something goes wrong, there's no way to see which specific items failed.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ Native bulk actions have limits</div>
+        <p>Monday.com's built-in bulk change is designed for quick manual edits, not data operations. For file-based, multi-column, or subitem bulk updates, you need Monday.com Inspector.</p>
+      </div>
+
+      <h2 id="solution">The Solution: File-Based Bulk Update with Monday.com Inspector</h2>
+      <p><a href="/">Monday.com Inspector</a> is a free Chrome extension that adds an Inspector panel to every monday.com board. Its <strong>Bulk Update</strong> mode lets you upload a CSV with item IDs and new values — and update dozens, hundreds, or thousands of items across multiple columns in a single operation.</p>
+
+      <p>What makes it different from native bulk actions:</p>
+      <ul>
+        <li><strong>Multi-column updates in one pass</strong> — update status, assignee, date, and dropdown all at once per item.</li>
+        <li><strong>File-driven</strong> — prepare your updates in Excel or Google Sheets, export to CSV, upload, done.</li>
+        <li><strong>Subitem support</strong> — update subitem columns using subitem IDs.</li>
+        <li><strong>Live per-row progress</strong> — see exactly which items were updated, which failed, and why.</li>
+        <li><strong>No row limits</strong> — handles thousands of items with automatic batching and rate limit handling.</li>
+        <li><strong>Supports 12+ column types</strong> — Status, People, Date, Timeline, Dropdown, Checkbox, Text, Numbers, Link, Phone, Email, Rating.</li>
+      </ul>
+
+      <div class="callout callout-success">
+        <div class="callout-title">✅ Works on any monday.com plan</div>
+        <p>Monday.com Inspector works with all monday.com plans — Free, Basic, Standard, Pro, and Enterprise. No extra subscription needed.</p>
+      </div>
+
+      <h2 id="use-cases">Common Bulk Update Use Cases</h2>
+      <p>These are the most common scenarios where teams use Monday.com Inspector's bulk update feature:</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
+        <div class="card" style="padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">📋</div>
+          <h3 style="font-size:0.9375rem;margin-bottom:6px">Sprint / phase transitions</h3>
+          <p style="font-size:13px;color:#52525b">Move all items from one sprint to the next — update status, assignee, and dates from a CSV in one operation.</p>
+        </div>
+        <div class="card" style="padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">👥</div>
+          <h3 style="font-size:0.9375rem;margin-bottom:6px">Team reassignment</h3>
+          <p style="font-size:13px;color:#52525b">When someone leaves or joins, reassign hundreds of items from one person to another in seconds.</p>
+        </div>
+        <div class="card" style="padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">📅</div>
+          <h3 style="font-size:0.9375rem;margin-bottom:6px">Date rescheduling</h3>
+          <p style="font-size:13px;color:#52525b">Push all due dates forward by a week or update a full project timeline from a revised Excel schedule.</p>
+        </div>
+        <div class="card" style="padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">🔄</div>
+          <h3 style="font-size:0.9375rem;margin-bottom:6px">Status resets</h3>
+          <p style="font-size:13px;color:#52525b">Reset all items to "Not Started" at the start of a new period, or mark a batch as "Done" after a milestone.</p>
+        </div>
+        <div class="card" style="padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">🏷️</div>
+          <h3 style="font-size:0.9375rem;margin-bottom:6px">Category / tag updates</h3>
+          <p style="font-size:13px;color:#52525b">Apply a new dropdown label, priority tag, or department classification to a filtered set of items.</p>
+        </div>
+        <div class="card" style="padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">📊</div>
+          <h3 style="font-size:0.9375rem;margin-bottom:6px">Data migration clean-up</h3>
+          <p style="font-size:13px;color:#52525b">After importing data, run a follow-up update pass to fix incorrectly mapped values or fill in missing fields.</p>
+        </div>
+      </div>
+
+      <h2 id="prepare-csv">How to Prepare Your Bulk Update CSV</h2>
+      <p>A bulk update CSV has one row per item to update. Unlike an import CSV (which creates new items), an update CSV needs a way to identify each existing item — typically its <strong>Item ID</strong>.</p>
+
+      <h3 id="find-item-ids">Step 1: Get Item IDs</h3>
+      <p>The most reliable way to match items for update is by Item ID. Here are two ways to get them:</p>
+      <ul>
+        <li><strong>Board export:</strong> Go to your monday.com board → Board menu (⋮) → Export → Excel. The exported file includes an item ID column.</li>
+        <li><strong>Monday.com Inspector Schema tab:</strong> Use the built-in GraphQL query engine to fetch item IDs, names, and column values. You can export the result as CSV.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <div class="callout-title">💡 Update by item name</div>
+        <p>If item IDs aren't available, Monday.com Inspector can match items by name instead. Use a column named <code>Item Name</code> as the match key. Note: if duplicate names exist on the board, only the first match is updated.</p>
+      </div>
+
+      <h3 id="csv-structure">Step 2: Build the Update CSV</h3>
+      <p>Your CSV needs:</p>
+      <ol>
+        <li>A header row</li>
+        <li>An <strong>Item ID</strong> column (or <strong>Item Name</strong> for name-based matching)</li>
+        <li>Only the columns you want to update — leave out columns that should stay unchanged</li>
+      </ol>
+
+      <pre><code>Item ID,Status,Assignee,Due Date
+7823451,Done,jane@acme.com,2026-04-30
+7823452,In Progress,bob@acme.com,2026-05-07
+7823453,Stuck,sam@acme.com,2026-05-14
+7823454,Done,jane@acme.com,2026-04-28
+7823455,Working on it,bob@acme.com,2026-05-10</code></pre>
+
+      <p>Column values follow the same formatting rules as import — see the <a href="monday-csv-import-guide.html#column-formats">column type formatting reference</a> in our CSV Import Guide.</p>
+
+      <h2 id="step-by-step">Step-by-Step: Bulk Update with Monday.com Inspector</h2>
+
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div>
+          <h3 style="margin:0 0 6px;font-size:1.0625rem">Install Monday.com Inspector</h3>
+          <p>Install the free <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Monday.com Inspector Chrome extension</a>. No account or sign-up required.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div>
+          <h3 style="margin:0 0 6px;font-size:1.0625rem">Prepare your update CSV</h3>
+          <p>Create a CSV with an Item ID column and only the columns you want to change. Export the current board state first if you need item IDs. Use the correct value formats (ISO dates, email for People, etc.).</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div>
+          <h3 style="margin:0 0 6px;font-size:1.0625rem">Open Inspector on your board</h3>
+          <p>Navigate to your monday.com board. Click the Monday.com Inspector icon in the Chrome toolbar, then click <strong>Open Inspector Panel</strong>. The panel opens on the right side of the board.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div>
+          <h3 style="margin:0 0 6px;font-size:1.0625rem">Upload your CSV and enable Update Mode</h3>
+          <p>Click the <strong>Import</strong> tab. Upload your CSV. Toggle <strong>Update Mode</strong> (instead of Create Mode). Map the <strong>Item ID</strong> column as the match key, then map the remaining columns to their board counterparts.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div>
+          <h3 style="margin:0 0 6px;font-size:1.0625rem">Run the update and review results</h3>
+          <p>Click <strong>Start Update</strong>. The progress panel shows updated (green), failed (red), and remaining (gray) rows in real time. Each failed row shows the exact error. Fix issues and re-run just the failed rows.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-brand">
+        <div class="callout-title">🚀 Ready to bulk update your board?</div>
+        <p>Monday.com Inspector is free and takes 30 seconds to install. <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" style="font-weight:600;color:#7c5cfc">Add to Chrome →</a></p>
+      </div>
+
+      <h2 id="supported-columns">Supported Column Types for Bulk Update</h2>
+      <p>Monday.com Inspector supports bulk updating all major monday.com column types:</p>
+
+      <div style="overflow-x:auto; margin: 24px 0;">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Column Type</th>
+              <th>Bulk Update Support</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Text</td><td class="check">✓</td><td>Any string value</td></tr>
+            <tr><td>Numbers</td><td class="check">✓</td><td>Integer or decimal</td></tr>
+            <tr><td>Status</td><td class="check">✓</td><td>Must match an existing board label</td></tr>
+            <tr><td>People</td><td class="check">✓</td><td>Match by email address</td></tr>
+            <tr><td>Date</td><td class="check">✓</td><td>YYYY-MM-DD format</td></tr>
+            <tr><td>Timeline</td><td class="check">✓</td><td>Two columns: start + end date</td></tr>
+            <tr><td>Dropdown</td><td class="check">✓</td><td>Must match an existing dropdown option</td></tr>
+            <tr><td>Checkbox</td><td class="check">✓</td><td>true / false or 1 / 0</td></tr>
+            <tr><td>Email</td><td class="check">✓</td><td>Email address string</td></tr>
+            <tr><td>Phone</td><td class="check">✓</td><td>Phone number string</td></tr>
+            <tr><td>Link / URL</td><td class="check">✓</td><td>URL or URL,Label format</td></tr>
+            <tr><td>Rating</td><td class="check">✓</td><td>Integer 1–5</td></tr>
+            <tr><td>Item Name</td><td class="check">✓</td><td>Renames the item</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tips">Best Practices for Bulk Updates</h2>
+      <ul>
+        <li><strong>Always export the board first.</strong> Before running a bulk update, export the current board state to a backup. This gives you a restore point if something goes wrong.</li>
+        <li><strong>Test with 5–10 rows.</strong> Run a small test update before processing hundreds of rows. Confirm the mapping is correct and values appear as expected on the board.</li>
+        <li><strong>Use Item IDs, not names.</strong> Names are not unique — items can have identical names. Item IDs are the only guaranteed unique identifier. Use IDs whenever possible.</li>
+        <li><strong>Only include columns to change.</strong> Don't include columns you don't want to modify — the tool only updates columns that are mapped. Unmapped columns are left untouched.</li>
+        <li><strong>Match status labels exactly.</strong> Status values must match an existing label on the board. Double-check spelling and capitalisation against your board's status column settings.</li>
+        <li><strong>Review the failed rows report.</strong> After the update, download the failed-rows CSV from the Inspector panel, fix the issues, and re-run just those rows.</li>
+      </ul>
+
+      <h2 id="faq">Frequently Asked Questions</h2>
+
+      <details class="faq">
+        <summary>Can monday.com bulk update items natively?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Yes, but with significant limits. Monday.com's native bulk action lets you select multiple items manually and change one column at a time — no file upload, no multi-column update in a single pass, and no subitem support. Monday.com Inspector enables file-based bulk updates across multiple columns simultaneously.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Can I bulk update subitems in monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Yes, with Monday.com Inspector. Include subitem IDs in your update CSV and enable subitem mode. The extension updates all supported column types for subitems — status, people, date, timeline, dropdown, and more. Native monday.com bulk actions do not support subitems.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>How do I get item IDs for bulk update?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Two easy ways: (1) Export your board to Excel — Board menu (⋮) → Export → Excel. The exported file includes item IDs. (2) Use Monday.com Inspector's built-in Schema / GraphQL tab to query item IDs and export results as CSV. Item IDs also appear in the URL when you open an item's detail view.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Is there a limit to how many items I can bulk update?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>No. Monday.com Inspector has no row limit for bulk updates. The extension handles batching and monday.com API rate limits automatically. You can safely update thousands of items in a single operation.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Can I undo a bulk update in monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Monday.com has an activity log and individual item history, but there is no single-click "undo" for bulk operations. The best practice is to export your board to Excel before running a bulk update — that way you have a backup and can run a corrective update if needed.</p>
+        </div>
+      </details>
+
+      <!-- Bottom related guides -->
+      <h2 id="related" style="margin-top: 56px">Related Guides</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+        <a href="import-subitems-monday.html" class="related-card">
+          <h4>How to Import Subitems in Monday.com</h4>
+          <p>Create subitems from CSV — 5-step guide with templates.</p>
+        </a>
+        <a href="monday-csv-import-guide.html" class="related-card">
+          <h4>Monday.com CSV Import Guide</h4>
+          <p>Complete format reference, comparison table, and best practices.</p>
+        </a>
+      </div>
+
+    </article>
+
+    <!-- Sidebar TOC -->
+    <aside>
+      <div class="article-toc">
+        <h3>Contents</h3>
+        <ol>
+          <li><a href="#the-problem">Native Bulk Action Limits</a></li>
+          <li><a href="#solution">The Inspector Solution</a></li>
+          <li><a href="#use-cases">Common Use Cases</a></li>
+          <li><a href="#prepare-csv">Prepare Your CSV</a></li>
+          <li><a href="#find-item-ids">Get Item IDs</a></li>
+          <li><a href="#csv-structure">Build the Update CSV</a></li>
+          <li><a href="#step-by-step">Step-by-Step Guide</a></li>
+          <li><a href="#supported-columns">Supported Column Types</a></li>
+          <li><a href="#tips">Best Practices</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </div>
+
+      <div style="margin-top: 24px">
+        <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 2L12.4 7.4L18 8.2L14 12.1L15.2 18L10 15.2L4.8 18L6 12.1L2 8.2L7.6 7.4Z" stroke="currentColor" stroke-width="1.75" fill="none"/></svg>
+          Add to Chrome — Free
+        </a>
+        <a href="import-subitems-monday.html" class="related-card">
+          <h4>Import Subitems Guide</h4>
+          <p>Subitems from CSV in 5 steps</p>
+        </a>
+        <a href="monday-csv-import-guide.html" class="related-card">
+          <h4>CSV Import Guide</h4>
+          <p>Format reference &amp; comparison table</p>
+        </a>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- CTA Banner -->
+<section class="section-sm">
+  <div class="container">
+    <div class="cta-banner reveal">
+      <div class="dot-grid"></div>
+      <div style="position:relative;z-index:1;text-align:center">
+        <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;letter-spacing:-0.03em;color:#fff;margin-bottom:16px">Stop updating items one by one</h2>
+        <p style="color:rgba(255,255,255,0.75);margin-bottom:32px;font-size:1.0625rem">Bulk update hundreds of monday.com items from a CSV. Free Chrome extension, no limits.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" class="btn btn-lg" style="background:#fff;color:#7c5cfc;font-weight:700" target="_blank">Add to Chrome — Free</a>
+          <a href="monday-csv-import-guide.html" class="btn btn-lg btn-secondary" style="border-color:rgba(255,255,255,0.3);color:#fff">CSV Import Guide →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="nav-logo" style="margin-bottom:12px"><div class="nav-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>monday<span style="color:#a78bfa">.inspector</span></div>
+        <p style="font-size:13px;color:#a1a1aa;line-height:1.7;max-width:220px">Free Chrome extension for monday.com power users. No account needed.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="https://buymeacoffee.com/sametivon" target="_blank" class="btn btn-sm" style="background:#27272a;color:#e4e4e7;font-size:12px">☕ Buy me a coffee</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Product</div>
+        <ul class="footer-links">
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#comparison">Comparison</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Chrome Store</a></li>
+          <li><a href="https://github.com/sametivon/monday-inspector" target="_blank">GitHub</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Guides</div>
+        <ul class="footer-links">
+          <li><a href="import-subitems-monday.html">Import Subitems</a></li>
+          <li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li>
+          <li><a href="monday-bulk-update.html">Bulk Update</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <ul class="footer-links">
+          <li><a href="https://www.linkedin.com/in/sametivon/" target="_blank">Sam @ Fruition</a></li>
+          <li><a href="https://calendly.com/sam-fruitionservices/30min" target="_blank">Book a call</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="mailto:sam@fruitionservices.io">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Monday.com Inspector · Built by <a href="https://www.linkedin.com/in/sametivon/" target="_blank">Sam @ Fruition Services</a></span>
+      <span>Not affiliated with monday.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }), { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  document.querySelectorAll('details.faq').forEach(detail => {
+    detail.addEventListener('toggle', () => {
+      document.querySelectorAll('details.faq').forEach(d => { if (d !== detail) d.removeAttribute('open'); });
+    });
+  });
+</script>
+</body>
+</html>
