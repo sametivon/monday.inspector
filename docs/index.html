@@ -3,974 +3,288 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Primary SEO -->
-  <title>Monday.com Inspector — Import Subitems, Bulk Update & Query Boards | Free Chrome Extension</title>
-  <meta name="description" content="The free Chrome extension that unlocks everything monday.com is missing: import subitems from CSV, bulk update items, run GraphQL queries, and inspect your board schema — all in one inline panel." />
-  <meta name="keywords" content="monday.com import subitems, monday.com csv import subitems, how to import subitems in monday.com, monday.com bulk update, monday.com advanced filtering, monday.com query items, monday.com tools extension, monday.com inspector, monday.com subitem import, import excel monday.com, monday.com graphql" />
+  <title>Monday.com Inspector — Import Subitems, Bulk Update & GraphQL Query | Free Chrome Extension</title>
+  <meta name="description" content="The free Chrome extension that unlocks everything monday.com is missing: import subitems from CSV, bulk update hundreds of items, run GraphQL queries, inspect board schemas. No row limits, no account needed." />
+  <meta name="keywords" content="monday.com import subitems, monday.com bulk update, monday.com csv import subitems, monday.com graphql, monday.com inspector, monday.com tools extension" />
   <link rel="canonical" href="https://mondayinspector.eu/" />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="Monday.com Inspector — Import Subitems, Bulk Update & Query Boards" />
-  <meta property="og:description" content="Free Chrome extension: import subitems from CSV, bulk update hundreds of items, run GraphQL queries, and inspect schemas — directly inside monday.com." />
+  <meta property="og:title" content="Monday.com Inspector — The Power Toolkit for monday.com" />
+  <meta property="og:description" content="Import subitems from CSV, bulk update items, run GraphQL queries — free Chrome extension, no account needed." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mondayinspector.eu/" />
-  <meta property="og:site_name" content="Monday.com Inspector" />
-  <meta property="og:locale" content="en_US" />
-
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Monday.com Inspector — The Power Toolkit for monday.com" />
-  <meta name="twitter:description" content="Import subitems from CSV, bulk update, run GraphQL queries — free Chrome extension." />
-
-  <!-- Additional SEO -->
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Sam @ Fruition Services" />
   <meta name="theme-color" content="#7c5cfc" />
-
-  <!-- JSON-LD: SoftwareApplication -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Monday.com Inspector",
-    "description": "All-in-one Chrome extension for monday.com: bulk import subitems from CSV/Excel, bulk update items, run GraphQL queries, inspect board schemas, and export data.",
-    "applicationCategory": "BrowserExtension",
-    "operatingSystem": "Chrome",
-    "softwareVersion": "1.2.0",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "author": { "@type": "Organization", "name": "Fruition Services", "url": "https://www.fruitionservices.io" },
-    "url": "https://mondayinspector.eu",
-    "installUrl": "https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg",
-    "featureList": [
-      "Import subitems into monday.com from CSV or Excel",
-      "Import parent items and subitems in one operation",
-      "Bulk update hundreds of items at once",
-      "GraphQL query editor with complexity budget tracking",
-      "Board schema inspector and column explorer",
-      "Smart column mapping for all column types",
-      "Real-time import progress with ETA and error details",
-      "Export board data to CSV or JSON",
-      "Privacy-first: API token stays in your browser"
-    ]
-  }
-  </script>
-
-  <!-- JSON-LD: FAQPage -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Can monday.com import subitems?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Monday.com's native import does not support subitems — you can only import top-level items. Monday.com Inspector solves this: upload a CSV or Excel file, map your columns, and the extension creates subitems under the correct parent items automatically."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I import subitems in monday.com from CSV?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Install the Monday.com Inspector Chrome extension, navigate to your board, open the extension panel, go to the Import tab, upload your CSV or Excel file, map the columns, and click Start Import. The tool creates parent items (optional) and subitems automatically."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I bulk update items in monday.com?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "With Monday.com Inspector, select the items you want to update in the Items tab, open the Actions tab, choose Bulk Update, pick the column to update and enter the new value, then apply. It updates all selected items at once."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does this work with monday.com board exports?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. The extension auto-detects Monday.com's hierarchical XLSX export format, preserving groups, parent items, and subitems. Export from one board and re-import into another in minutes."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is Monday.com Inspector free?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, completely free and open source. No row limits, no account required, no subscription. Your API token stays securely in your browser."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What column types does the import support?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "All writable column types: text, numbers, status, people, date, timeline, dropdown, checkbox, link, phone, email, rating, and more. Read-only columns like formulas and mirrors are automatically excluded."
-        }
-      }
-    ]
-  }
-  </script>
-
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Monday.com Inspector","description":"Free Chrome extension for monday.com: import subitems from CSV, bulk update items, run GraphQL queries, inspect board schemas.","applicationCategory":"BrowserExtension","operatingSystem":"Chrome","softwareVersion":"1.2.0","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Fruition Services","url":"https://www.fruitionservices.io"},"url":"https://mondayinspector.eu","installUrl":"https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can monday.com import subitems natively?","acceptedAnswer":{"@type":"Answer","text":"No. Monday.com's built-in CSV import only creates top-level items. Monday.com Inspector fills this gap — it imports parent items and subitems together from a single CSV or Excel file."}},{"@type":"Question","name":"How do I bulk update items in monday.com?","acceptedAnswer":{"@type":"Answer","text":"With Monday.com Inspector: select items using checkboxes, go to Actions tab, choose Bulk Update, pick a column and value, and apply. All selected items update at once."}},{"@type":"Question","name":"Is Monday.com Inspector free?","acceptedAnswer":{"@type":"Answer","text":"Yes — completely free, open source, no account required, no row limits. Your API token stays in your browser."}}]}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          colors: {
-            brand: { DEFAULT: '#7c5cfc', light: '#a78bfa', dark: '#5a3de8', muted: '#ede9fe' },
-          },
-          animation: {
-            'float': 'float 6s ease-in-out infinite',
-            'shimmer': 'shimmer 3s ease-in-out infinite',
-            'fade-up': 'fadeUp 0.6s ease forwards',
-            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
-          },
-        },
-      },
-    };
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #fafafa; }
-
-    /* ─── Animations ─────────────────────────── */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% center; }
-      100% { background-position: 200% center; }
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(124, 92, 252, 0.3); }
-      50% { box-shadow: 0 0 0 8px rgba(124, 92, 252, 0); }
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes gradient-x {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    /* ─── Scroll reveal ──────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-delay-1 { transition-delay: 80ms; }
-    .reveal-delay-2 { transition-delay: 160ms; }
-    .reveal-delay-3 { transition-delay: 240ms; }
-    .reveal-delay-4 { transition-delay: 320ms; }
-    .reveal-delay-5 { transition-delay: 400ms; }
-    .reveal-delay-6 { transition-delay: 480ms; }
-
-    /* ─── Gradient text ──────────────────────── */
-    .text-gradient {
-      background: linear-gradient(135deg, #7c5cfc 0%, #a78bfa 50%, #6366f1 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 4s ease-in-out infinite;
-    }
-
-    /* ─── Hero blob ──────────────────────────── */
-    .hero-blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-    }
-
-    /* ─── Glassmorphism card ─────────────────── */
-    .glass-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.04);
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .glass-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 48px rgba(124, 92, 252, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
-      border-color: rgba(124, 92, 252, 0.25);
-    }
-
-    /* ─── Feature card icon ──────────────────── */
-    .feature-icon {
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .glass-card:hover .feature-icon { transform: scale(1.15) rotate(-3deg); }
-
-    /* ─── Primary button ─────────────────────── */
-    .btn-primary {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 15px;
-      color: white;
-      background: linear-gradient(135deg, #7c5cfc, #5a3de8);
-      background-size: 200% 200%;
-      box-shadow: 0 4px 16px rgba(124, 92, 252, 0.35), 0 1px 4px rgba(0,0,0,0.08);
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-position 0.4s ease;
-      overflow: hidden;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 8px 28px rgba(124, 92, 252, 0.45), 0 2px 8px rgba(0,0,0,0.1);
-      background-position: right center;
-    }
-    .btn-primary:hover::after { opacity: 1; }
-    .btn-primary:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(124, 92, 252, 0.3); }
-
-    /* Shine sweep on primary button */
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -60%;
-      width: 40%; height: 200%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transform: skewX(-20deg);
-      transition: left 0.6s ease;
-    }
-    .btn-primary:hover::before { left: 130%; }
-
-    /* ─── Secondary button ───────────────────── */
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 15px;
-      color: #7c5cfc;
-      background: transparent;
-      border: 2px solid #c4b5fd;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      text-decoration: none;
-    }
-    .btn-secondary:hover {
-      background: #f5f3ff;
-      border-color: #7c5cfc;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(124, 92, 252, 0.12);
-    }
-    .btn-secondary:active { transform: scale(0.97); }
-
-    /* ─── Step ───────────────────────────────── */
-    .step-num {
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-    }
-    .step-row:hover .step-num {
-      transform: scale(1.12);
-      box-shadow: 0 0 0 6px rgba(124, 92, 252, 0.15);
-    }
-
-    /* ─── FAQ ────────────────────────────────── */
-    details summary { list-style: none; cursor: pointer; }
-    details summary::-webkit-details-marker { display: none; }
-    .faq-arrow { transition: transform 0.3s ease; }
-    details[open] .faq-arrow { transform: rotate(180deg); }
-    details .faq-body { animation: slideDown 0.3s ease; }
-
-    /* ─── Stat card ──────────────────────────── */
-    .stat-card {
-      background: linear-gradient(135deg, #7c5cfc08, #a78bfa10);
-      border: 1px solid #c4b5fd40;
-      border-radius: 16px;
-      padding: 24px;
-      text-align: center;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .stat-card:hover { transform: translateY(-4px); }
-
-    /* ─── Tag badge ──────────────────────────── */
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-
-    /* ─── Nav shadow on scroll ───────────────── */
-    nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.07); }
-
-    /* ─── Section divider ────────────────────── */
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
-      margin: 0 auto;
-      max-width: 400px;
-    }
-
-    /* ─── Code-like badge ────────────────────── */
-    .code-badge {
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 11px;
-      background: #1e1b4b;
-      color: #a78bfa;
-      padding: 2px 8px;
-      border-radius: 6px;
-    }
-
-    /* ─── Inline mock UI ─────────────────────── */
-    .mock-panel {
-      background: white;
-      border-radius: 14px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.05);
-      overflow: hidden;
-      font-size: 12px;
-    }
-    .mock-tab { padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; }
-    .mock-tab.active { color: #7c5cfc; border-bottom-color: #7c5cfc; }
-    .mock-tab:not(.active) { color: #9ca3af; }
-    .mock-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid #f3f4f6; font-size: 11px; }
-    .mock-arrow { color: #9ca3af; }
-    .mock-select { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 8px; font-size: 10px; color: #374151; flex: 1; }
-    .mock-bar { height: 6px; border-radius: 3px; background: #ede9fe; overflow: hidden; }
-    .mock-fill { height: 100%; background: linear-gradient(90deg, #7c5cfc, #a78bfa); border-radius: 3px; transition: width 1s ease; }
-    .mock-badge { padding: 1px 6px; border-radius: 100px; font-size: 9px; font-weight: 700; }
+    .hero{background:#fff;padding:88px 0 80px;position:relative;overflow:hidden}
+    .hero-blob{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+    .hero h1{font-size:clamp(2.5rem,5vw,3.75rem);font-weight:900;letter-spacing:-.035em;line-height:1.1;margin-bottom:22px}
+    .hero-sub{font-size:clamp(1rem,2vw,1.125rem);color:#52525b;max-width:600px;margin:0 auto 32px;line-height:1.75}
+    .trust-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;color:#52525b;font-size:13.5px;margin-top:36px}
+    .trust-bar span{display:flex;align-items:center;gap:6px}
+    .problem-strip{background:#fffbeb;border-top:1px solid #fde68a;border-bottom:1px solid #fde68a;padding:14px 0;text-align:center;font-size:14px;color:#713f12}
+    .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .guide-card{display:flex;align-items:flex-start;gap:16px;background:#fff;border:1px solid #e4e4e7;border-radius:14px;padding:24px;text-decoration:none;color:inherit;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+    .guide-card:hover{border-color:#c4b5fd;box-shadow:0 12px 32px rgba(124,92,252,.1);transform:translateY(-3px)}
+    .guide-card-icon{width:40px;height:40px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .guide-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+    .guide-card p{font-size:12.5px;color:#71717a;line-height:1.55}
+    .comp-header-native{background:#fff7ed!important;color:#c2410c!important;font-weight:700!important;text-align:center!important}
+    .comp-header-inspector{background:#f5f3ff!important;color:#6d28d9!important;font-weight:700!important;text-align:center!important}
+    .comp-center{text-align:center}
+    @media(max-width:900px){.feature-grid,.services-grid{grid-template-columns:repeat(2,1fr)}.guide-grid{grid-template-columns:1fr}}
+    @media(max-width:640px){.feature-grid,.services-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    @media(max-width:900px){.how-grid{grid-template-columns:1fr!important}}
   </style>
 </head>
-<body class="text-gray-900 antialiased">
+<body>
 
-  <!-- ─── Nav ──────────────────────────────────── -->
-  <nav id="navbar" class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100 transition-shadow duration-300">
-    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-      <div class="flex items-center gap-2.5">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <span class="font-bold text-gray-900 text-[15px] tracking-tight">monday<span class="text-brand">.inspector</span></span>
-      </div>
-      <div class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-500">
-        <a href="#features" class="hover:text-gray-900 transition-colors duration-200">Features</a>
-        <a href="#import-guide" class="hover:text-gray-900 transition-colors duration-200">Import Guide</a>
-        <a href="#how-it-works" class="hover:text-gray-900 transition-colors duration-200">How It Works</a>
-        <a href="#faq" class="hover:text-gray-900 transition-colors duration-200">FAQ</a>
-        <a href="#services" class="hover:text-gray-900 transition-colors duration-200">Services</a>
-      </div>
-      <a
-        class="btn-primary"
-        style="padding: 8px 18px; font-size: 13px; border-radius: 9px;"
-        href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"
-        target="_blank"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-        Add to Chrome
-      </a>
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/"><div class="nav-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>monday<span style="color:#7c5cfc">.inspector</span></a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="import-subitems-monday.html">Import Subitems</a></li>
+      <li><a href="monday-csv-import-guide.html">CSV Guide</a></li>
+      <li><a href="monday-bulk-update.html">Bulk Update</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#services">Services</a></li>
+    </ul>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome</a>
+  </div>
+</nav>
+
+<section class="hero dot-grid">
+  <div class="hero-blob" style="width:560px;height:560px;top:-180px;right:-80px;background:radial-gradient(circle,#ede9fe,transparent 70%);opacity:.7"></div>
+  <div class="hero-blob" style="width:380px;height:380px;bottom:-80px;left:-60px;background:radial-gradient(circle,#dbeafe,transparent 70%);opacity:.5"></div>
+  <div class="container" style="text-align:center;position:relative">
+    <div class="badge badge-brand reveal" style="margin-bottom:24px"><span style="width:6px;height:6px;border-radius:50%;background:#7c5cfc;animation:pulse 2s infinite;display:inline-block"></span>&nbsp;Free · Open Source · v1.2.0</div>
+    <h1 class="reveal">Supercharge monday.com<br/>with the tools <span class="text-gradient">it's missing</span></h1>
+    <p class="hero-sub reveal">Import subitems from CSV, bulk update hundreds of items, run GraphQL queries, and inspect board schemas — all in a sleek inline panel inside monday.com.</p>
+    <div class="reveal" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-primary btn-xl" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome — It's Free</a>
+      <a class="btn btn-secondary btn-lg" href="https://calendly.com/sam-fruitionservices/30min" target="_blank">Book a Consultation</a>
     </div>
-  </nav>
+    <div class="trust-bar reveal">
+      <span><span style="color:#16a34a;font-weight:700">✓</span> No row limits</span>
+      <span><span style="color:#16a34a;font-weight:700">✓</span> No account needed</span>
+      <span><span style="color:#16a34a;font-weight:700">✓</span> 100% privacy-first</span>
+      <span><span style="color:#16a34a;font-weight:700">✓</span> Open source</span>
+      <span><span style="color:#16a34a;font-weight:700">✓</span> Works inside monday.com</span>
+    </div>
+  </div>
+</section>
 
-  <!-- ─── Hero ─────────────────────────────────── -->
-  <section class="relative overflow-hidden bg-white pt-20 pb-24">
-    <!-- Background blobs -->
-    <div class="hero-blob" style="width:600px;height:600px;top:-200px;right:-100px;background:radial-gradient(circle,#ede9fe 0%,transparent 70%);opacity:0.6;"></div>
-    <div class="hero-blob" style="width:400px;height:400px;bottom:-100px;left:-80px;background:radial-gradient(circle,#dbeafe 0%,transparent 70%);opacity:0.5;"></div>
+<div class="problem-strip">
+  <strong>⚠️ monday.com's native import doesn't support subitems.</strong>&nbsp;Monday.com Inspector solves this — and much more.&nbsp;<a href="import-subitems-monday.html" style="color:#7c5cfc;font-weight:600;text-underline-offset:3px">See how →</a>
+</div>
 
-    <div class="relative max-w-5xl mx-auto px-6 text-center">
-      <!-- Badge -->
-      <div class="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-muted text-brand text-xs font-semibold mb-7 border border-brand/20">
-        <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
-        Free · Open Source · v1.2.0
+<section class="section-sm" style="background:#fff">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-box reveal"><div class="stat-num">6</div><div class="stat-label">Power features</div></div>
+      <div class="stat-box reveal d1"><div class="stat-num">∞</div><div class="stat-label">No row limits</div></div>
+      <div class="stat-box reveal d2"><div class="stat-num">0</div><div class="stat-label">Third-party servers</div></div>
+      <div class="stat-box reveal d3"><div class="stat-num">Free</div><div class="stat-label">Always &amp; forever</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="container">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="badge badge-brand">Features</span></div>
+      <h2 class="reveal">Everything monday.com is missing</h2>
+      <p class="reveal">Six capabilities that unlock your boards' full potential — in one free inline panel.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="card reveal"><div class="card-icon">📥</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><h3 style="font-size:15px;font-weight:700">Import Subitems</h3><span class="badge badge-brand" style="font-size:10px">#1</span></div><p style="font-size:13.5px;color:#52525b;line-height:1.65">Import parent items and subitems together from CSV or Excel. Monday.com's native import can't do this.</p><a href="import-subitems-monday.html" style="font-size:12.5px;color:#7c5cfc;font-weight:600;margin-top:14px;display:inline-block;text-decoration:none">Full guide →</a></div>
+      <div class="card reveal d1"><div class="card-icon">⚡</div><h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Bulk Update</h3><p style="font-size:13.5px;color:#52525b;line-height:1.65">Select hundreds of items, pick any column, push a value to all at once. Works on parent items and subitems.</p><a href="monday-bulk-update.html" style="font-size:12.5px;color:#7c5cfc;font-weight:600;margin-top:14px;display:inline-block;text-decoration:none">Full guide →</a></div>
+      <div class="card reveal d2"><div class="card-icon">🔍</div><h3 style="font-size:15px;font-weight:700;margin-bottom:8px">GraphQL Query Engine</h3><p style="font-size:13.5px;color:#52525b;line-height:1.65">Write and run real GraphQL queries against your board. Complexity budget tracker and beginner guide included.</p></div>
+      <div class="card reveal d3"><div class="card-icon">🗂</div><h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Schema Inspector</h3><p style="font-size:13.5px;color:#52525b;line-height:1.65">Explore every column — type, ID, settings — for both parent items and subitems. One-click copy of column IDs.</p></div>
+      <div class="card reveal d4"><div class="card-icon">🔗</div><h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Smart Column Mapping</h3><p style="font-size:13.5px;color:#52525b;line-height:1.65">Auto-matches file headers to board columns. Type-aware inputs for people, timeline, status, and more.</p></div>
+      <div class="card reveal d5"><div class="card-icon">📤</div><h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Export &amp; Backup</h3><p style="font-size:13.5px;color:#52525b;line-height:1.65">Export any board to CSV or JSON with one click. Includes items, subitems, all column values, and group structure.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<section class="section" id="comparison" style="background:#fff">
+  <div class="container">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="badge badge-amber">Comparison</span></div>
+      <h2 class="reveal">Inspector vs. native monday.com</h2>
+      <p class="reveal">See exactly what you unlock by installing the extension.</p>
+    </div>
+    <div class="table-wrap reveal">
+      <table class="comp-table">
+        <thead><tr><th style="width:44%">Feature</th><th class="comp-center comp-header-native">monday.com Native</th><th class="comp-center comp-header-inspector">monday.com Inspector</th></tr></thead>
+        <tbody>
+          <tr><td class="feature-col">Import top-level items from CSV</td><td class="comp-center"><span class="check">✓</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Import subitems from CSV</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Import parents + subitems together</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Re-import monday.com board export</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Bulk update items (any column)</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Bulk update subitems</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">GraphQL query editor</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Real-time import progress with ETA</td><td class="comp-center"><span class="cross">✕</span></td><td class="comp-center"><span class="check">✓</span></td></tr>
+          <tr><td class="feature-col">Row limits</td><td class="comp-center" style="font-size:12.5px;color:#52525b">Plan limits apply</td><td class="comp-center"><span class="check" style="font-size:13px">None</span></td></tr>
+          <tr><td class="feature-col">Cost</td><td class="comp-center" style="font-size:12.5px;color:#52525b">Included in plan</td><td class="comp-center"><span class="check" style="font-size:13px">Free</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="how-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+      <div>
+        <div class="sec-head" style="text-align:left;margin-bottom:36px">
+          <div class="eyebrow" style="justify-content:flex-start"><span class="badge badge-brand">How It Works</span></div>
+          <h2 class="reveal" style="text-align:left">From CSV to subitems<br/>in 4 steps</h2>
+          <p class="reveal" style="text-align:left">No API knowledge required. Works directly inside your board.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card step-row reveal" style="padding:20px 22px"><div class="step-num">1</div><div><h3 style="font-size:14px;font-weight:700;margin-bottom:3px">Install &amp; open your board</h3><p style="font-size:12.5px;color:#52525b">Install the extension, navigate to a monday.com board, click the icon → Open Inspector Panel.</p></div></div>
+          <div class="card step-row reveal d1" style="padding:20px 22px"><div class="step-num">2</div><div><h3 style="font-size:14px;font-weight:700;margin-bottom:3px">Upload your CSV or Excel file</h3><p style="font-size:12.5px;color:#52525b">Drag and drop in the Import tab. Board exports are auto-detected and parsed.</p></div></div>
+          <div class="card step-row reveal d2" style="padding:20px 22px"><div class="step-num">3</div><div><h3 style="font-size:14px;font-weight:700;margin-bottom:3px">Map your columns</h3><p style="font-size:12.5px;color:#52525b">Smart auto-matching maps file headers to board columns. Adjust mismatches manually.</p></div></div>
+          <div class="card step-row reveal d3" style="padding:20px 22px"><div class="step-num">4</div><div><h3 style="font-size:14px;font-weight:700;margin-bottom:3px">Start import &amp; watch live progress</h3><p style="font-size:12.5px;color:#52525b">Real-time progress bar with ETA, rows/sec rate, and per-row status.</p></div></div>
+        </div>
       </div>
-
-      <!-- H1 — primary keyword included -->
-      <h1 class="reveal text-5xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-gray-900">
-        Supercharge monday.com<br/>
-        with the tools <span class="text-gradient">it's missing</span>
-      </h1>
-
-      <p class="reveal text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-4 leading-relaxed">
-        Import subitems from CSV, bulk update hundreds of items, run GraphQL queries,
-        and inspect board schemas — all in a sleek inline panel inside monday.com.
-      </p>
-      <p class="reveal text-sm text-gray-400 mb-10">
-        monday.com's native import doesn't support subitems. <strong class="text-gray-600">Monday.com Inspector does.</strong>
-      </p>
-
-      <div class="reveal flex flex-wrap items-center justify-center gap-4 mb-14">
-        <a class="btn-primary"
-          href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"
-          target="_blank">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><path d="M12 8l4 4-4 4M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
-          Add to Chrome — It's Free
-        </a>
-        <a class="btn-secondary"
-          href="https://calendly.com/sam-fruitionservices/30min"
-          target="_blank">
-          Book a Consultation
-        </a>
-      </div>
-
-      <!-- Trust bar -->
-      <div class="reveal flex flex-wrap justify-center gap-5 text-sm text-gray-400 mb-14">
-        <span class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> No row limits</span>
-        <span class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> No account needed</span>
-        <span class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 100% privacy-first</span>
-        <span class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> Open source</span>
-        <span class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> Works inside monday.com</span>
-      </div>
-
-      <!-- Mock UI panel preview -->
-      <div class="reveal max-w-md mx-auto" style="animation: float 6s ease-in-out infinite; animation-delay: 1s;">
-        <div class="mock-panel">
-          <!-- Tab bar -->
-          <div class="flex border-b border-gray-100 px-3 pt-2 bg-gray-50/60" style="gap:0">
-            <div class="mock-tab">Schema</div>
-            <div class="mock-tab">Items</div>
-            <div class="mock-tab active">Import</div>
-            <div class="mock-tab">Actions</div>
-            <div class="mock-tab">Query</div>
+      <div class="reveal d2 mobile-hide">
+        <div style="background:#fff;border:1px solid #e4e4e7;border-radius:16px;overflow:hidden;box-shadow:0 20px 56px rgba(0,0,0,.08)">
+          <div style="background:#fafafa;border-bottom:1px solid #e4e4e7;padding:10px 16px;display:flex">
+            <div style="padding:7px 14px;font-size:11.5px;font-weight:600;color:#a1a1aa">Schema</div>
+            <div style="padding:7px 14px;font-size:11.5px;font-weight:600;color:#a1a1aa">Items</div>
+            <div style="padding:7px 14px;font-size:11.5px;font-weight:700;color:#7c5cfc;border-bottom:2px solid #7c5cfc">Import</div>
+            <div style="padding:7px 14px;font-size:11.5px;font-weight:600;color:#a1a1aa">Actions</div>
           </div>
-          <!-- Import step preview -->
-          <div class="px-4 py-3">
-            <div class="flex justify-between items-center mb-3">
-              <div>
-                <div style="font-size:12px;font-weight:700;color:#111">monday_export.xlsx</div>
-                <div style="font-size:10px;color:#9ca3af">142 rows to import</div>
-              </div>
-              <span class="mock-badge" style="background:#ede9fe;color:#7c5cfc">Monday Export</span>
+          <div style="padding:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+              <div><div style="font-size:12.5px;font-weight:700">monday_export.xlsx</div><div style="font-size:10.5px;color:#71717a;margin-top:2px">142 rows to import</div></div>
+              <span class="badge badge-brand" style="font-size:10px">Monday Export</span>
             </div>
-            <div style="font-size:10px;font-weight:700;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Column Mapping</div>
-            <div class="mock-row"><span style="font-size:10px;color:#374151;min-width:80px">Status</span><span class="mock-arrow">→</span><div class="mock-select">Status ✓</div><span class="mock-badge" style="background:#d1fae5;color:#065f46">matched</span></div>
-            <div class="mock-row"><span style="font-size:10px;color:#374151;min-width:80px">Assignee</span><span class="mock-arrow">→</span><div class="mock-select">People ✓</div><span class="mock-badge" style="background:#d1fae5;color:#065f46">matched</span></div>
-            <div class="mock-row"><span style="font-size:10px;color:#374151;min-width:80px">Due Date</span><span class="mock-arrow">→</span><div class="mock-select">Timeline ✓</div><span class="mock-badge" style="background:#d1fae5;color:#065f46">matched</span></div>
-            <div class="mt-3 mb-1.5">
-              <div class="flex justify-between" style="font-size:10px;color:#6b7280;margin-bottom:4px"><span style="font-weight:700;color:#7c5cfc">73%</span><span>104 / 142</span></div>
-              <div class="mock-bar"><div class="mock-fill" style="width:73%"></div></div>
-            </div>
-            <div class="flex gap-2 mt-2" style="font-size:10px">
-              <span style="color:#059669;font-weight:600">✓ 104 success</span>
-              <span style="color:#9ca3af">· 38 pending</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Stats strip ───────────────────────────── -->
-  <section class="bg-gradient-to-r from-brand/5 via-purple-50 to-blue-50 border-y border-brand/10 py-10">
-    <div class="max-w-4xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
-      <div class="stat-card reveal"><div class="text-3xl font-extrabold text-brand mb-1">6</div><div class="text-sm text-gray-500 font-medium">Power features</div></div>
-      <div class="stat-card reveal reveal-delay-1"><div class="text-3xl font-extrabold text-brand mb-1">∞</div><div class="text-sm text-gray-500 font-medium">No row limits</div></div>
-      <div class="stat-card reveal reveal-delay-2"><div class="text-3xl font-extrabold text-brand mb-1">0</div><div class="text-sm text-gray-500 font-medium">Third-party servers</div></div>
-      <div class="stat-card reveal reveal-delay-3"><div class="text-3xl font-extrabold text-brand mb-1">Free</div><div class="text-sm text-gray-500 font-medium">Always & forever</div></div>
-    </div>
-  </section>
-
-  <!-- ─── Features ──────────────────────────────── -->
-  <section class="max-w-6xl mx-auto px-6 py-20" id="features">
-    <div class="text-center mb-14">
-      <h2 class="reveal text-4xl font-extrabold mb-4 tracking-tight">Everything monday.com is missing</h2>
-      <p class="reveal text-gray-500 text-lg max-w-xl mx-auto">One extension. Six capabilities that unlock your boards' full potential.</p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-5">
-      <!-- Feature 1: Import -->
-      <div class="glass-card rounded-2xl p-7 reveal col-span-1 md:col-span-1">
-        <div class="feature-icon text-3xl mb-4">📥</div>
-        <div class="flex items-center gap-2 mb-2">
-          <h3 class="text-base font-bold">Import Subitems</h3>
-          <span class="tag" style="background:#ede9fe;color:#7c5cfc">#1 Feature</span>
-        </div>
-        <p class="text-sm text-gray-500 leading-relaxed">Import parent items and subitems together from a single CSV or Excel file. Monday.com's native import can't do this — Inspector can.</p>
-      </div>
-
-      <!-- Feature 2: Bulk Update -->
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-1">
-        <div class="feature-icon text-3xl mb-4">⚡</div>
-        <h3 class="text-base font-bold mb-2">Bulk Update</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Select dozens or hundreds of items, pick any column, enter a value, and update them all at once. Works on parent items and subitems.</p>
-      </div>
-
-      <!-- Feature 3: Query Engine -->
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-2">
-        <div class="feature-icon text-3xl mb-4">🔍</div>
-        <h3 class="text-base font-bold mb-2">GraphQL Query Engine</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Write and run GraphQL queries directly against your board. Built-in complexity budget tracker and beginner-friendly guide included.</p>
-      </div>
-
-      <!-- Feature 4: Schema Viewer -->
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-3">
-        <div class="feature-icon text-3xl mb-4">🗂</div>
-        <h3 class="text-base font-bold mb-2">Schema Inspector</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Explore every board column — type, ID, settings — for both parent items and subitems. One-click copy of column IDs for your integrations.</p>
-      </div>
-
-      <!-- Feature 5: Smart Mapping -->
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-4">
-        <div class="feature-icon text-3xl mb-4">🔗</div>
-        <h3 class="text-base font-bold mb-2">Smart Column Mapping</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Auto-matches your file headers to board columns. Smart inputs for every column type: people picker, timeline date range, status dropdown, and more.</p>
-      </div>
-
-      <!-- Feature 6: Export -->
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-5">
-        <div class="feature-icon text-3xl mb-4">📤</div>
-        <h3 class="text-base font-bold mb-2">Export &amp; Backup</h3>
-        <p class="text-sm text-gray-500 leading-relaxed">Export any board to CSV or JSON with a single click. Includes items, subitems, all column values, and group structure.</p>
-      </div>
-    </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- ─── SEO Section: Import Guide ─────────────── -->
-  <section class="max-w-3xl mx-auto px-6 py-20" id="import-guide">
-    <div class="text-center mb-12">
-      <span class="tag reveal" style="background:#ede9fe;color:#7c5cfc;margin-bottom:16px;display:inline-flex">📖 Import Guide</span>
-      <h2 class="reveal text-4xl font-extrabold tracking-tight mb-4">How to import subitems<br/>in monday.com</h2>
-      <p class="reveal text-gray-500 text-lg">Monday.com's native import only supports top-level items. Here's the workaround thousands of teams use.</p>
-    </div>
-
-    <!-- Problem -->
-    <div class="glass-card rounded-2xl p-8 mb-6 reveal border-l-4" style="border-left-color: #f59e0b;">
-      <div class="flex items-start gap-4">
-        <div class="text-2xl flex-shrink-0">⚠️</div>
-        <div>
-          <h3 class="font-bold text-gray-900 mb-2">The monday.com limitation</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Monday.com's built-in CSV import creates items, but <strong>it does not create subitems</strong>. If your data has a parent-child hierarchy — projects with tasks, orders with line items, clients with contacts — you're stuck doing it manually row by row.
-          </p>
-          <p class="text-sm text-gray-600 mt-2 leading-relaxed">
-            Teams with hundreds or thousands of subitems spend days doing what should take minutes.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Solution -->
-    <div class="glass-card rounded-2xl p-8 mb-6 reveal border-l-4" style="border-left-color: #7c5cfc;">
-      <div class="flex items-start gap-4">
-        <div class="text-2xl flex-shrink-0">✅</div>
-        <div>
-          <h3 class="font-bold text-gray-900 mb-2">The solution: Monday.com Inspector</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Monday.com Inspector is a free Chrome extension that injects an inline panel into every monday.com board page. Its Import tab handles what monday.com can't: creating subitems under the right parent items in bulk, from a CSV or Excel file.
-          </p>
-          <p class="text-sm text-gray-600 mt-2 leading-relaxed">
-            It also auto-detects monday.com's own board export format (XLSX), so you can migrate boards between workspaces with full hierarchy preserved.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step by step import guide -->
-    <h3 class="font-bold text-xl mb-6 reveal">Step-by-step: importing subitems from CSV</h3>
-
-    <div class="space-y-4">
-      <div class="step-row glass-card rounded-2xl p-6 reveal flex items-start gap-5">
-        <div class="step-num flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white font-extrabold text-base flex items-center justify-center shadow-sm">1</div>
-        <div>
-          <h4 class="font-bold mb-1">Prepare your CSV file</h4>
-          <p class="text-sm text-gray-500 leading-relaxed">Your file needs at least two columns: one for the parent item name (or ID), and one for the subitem name. Add any other subitem columns you want to import — status, assignee, date, etc.</p>
-          <div class="mt-3 bg-gray-50 rounded-lg p-3 font-mono text-xs text-gray-600 overflow-x-auto">
-            Parent Item, Subitem Name, Status, Assignee<br/>
-            "Website Redesign", "Write copy", "Working", "Alex"<br/>
-            "Website Redesign", "Design mockups", "Done", "Jordan"<br/>
-            "Mobile App", "Fix login bug", "In Progress", "Taylor"
-          </div>
-        </div>
-      </div>
-
-      <div class="step-row glass-card rounded-2xl p-6 reveal reveal-delay-1 flex items-start gap-5">
-        <div class="step-num flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white font-extrabold text-base flex items-center justify-center shadow-sm">2</div>
-        <div>
-          <h4 class="font-bold mb-1">Install the extension &amp; open your board</h4>
-          <p class="text-sm text-gray-500 leading-relaxed">Install Monday.com Inspector from the Chrome Web Store. Navigate to your monday.com board, click the extension icon in your browser toolbar, and hit <strong>Open Inspector Panel</strong>. The panel slides in on the right side of your board.</p>
-        </div>
-      </div>
-
-      <div class="step-row glass-card rounded-2xl p-6 reveal reveal-delay-2 flex items-start gap-5">
-        <div class="step-num flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white font-extrabold text-base flex items-center justify-center shadow-sm">3</div>
-        <div>
-          <h4 class="font-bold mb-1">Upload and map your columns</h4>
-          <p class="text-sm text-gray-500 leading-relaxed">Go to the <strong>Import</strong> tab. Drag and drop your CSV file. The tool auto-matches columns with the same name. For anything that doesn't auto-match, use the dropdown to pick the right board column. Set which column identifies the parent item.</p>
-        </div>
-      </div>
-
-      <div class="step-row glass-card rounded-2xl p-6 reveal reveal-delay-3 flex items-start gap-5">
-        <div class="step-num flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-dark text-white font-extrabold text-base flex items-center justify-center shadow-sm">4</div>
-        <div>
-          <h4 class="font-bold mb-1">Click Start Import and watch the progress</h4>
-          <p class="text-sm text-gray-500 leading-relaxed">Hit <strong>Start Import</strong>. A live progress panel shows you each row being created — with a percentage bar, ETA, rows/sec rate, and per-row status indicators. Errors are listed with the exact reason so you can fix and re-run.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tips box -->
-    <div class="mt-8 reveal glass-card rounded-2xl p-6" style="background: linear-gradient(135deg, #f5f3ff, #ede9fe40);">
-      <h4 class="font-bold mb-3 text-brand">💡 Pro tips</h4>
-      <ul class="space-y-2 text-sm text-gray-600">
-        <li class="flex items-start gap-2"><span class="text-brand mt-0.5">→</span><span>To import from a <strong>monday.com board export (XLSX)</strong>, just upload it directly — the tool detects the format automatically and preserves your groups, parent items, and subitems.</span></li>
-        <li class="flex items-start gap-2"><span class="text-brand mt-0.5">→</span><span>For <strong>people columns</strong>, use the person's full name as it appears in monday.com. The tool matches by name automatically.</span></li>
-        <li class="flex items-start gap-2"><span class="text-brand mt-0.5">→</span><span>For <strong>timeline columns</strong>, use <code class="code-badge">YYYY-MM-DD</code> format for start and end dates.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- ─── Bulk Update feature ───────────────────── -->
-  <section class="max-w-5xl mx-auto px-6 py-20">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div class="reveal">
-        <span class="tag mb-4 inline-flex" style="background:#fef3c7;color:#b45309">⚡ Bulk Update</span>
-        <h2 class="text-3xl font-extrabold tracking-tight mb-4">Update hundreds of items at once</h2>
-        <p class="text-gray-500 mb-4 leading-relaxed">Monday.com makes you update items one at a time. Inspector lets you select any number of items, pick a column, and push a value to all of them simultaneously.</p>
-        <ul class="space-y-3 text-sm text-gray-600">
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-bold">✓</span>Update parent items or subitems</li>
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-bold">✓</span>All column types: status, people, date, text, and more</li>
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-bold">✓</span>Smart inputs match each column type</li>
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-bold">✓</span>Save hours of manual monday.com editing</li>
-        </ul>
-      </div>
-      <div class="reveal reveal-delay-2">
-        <div class="mock-panel">
-          <div class="flex border-b border-gray-100 px-3 pt-2 bg-gray-50/60">
-            <div class="mock-tab active">Actions</div>
-            <div class="mock-tab">Bulk Update</div>
-          </div>
-          <div class="p-4">
-            <div class="flex items-center justify-between mb-3">
-              <span style="font-size:11px;font-weight:700;color:#111">Bulk Update Items</span>
-              <span class="mock-badge" style="background:#ede9fe;color:#7c5cfc">47 selected</span>
-            </div>
-            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px">Column to update</div>
-            <div class="mock-select" style="display:block;margin-bottom:10px;padding:6px 10px">Status → In Progress</div>
-            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px">Assign to</div>
-            <div class="mock-select" style="display:block;margin-bottom:10px;padding:6px 10px">👤 Alex Johnson</div>
-            <div style="border-radius:8px;background:linear-gradient(135deg,#7c5cfc,#5a3de8);color:white;font-size:11px;font-weight:700;padding:8px 14px;text-align:center">
-              Update 47 Items
+            <div style="font-size:10px;font-weight:700;color:#52525b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Column Mapping</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f4f4f5"><span style="font-size:11px;font-weight:500;min-width:68px">Status</span><span style="color:#a1a1aa">→</span><div style="flex:1;background:#f4f4f5;border-radius:6px;padding:4px 8px;font-size:10.5px">Status</div><span class="badge badge-green" style="font-size:9px">matched</span></div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f4f4f5"><span style="font-size:11px;font-weight:500;min-width:68px">Assignee</span><span style="color:#a1a1aa">→</span><div style="flex:1;background:#f4f4f5;border-radius:6px;padding:4px 8px;font-size:10.5px">People</div><span class="badge badge-green" style="font-size:9px">matched</span></div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0"><span style="font-size:11px;font-weight:500;min-width:68px">Due Date</span><span style="color:#a1a1aa">→</span><div style="flex:1;background:#f4f4f5;border-radius:6px;padding:4px 8px;font-size:10.5px">Timeline</div><span class="badge badge-green" style="font-size:9px">matched</span></div>
+            <div style="margin-top:14px">
+              <div style="display:flex;justify-content:space-between;font-size:10.5px;margin-bottom:5px;color:#52525b"><span style="font-weight:700;color:#7c5cfc">73%</span><span>104 / 142</span></div>
+              <div style="height:7px;border-radius:4px;background:#ede9fe"><div style="width:73%;height:100%;background:linear-gradient(90deg,#7c5cfc,#a78bfa);border-radius:4px"></div></div>
+              <div style="font-size:10px;color:#52525b;margin-top:6px">✓ 104 success · ~38 sec remaining</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <div class="section-divider"></div>
+<div class="hr"></div>
 
-  <!-- ─── Query Engine ──────────────────────────── -->
-  <section class="max-w-5xl mx-auto px-6 py-20">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div class="reveal order-2 md:order-1">
-        <div class="mock-panel">
-          <div class="flex border-b border-gray-100 px-3 pt-2 bg-gray-50/60">
-            <div class="mock-tab active">Query</div>
-          </div>
-          <div class="p-4">
-            <div style="background:#1e1b4b;border-radius:10px;padding:10px 12px;font-family:monospace;font-size:10px;color:#a78bfa;margin-bottom:10px;line-height:1.6">
-              <span style="color:#60a5fa">query</span> <span style="color:#fde68a">GetItems</span> {<br/>
-              &nbsp;&nbsp;<span style="color:#34d399">boards</span>(<span style="color:#fca5a5">ids</span>: <span style="color:#fde68a">[1234567890]</span>) {<br/>
-              &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#34d399">items_page</span> {<br/>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#34d399">items</span> {<br/>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#34d399">name</span><br/>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#34d399">subitems</span> { <span style="color:#34d399">name</span> }<br/>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
-              &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
-              &nbsp;&nbsp;}<br/>
-              }
-            </div>
-            <div class="flex items-center justify-between mb-2">
-              <span style="font-size:10px;color:#6b7280">Complexity budget</span>
-              <span style="font-size:10px;font-weight:700;color:#7c5cfc">2,340 / 10,000,000</span>
-            </div>
-            <div class="mock-bar"><div class="mock-fill" style="width:2%"></div></div>
-          </div>
+<section class="section" style="background:#fff" id="guides">
+  <div class="container">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="badge badge-brand">Guides</span></div>
+      <h2 class="reveal">Learn how to use every feature</h2>
+      <p class="reveal">Step-by-step tutorials for the most powerful capabilities.</p>
+    </div>
+    <div class="guide-grid">
+      <a class="guide-card reveal" href="import-subitems-monday.html"><div class="guide-card-icon">📥</div><div><h3>How to Import Subitems in Monday.com</h3><p>The complete step-by-step guide — CSV format, column mapping, live progress.</p><span style="font-size:12px;color:#7c5cfc;font-weight:600;margin-top:8px;display:inline-block">Read guide →</span></div></a>
+      <a class="guide-card reveal d1" href="monday-csv-import-guide.html"><div class="guide-card-icon">📄</div><div><h3>Monday.com CSV Import: Complete Guide</h3><p>How to format your CSV, column type guide, and native vs. Inspector comparison.</p><span style="font-size:12px;color:#7c5cfc;font-weight:600;margin-top:8px;display:inline-block">Read guide →</span></div></a>
+      <a class="guide-card reveal d2" href="monday-bulk-update.html"><div class="guide-card-icon">⚡</div><div><h3>How to Bulk Update Items in Monday.com</h3><p>Update hundreds of items at once — statuses, assignees, dates, and more.</p><span style="font-size:12px;color:#7c5cfc;font-weight:600;margin-top:8px;display:inline-block">Read guide →</span></div></a>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<section class="section" id="faq">
+  <div class="container-sm">
+    <div class="sec-head"><h2 class="reveal">Frequently asked questions</h2><p class="reveal">Everything you need to know before installing.</p></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <details class="faq reveal" open><summary>Can monday.com import subitems natively?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary><div class="faq-body">No — monday.com's built-in CSV import only creates top-level items. It does not support subitems. Monday.com Inspector was built specifically for this. <a href="import-subitems-monday.html">Full import subitems guide →</a></div></details>
+      <details class="faq reveal d1"><summary>How do I import subitems from CSV into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary><div class="faq-body">Install Monday.com Inspector, navigate to your board, click the extension icon → Open Inspector Panel, go to the Import tab, upload your CSV, map columns, and click Start Import. The tool creates subitems under the correct parent items automatically. <a href="import-subitems-monday.html">Step-by-step guide →</a></div></details>
+      <details class="faq reveal d2"><summary>How do I bulk update items in monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary><div class="faq-body">In the Items tab, select items using checkboxes. Then go to Actions → Bulk Update, pick a column and value, and click Update. All selected items update at once — parents and subitems. <a href="monday-bulk-update.html">Full guide →</a></div></details>
+      <details class="faq reveal d3"><summary>Does it work with monday.com board exports (.xlsx)?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary><div class="faq-body">Yes. The extension auto-detects monday.com's native XLSX export format and preserves the full hierarchy: groups, parent items, subitems, and all column values. Export from one board and re-import into another.</div></details>
+      <details class="faq reveal d4"><summary>What column types are supported for import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary><div class="faq-body">All writable column types: text, numbers, status, people, date, timeline, dropdown, checkbox, link, phone, email, and rating. Read-only columns are excluded automatically. <a href="monday-csv-import-guide.html">Column type guide →</a></div></details>
+      <details class="faq reveal d5"><summary>Is Monday.com Inspector free? Any row limits?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary><div class="faq-body">Completely free. No row limits, no subscription, no account required. Open source. Your API token stays in your browser — no data goes through any server we control. <a href="privacy.html">Privacy Policy →</a></div></details>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<section class="section" id="services" style="background:#fff">
+  <div class="container">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="badge badge-gray">Fruition Services</span></div>
+      <h2 class="reveal">Need more? We can help.</h2>
+      <p class="reveal">Built by <a href="https://www.linkedin.com/in/sametivon/" target="_blank" style="color:#7c5cfc;font-weight:600">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" style="color:#7c5cfc;font-weight:600">Fruition Services</a> — Platinum monday.com Partner, 500+ implementations.</p>
+    </div>
+    <div class="services-grid" style="margin-bottom:40px">
+      <div class="card reveal"><div class="card-icon">🛠</div><h3 style="font-size:14.5px;font-weight:700;margin-bottom:6px">Board Setup &amp; Optimization</h3><p style="font-size:13px;color:#52525b">Design and optimize monday.com boards for your team's workflows.</p></div>
+      <div class="card reveal d1"><div class="card-icon">🔌</div><h3 style="font-size:14.5px;font-weight:700;margin-bottom:6px">Custom API Integrations</h3><p style="font-size:13px;color:#52525b">Connect monday.com to your CRM, ERP, databases, and existing tools.</p></div>
+      <div class="card reveal d2"><div class="card-icon">📦</div><h3 style="font-size:14.5px;font-weight:700;margin-bottom:6px">Data Migration</h3><p style="font-size:13px;color:#52525b">Migrate from Asana, Trello, Jira, or spreadsheets — clean and complete.</p></div>
+      <div class="card reveal d3"><div class="card-icon">⚙️</div><h3 style="font-size:14.5px;font-weight:700;margin-bottom:6px">Workflow Automation</h3><p style="font-size:13px;color:#52525b">Build powerful automations and custom recipes for your team.</p></div>
+      <div class="card reveal d4"><div class="card-icon">🎓</div><h3 style="font-size:14.5px;font-weight:700;margin-bottom:6px">Team Training</h3><p style="font-size:13px;color:#52525b">Live sessions tailored to your team's specific workflows.</p></div>
+      <div class="card reveal d5"><div class="card-icon">🤝</div><h3 style="font-size:14.5px;font-weight:700;margin-bottom:6px">Monthly Admin Support</h3><p style="font-size:13px;color:#52525b">Ongoing monday.com admin — boards, users, automations, optimization.</p></div>
+    </div>
+    <div style="text-align:center" class="reveal"><a class="btn btn-primary btn-lg" href="https://calendly.com/sam-fruitionservices/30min" target="_blank">Schedule a Free Consultation</a></div>
+  </div>
+</section>
+
+<section class="section-sm" style="background:#fafafa;padding:64px 0">
+  <div class="container">
+    <div class="cta-banner reveal">
+      <div class="badge" style="margin:0 auto 20px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)">v1.2.0 — Latest</div>
+      <h2 style="font-size:clamp(1.75rem,3vw,2.5rem);font-weight:900;color:#fff;margin-bottom:16px;letter-spacing:-.025em">Stop fighting monday.com limitations</h2>
+      <p style="color:rgba(255,255,255,.8);font-size:1.0625rem;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto">Import subitems, bulk update, run queries. Everything you wish monday.com had — free, right now.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-xl" style="background:#fff;color:#7c5cfc;font-weight:700" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Install Extension — Free</a>
+        <a class="btn btn-lg" style="border:1.5px solid rgba(255,255,255,.4);color:#fff;background:transparent" href="https://calendly.com/sam-fruitionservices/30min" target="_blank">Book a Consultation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="nav-logo" href="/" style="color:#f4f4f5;text-decoration:none"><div class="nav-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>monday<span style="color:#a78bfa">.inspector</span></a>
+        <p>The free Chrome extension that gives monday.com the power features it's missing.</p>
+        <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap">
+          <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" style="background:#27272a;color:#a1a1aa;padding:5px 12px;border-radius:100px;font-size:11.5px;font-weight:600;text-decoration:none">Chrome Store</a>
+          <a href="https://github.com/sametivon/monday.inspector" target="_blank" style="background:#27272a;color:#a1a1aa;padding:5px 12px;border-radius:100px;font-size:11.5px;font-weight:600;text-decoration:none">GitHub</a>
         </div>
       </div>
-      <div class="reveal reveal-delay-2 order-1 md:order-2">
-        <span class="tag mb-4 inline-flex" style="background:#dbeafe;color:#1d4ed8">🔍 Query Engine</span>
-        <h2 class="text-3xl font-extrabold tracking-tight mb-4">Advanced queries monday.com doesn't offer</h2>
-        <p class="text-gray-500 mb-4 leading-relaxed">Write real GraphQL queries against your board's live data. Filter, search, and extract anything — no UI limitations.</p>
-        <ul class="space-y-3 text-sm text-gray-600">
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">✓</span>Full monday.com GraphQL API access</li>
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">✓</span>Real-time complexity budget tracker</li>
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">✓</span>Beginner-friendly guide included</li>
-          <li class="flex items-center gap-2.5"><span class="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-bold">✓</span>Export query results to JSON</li>
-        </ul>
-      </div>
+      <div><p class="footer-col-title">Product</p><ul class="footer-links"><li><a href="#features">Features</a></li><li><a href="#comparison">vs. Native</a></li><li><a href="#how-it-works">How It Works</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      <div><p class="footer-col-title">Guides</p><ul class="footer-links"><li><a href="import-subitems-monday.html">Import Subitems</a></li><li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li><li><a href="monday-bulk-update.html">Bulk Update Guide</a></li></ul></div>
+      <div><p class="footer-col-title">Company</p><ul class="footer-links"><li><a href="https://www.fruitionservices.io" target="_blank">Fruition Services</a></li><li><a href="https://www.linkedin.com/in/sametivon/" target="_blank">LinkedIn</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="mailto:sam@fruitionservices.io">Contact</a></li></ul></div>
     </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- ─── Use Cases ─────────────────────────────── -->
-  <section class="bg-gradient-to-b from-white to-gray-50 py-20" id="use-cases">
-    <div class="max-w-5xl mx-auto px-6">
-      <div class="text-center mb-14">
-        <h2 class="reveal text-4xl font-extrabold tracking-tight mb-4">Built for real workflows</h2>
-        <p class="reveal text-gray-500 text-lg">Whether you're migrating, automating, or managing at scale — Inspector handles it.</p>
-      </div>
-      <div class="grid md:grid-cols-2 gap-5">
-        <div class="glass-card rounded-2xl p-7 reveal">
-          <div class="text-2xl mb-3">📥</div>
-          <h3 class="font-bold mb-2">Migrate from another tool</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Moving from Asana, Jira, Trello, or a spreadsheet? Export as CSV, map to monday.com columns, import items and subitems in minutes — not days.</p>
-        </div>
-        <div class="glass-card rounded-2xl p-7 reveal reveal-delay-1">
-          <div class="text-2xl mb-3">🔄</div>
-          <h3 class="font-bold mb-2">Re-import a monday.com export</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Export a board as XLSX, edit it in Excel, and re-import it into any board. Groups, parents, and subitems all preserved automatically.</p>
-        </div>
-        <div class="glass-card rounded-2xl p-7 reveal reveal-delay-2">
-          <div class="text-2xl mb-3">🚀</div>
-          <h3 class="font-bold mb-2">Onboard a new project</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Have a project template in a spreadsheet? Create all your parent items and subitems in one import — with statuses, assignees, and dates pre-set.</p>
-        </div>
-        <div class="glass-card rounded-2xl p-7 reveal reveal-delay-3">
-          <div class="text-2xl mb-3">🔧</div>
-          <h3 class="font-bold mb-2">Fix or reset boards in bulk</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">Need to update a status across 200 items, or reassign all tasks in a project? Bulk Update handles it in seconds instead of hours.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── FAQ ──────────────────────────────────── -->
-  <section class="max-w-3xl mx-auto px-6 py-20" id="faq">
-    <div class="text-center mb-14">
-      <h2 class="reveal text-4xl font-extrabold tracking-tight mb-4">Frequently asked questions</h2>
-      <p class="reveal text-gray-500">Everything you need to know before installing.</p>
-    </div>
-
-    <div class="space-y-3">
-      <details class="glass-card rounded-2xl p-6 reveal" open>
-        <summary class="font-bold flex items-center justify-between">
-          Can monday.com import subitems natively?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">No — monday.com's built-in CSV import only creates top-level items, not subitems. Monday.com Inspector was built specifically to solve this limitation. It handles both parent items and subitems from a single file.</p>
-      </details>
-
-      <details class="glass-card rounded-2xl p-6 reveal reveal-delay-1">
-        <summary class="font-bold flex items-center justify-between">
-          How do I import subitems from a CSV into monday.com?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">Install Monday.com Inspector, navigate to your board, open the extension panel (click the extension icon → Open Inspector Panel), go to the Import tab, upload your CSV, map your columns, and click Start Import. The tool creates subitems under the correct parent items automatically.</p>
-      </details>
-
-      <details class="glass-card rounded-2xl p-6 reveal reveal-delay-2">
-        <summary class="font-bold flex items-center justify-between">
-          How do I bulk update items in monday.com?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">In the Items tab, select the items you want to update (use the checkboxes). Then go to the Actions tab, choose Bulk Update, pick a column and value, and click Update. All selected items are updated at once — parent items or subitems.</p>
-      </details>
-
-      <details class="glass-card rounded-2xl p-6 reveal reveal-delay-3">
-        <summary class="font-bold flex items-center justify-between">
-          Does it work with monday.com board exports (.xlsx)?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">Yes. The extension auto-detects monday.com's native export format and preserves the full hierarchy: groups, parent items, subitems, and all column values. You can export from one board and re-import into another with one click.</p>
-      </details>
-
-      <details class="glass-card rounded-2xl p-6 reveal reveal-delay-4">
-        <summary class="font-bold flex items-center justify-between">
-          What column types are supported for import?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">All writable column types: text, numbers, status, people, date, timeline, dropdown, checkbox, link, phone, email, and rating. Read-only columns (formulas, mirrors, auto-number) are automatically excluded from the mapping interface.</p>
-      </details>
-
-      <details class="glass-card rounded-2xl p-6 reveal reveal-delay-5">
-        <summary class="font-bold flex items-center justify-between">
-          Is it free? Are there row limits?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">Completely free. No row limits, no account, no subscription. Open source. Your monday.com API token stays in your browser — no data goes through any third-party server.</p>
-      </details>
-
-      <details class="glass-card rounded-2xl p-6 reveal">
-        <summary class="font-bold flex items-center justify-between">
-          Is my data safe? Where is my API token stored?
-          <span class="faq-arrow text-gray-400 text-xl ml-4 flex-shrink-0">⌄</span>
-        </summary>
-        <p class="faq-body text-sm text-gray-500 mt-4 leading-relaxed">Your API token is stored locally in your browser using Chrome's built-in storage. It's only ever sent to the monday.com API. No third-party servers, no analytics, no data collection. See our <a href="privacy.html" class="text-brand hover:underline font-medium">Privacy Policy</a> for full details.</p>
-      </details>
-    </div>
-  </section>
-
-  <div class="section-divider"></div>
-
-  <!-- ─── Services ──────────────────────────────── -->
-  <section class="max-w-6xl mx-auto px-6 py-20" id="services">
-    <div class="text-center mb-14">
-      <h2 class="reveal text-4xl font-extrabold tracking-tight mb-4">Need more? Fruition can help.</h2>
-      <p class="reveal text-gray-500 text-lg max-w-2xl mx-auto">
-        Built by <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="text-brand font-semibold hover:underline">Sam</a> @ <a href="https://www.fruitionservices.io" target="_blank" class="text-brand font-semibold hover:underline">Fruition Services</a> — Platinum monday.com Partner with 500+ implementations across 50+ industries.
-      </p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-5 mb-12">
-      <div class="glass-card rounded-2xl p-7 reveal">
-        <div class="feature-icon text-2xl mb-3">🛠</div>
-        <h3 class="font-bold mb-1">Board Setup &amp; Optimization</h3>
-        <p class="text-sm text-gray-500">Design and optimize monday.com boards for maximum team efficiency.</p>
-      </div>
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-1">
-        <div class="feature-icon text-2xl mb-3">🔌</div>
-        <h3 class="font-bold mb-1">Custom API Integrations</h3>
-        <p class="text-sm text-gray-500">Connect monday.com to your CRM, ERP, databases, and existing tools.</p>
-      </div>
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-2">
-        <div class="feature-icon text-2xl mb-3">📦</div>
-        <h3 class="font-bold mb-1">Data Migration</h3>
-        <p class="text-sm text-gray-500">Migrate from Asana, Trello, Jira, or spreadsheets to monday.com cleanly.</p>
-      </div>
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-3">
-        <div class="feature-icon text-2xl mb-3">⚙️</div>
-        <h3 class="font-bold mb-1">Workflow Automation</h3>
-        <p class="text-sm text-gray-500">Automate repetitive tasks with monday.com automations and custom recipes.</p>
-      </div>
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-4">
-        <div class="feature-icon text-2xl mb-3">🎓</div>
-        <h3 class="font-bold mb-1">Team Training</h3>
-        <p class="text-sm text-gray-500">Live training sessions tailored to your team's specific workflows and boards.</p>
-      </div>
-      <div class="glass-card rounded-2xl p-7 reveal reveal-delay-5">
-        <div class="feature-icon text-2xl mb-3">🤝</div>
-        <h3 class="font-bold mb-1">Monthly Admin Support</h3>
-        <p class="text-sm text-gray-500">Ongoing monday.com administration — boards, users, automations, optimization.</p>
-      </div>
-    </div>
-    <div class="text-center reveal">
-      <a class="btn-primary" style="font-size:15px" href="https://calendly.com/sam-fruitionservices/30min" target="_blank">
-        Schedule a Free Consultation
-      </a>
-    </div>
-  </section>
-
-  <!-- ─── Final CTA ─────────────────────────────── -->
-  <section class="relative overflow-hidden bg-gradient-to-br from-brand via-purple-600 to-indigo-600 py-24">
-    <div class="hero-blob" style="width:500px;height:500px;top:-150px;right:-100px;background:radial-gradient(circle,rgba(255,255,255,0.12),transparent 70%);"></div>
-    <div class="max-w-2xl mx-auto px-6 text-center relative">
-      <h2 class="reveal text-4xl font-extrabold text-white mb-4 tracking-tight">Stop fighting monday.com limitations</h2>
-      <p class="reveal text-purple-100 text-lg mb-10 leading-relaxed">Import subitems, bulk update, run queries. Everything you wish monday.com had — free, in your browser, right now.</p>
-      <div class="reveal flex flex-wrap gap-4 justify-center">
-        <a
-          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-brand font-bold text-base hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-          href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg"
-          target="_blank"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#7c5cfc" stroke-width="2"/><path d="M12 8l4 4-4 4M8 12h8" stroke="#7c5cfc" stroke-width="2" stroke-linecap="round"/></svg>
-          Install Extension — Free
-        </a>
-        <a
-          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl border-2 border-white/40 text-white font-bold text-base hover:bg-white/10 transition-all duration-200"
-          href="https://calendly.com/sam-fruitionservices/30min"
-          target="_blank"
-        >
-          Book a Consultation
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Footer ────────────────────────────────── -->
-  <footer class="bg-white border-t border-gray-100 py-8">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-md bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
-        </div>
-        <span class="text-sm font-bold text-gray-700">monday<span class="text-brand">.inspector</span></span>
-        <span class="text-gray-300 mx-1">·</span>
-        <span class="text-xs text-gray-400">&copy; 2026 <a href="https://www.fruitionservices.io" target="_blank" class="hover:text-brand transition-colors">Fruition Services</a></span>
-      </div>
-      <div class="flex flex-wrap items-center gap-5 text-sm text-gray-400">
-        <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" class="hover:text-brand transition-colors">Chrome Web Store</a>
-        <a href="https://github.com/sametivon/monday.inspector" target="_blank" class="hover:text-brand transition-colors">GitHub</a>
-        <a href="https://www.linkedin.com/in/sametivon/" target="_blank" class="hover:text-brand transition-colors">LinkedIn</a>
-        <a href="mailto:sam@fruitionservices.io" class="hover:text-brand transition-colors">sam@fruitionservices.io</a>
-        <a href="privacy.html" class="hover:text-brand transition-colors">Privacy Policy</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ─── Scripts ───────────────────────────────── -->
-  <script>
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // Nav shadow
-    const nav = document.getElementById('navbar');
-    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-
-    // Animate mock progress bar on scroll into view
-    const mockFill = document.querySelector('.mock-fill');
-    if (mockFill) {
-      const fillObserver = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            setTimeout(() => { mockFill.style.width = '73%'; }, 600);
-            fillObserver.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.5 });
-      mockFill.style.width = '0%';
-      fillObserver.observe(mockFill);
-    }
-  </script>
+    <div class="footer-bottom"><span>&copy; 2026 <a href="https://www.fruitionservices.io" target="_blank" style="color:#52525b">Fruition Services</a>. All rights reserved.</span><span>Free &amp; Open Source</span></div>
+  </div>
+</footer>
+<script>
+  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}}),{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const nav=document.getElementById('site-nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});});
+</script>
 </body>
 </html>

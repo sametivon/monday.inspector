@@ -14,19 +14,19 @@ interface InspectorShellProps {
   exportMenu?: React.ReactNode;
 }
 
-const TABS: { id: InspectorTab; label: string }[] = [
-  { id: "schema", label: "Schema" },
-  { id: "hierarchy", label: "Items" },
-  { id: "detail", label: "Detail" },
-  { id: "query", label: "Query" },
-  { id: "import", label: "Import" },
-  { id: "actions", label: "Actions" },
-  { id: "logs", label: "Logs" },
+const TABS: { id: InspectorTab; label: string; icon: string }[] = [
+  { id: "schema", label: "Schema", icon: "📐" },
+  { id: "hierarchy", label: "Items", icon: "📁" },
+  { id: "detail", label: "Detail", icon: "📋" },
+  { id: "query", label: "Query", icon: "⚡" },
+  { id: "import", label: "Import", icon: "📥" },
+  { id: "actions", label: "Actions", icon: "🎯" },
+  { id: "logs", label: "Logs", icon: "📝" },
 ];
 
-const DEFAULT_WIDTH = 380;
-const DEFAULT_HEIGHT = 500;
-const MIN_WIDTH = 280;
+const DEFAULT_WIDTH = 400;
+const DEFAULT_HEIGHT = 540;
+const MIN_WIDTH = 300;
 const MIN_HEIGHT = 300;
 
 export function InspectorShell({
@@ -43,9 +43,10 @@ export function InspectorShell({
 }: InspectorShellProps) {
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [height, setHeight] = useState(DEFAULT_HEIGHT);
-  const [pos, setPos] = useState({ x: window.innerWidth - DEFAULT_WIDTH - 16, y: 60 });
+  const [pos, setPos] = useState({ x: window.innerWidth - DEFAULT_WIDTH - 16, y: 56 });
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [refreshSpin, setRefreshSpin] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -95,6 +96,12 @@ export function InspectorShell({
     };
   }, [isResizing, pos]);
 
+  const handleRefresh = () => {
+    setRefreshSpin(true);
+    onRefresh();
+    setTimeout(() => setRefreshSpin(false), 800);
+  };
+
   return (
     <div
       ref={panelRef}
@@ -107,60 +114,95 @@ export function InspectorShell({
         height,
         display: "flex",
         flexDirection: "column",
-        background: "hsl(0 0% 100%)",
-        border: "1px solid hsl(240 5.9% 90%)",
-        borderRadius: 10,
-        boxShadow: "0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)",
+        background: "hsl(220 16% 97%)",
+        border: "1px solid hsl(220 12% 87%)",
+        borderRadius: 14,
+        boxShadow: "0 16px 48px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)",
         fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         fontSize: "11px",
-        color: "hsl(240 10% 3.9%)",
+        color: "hsl(224 14% 10%)",
         zIndex: 1,
         pointerEvents: "auto",
         userSelect: isDragging || isResizing ? "none" : "auto",
         overflow: "hidden",
       }}
     >
-      {/* Header */}
+      {/* Header — gradient accent */}
       <div
         onMouseDown={handleDragStart}
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "6px 10px",
-          borderBottom: "1px solid hsl(240 5.9% 90%)",
-          background: "hsl(0 0% 100%)",
+          padding: "10px 12px",
+          borderBottom: "1px solid hsl(220 12% 89%)",
+          background: "linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(256 72% 98%) 100%)",
           flexShrink: 0,
           cursor: isDragging ? "grabbing" : "grab",
-          borderRadius: "10px 10px 0 0",
+          borderRadius: "14px 14px 0 0",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontWeight: 700, fontSize: 12, letterSpacing: "-0.02em" }}>Inspector</span>
+          {/* Logo icon */}
+          <div style={{
+            width: 22,
+            height: 22,
+            borderRadius: 7,
+            background: "linear-gradient(135deg, hsl(256 72% 56%) 0%, hsl(256 72% 46%) 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            fontSize: 11,
+            fontWeight: 800,
+            flexShrink: 0,
+            boxShadow: "0 2px 6px hsl(256 72% 56% / 0.3)",
+          }}>
+            M
+          </div>
+          <span style={{ fontWeight: 800, fontSize: 13, letterSpacing: "-0.03em" }}>Inspector</span>
           {boardId && (
-            <span className="type-badge" style={{ fontSize: 9, fontFamily: "monospace" }}>
-              {boardId}
+            <span className="type-badge" style={{ fontSize: 9, fontFamily: "monospace", padding: "2px 7px" }}>
+              #{boardId}
             </span>
           )}
-          <span
-            style={{
-              width: 7,
-              height: 7,
-              borderRadius: "50%",
-              background: connected ? "hsl(142 76% 46%)" : "hsl(0 84% 60%)",
-              flexShrink: 0,
-              boxShadow: connected ? "0 0 4px hsl(142 76% 46% / 0.4)" : undefined,
-            }}
+          {/* Connection indicator */}
+          <div style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: connected ? "hsl(150 60% 46%)" : "hsl(0 72% 56%)",
+            flexShrink: 0,
+            boxShadow: connected
+              ? "0 0 0 3px hsl(150 60% 46% / 0.2), 0 0 8px hsl(150 60% 46% / 0.3)"
+              : "0 0 0 3px hsl(0 72% 56% / 0.2)",
+            transition: "all 0.3s ease",
+            animation: connected ? "none" : undefined,
+          }}
             title={connected ? "Connected" : "No connection"}
           />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
           {loading && <div className="spinner" style={{ width: 12, height: 12 }} />}
           {headerActions}
-          <button className="btn-icon" onClick={onRefresh} title="Refresh data" style={{ fontSize: 13 }}>
+          <button
+            className="btn-icon"
+            onClick={handleRefresh}
+            title="Refresh data"
+            style={{
+              fontSize: 14,
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              transform: refreshSpin ? "rotate(360deg)" : "rotate(0deg)",
+            }}
+          >
             ↻
           </button>
-          <button className="btn-icon" onClick={onClose} title="Close inspector" style={{ fontSize: 12 }}>
+          <button
+            className="btn-icon"
+            onClick={onClose}
+            title="Close inspector"
+            style={{ fontSize: 12 }}
+          >
             ✕
           </button>
         </div>
@@ -173,6 +215,7 @@ export function InspectorShell({
             key={tab.id}
             className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
             onClick={() => onTabChange(tab.id)}
+            title={tab.label}
           >
             {tab.label}
           </button>
@@ -183,8 +226,8 @@ export function InspectorShell({
       {exportMenu && (
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "flex-end",
-          padding: "3px 8px", borderBottom: "1px solid hsl(240 5.9% 90%)",
-          background: "hsl(240 4.8% 95.9% / 0.5)", flexShrink: 0,
+          padding: "4px 10px", borderBottom: "1px solid hsl(220 12% 89%)",
+          background: "hsl(0 0% 100%)", flexShrink: 0,
         }}>
           {exportMenu}
         </div>
@@ -193,26 +236,35 @@ export function InspectorShell({
       {/* Tab content */}
       <div className="tab-content">{children}</div>
 
-      {/* Resize handle */}
+      {/* Resize handle — visible grip */}
       <div
         onMouseDown={handleResizeStart}
         style={{
           position: "absolute",
-          right: 0,
-          bottom: 0,
-          width: 18,
-          height: 18,
+          right: 2,
+          bottom: 2,
+          width: 16,
+          height: 16,
           cursor: "nwse-resize",
           zIndex: 10,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "hsl(240 5.9% 80%)",
-          fontSize: 9,
-          lineHeight: 1,
+          opacity: 0.3,
+          transition: "opacity 0.2s",
+          borderRadius: "0 0 12px 0",
         }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.3"; }}
       >
-        ◢
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <circle cx="6" cy="4" r="1" fill="hsl(220 12% 60%)" />
+          <circle cx="4" cy="6" r="1" fill="hsl(220 12% 60%)" />
+          <circle cx="8" cy="6" r="1" fill="hsl(220 12% 60%)" />
+          <circle cx="6" cy="8" r="1" fill="hsl(220 12% 60%)" />
+          <circle cx="8" cy="8" r="1" fill="hsl(220 12% 60%)" />
+          <circle cx="2" cy="8" r="1" fill="hsl(220 12% 60%)" />
+        </svg>
       </div>
     </div>
   );

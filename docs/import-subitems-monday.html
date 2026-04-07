@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Import Subitems in Monday.com (2026 Step-by-Step Guide)</title>
+  <meta name="description" content="Monday.com doesn't support importing subitems natively. Learn how to import subitems from CSV into monday.com in 5 steps using the free Monday.com Inspector Chrome extension." />
+  <meta name="keywords" content="how to import subitems in monday.com, monday.com import subitems, monday.com csv import subitems, import subitems monday, monday.com subitem import tool" />
+  <link rel="canonical" href="https://mondayinspector.eu/import-subitems-monday.html" />
+  <meta property="og:title" content="How to Import Subitems in Monday.com — Complete Guide" />
+  <meta property="og:description" content="Monday.com can't import subitems natively. Here's the step-by-step guide using the free Monday.com Inspector extension." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://mondayinspector.eu/import-subitems-monday.html" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Sam @ Fruition Services" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Import Subitems in Monday.com",
+    "description": "Step-by-step guide to importing subitems into monday.com from a CSV or Excel file using the free Monday.com Inspector Chrome extension.",
+    "totalTime": "PT10M",
+    "tool": { "@type": "HowToTool", "name": "Monday.com Inspector Chrome Extension" },
+    "step": [
+      { "@type": "HowToStep", "position": 1, "name": "Prepare your CSV file", "text": "Create a CSV with at least two columns: one for the parent item name (or ID), and one for the subitem name. Add any other columns you want to import." },
+      { "@type": "HowToStep", "position": 2, "name": "Install Monday.com Inspector", "text": "Install the free Monday.com Inspector Chrome extension from the Chrome Web Store." },
+      { "@type": "HowToStep", "position": 3, "name": "Open your monday.com board", "text": "Navigate to your monday.com board, click the extension icon in the toolbar, and click Open Inspector Panel." },
+      { "@type": "HowToStep", "position": 4, "name": "Upload and map columns", "text": "Go to the Import tab, upload your CSV file, and map file columns to board columns. The tool auto-matches columns with the same name." },
+      { "@type": "HowToStep", "position": 5, "name": "Start the import", "text": "Click Start Import. Watch live progress with a percentage bar, ETA, and per-row status. Errors are listed with exact details." }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Can monday.com import subitems natively?", "acceptedAnswer": { "@type": "Answer", "text": "No. Monday.com's native CSV import only creates top-level items. It has no built-in way to create subitems from a file. Monday.com Inspector is a free Chrome extension that solves this limitation." } },
+      { "@type": "Question", "name": "What CSV format do I need to import subitems into monday.com?", "acceptedAnswer": { "@type": "Answer", "text": "Your CSV needs at least a column for the parent item name (or ID) and a column for the subitem name. You can also include any other subitem columns: status, assignee, date, timeline, etc." } },
+      { "@type": "Question", "name": "Can I import parent items and subitems at the same time?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Monday.com Inspector supports full two-phase import: it first creates parent items (with their column values), then creates subitems underneath them." } },
+      { "@type": "Question", "name": "Does monday.com Inspector work with monday.com board exports?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Upload a monday.com XLSX board export and the tool auto-detects the format, preserving groups, parent items, and subitems. You can migrate a board between workspaces in minutes." } },
+      { "@type": "Question", "name": "Is there a row limit for importing subitems?", "acceptedAnswer": { "@type": "Answer", "text": "No. Monday.com Inspector has no row limits. You can import thousands of subitems in a single operation. The tool handles batching and rate limits automatically." } }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mondayinspector.eu/" },
+      { "@type": "ListItem", "position": 2, "name": "How to Import Subitems in Monday.com", "item": "https://mondayinspector.eu/import-subitems-monday.html" }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .article-hero { background: #fff; padding: 64px 0 48px; border-bottom: 1px solid #e4e4e7; }
+    .article-hero h1 { font-size: clamp(1.875rem, 3.5vw, 2.75rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin: 16px 0 18px; }
+    .article-hero .lead { font-size: 1.0625rem; color: #52525b; line-height: 1.75; max-width: 680px; }
+    .article-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #71717a; flex-wrap: wrap; margin-top: 20px; }
+    .article-meta span { display: flex; align-items: center; gap: 5px; }
+    .article-layout { display: grid; grid-template-columns: 1fr 280px; gap: 56px; align-items: flex-start; padding: 56px 0 96px; }
+    .article-toc { position: sticky; top: 88px; background: #fff; border: 1px solid #e4e4e7; border-radius: 14px; padding: 24px; }
+    .article-toc h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #52525b; margin-bottom: 16px; }
+    .article-toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 10px; }
+    .article-toc ol li { counter-increment: toc; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+    .article-toc ol li::before { content: counter(toc); width: 20px; height: 20px; border-radius: 50%; background: #ede9fe; color: #7c5cfc; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .article-toc ol li a { color: #52525b; text-decoration: none; line-height: 1.5; }
+    .article-toc ol li a:hover { color: #7c5cfc; }
+    .related-card { display: block; background: #f5f3ff; border: 1px solid #c4b5fd40; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.2s; margin-top: 12px; }
+    .related-card:hover { background: #ede9fe; border-color: #c4b5fd; }
+    .related-card h4 { font-size: 13px; font-weight: 600; color: #09090b; margin-bottom: 3px; }
+    .related-card p { font-size: 12px; color: #71717a; }
+    @media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } .article-toc { display: none; } }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/"><div class="nav-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>monday<span style="color:#7c5cfc">.inspector</span></a>
+    <ul class="nav-links">
+      <li><a href="/#features">Features</a></li>
+      <li><a href="import-subitems-monday.html" class="active">Import Subitems</a></li>
+      <li><a href="monday-csv-import-guide.html">CSV Guide</a></li>
+      <li><a href="monday-bulk-update.html">Bulk Update</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+      <li><a href="/#services">Services</a></li>
+    </ul>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome</a>
+  </div>
+</nav>
+
+<!-- Article Hero -->
+<div class="article-hero">
+  <div class="container-sm">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <span>How to Import Subitems in Monday.com</span>
+    </nav>
+    <div class="badge badge-brand" style="margin-bottom:16px">Guide · 5 min read</div>
+    <h1>How to Import Subitems in Monday.com (2026 Step-by-Step Guide)</h1>
+    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong>. This guide shows you exactly how to import subitems from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension.</p>
+    <div class="article-meta">
+      <span>📅 Updated April 2026</span>
+      <span>✍️ Sam @ Fruition Services</span>
+      <span>🕐 5 min read</span>
+    </div>
+  </div>
+</div>
+
+<!-- Article Layout -->
+<div class="container">
+  <div class="article-layout">
+
+    <!-- Main content -->
+    <article class="prose">
+
+      <h2 id="the-problem">Why Monday.com Can't Import Subitems Natively</h2>
+      <p>Monday.com has a built-in CSV import feature, but it only supports creating <strong>top-level items</strong> in a board. If you try to import a file that includes subitems — tasks under projects, line items under orders, contacts under clients — monday.com simply ignores the hierarchy and either fails or creates everything at the parent level.</p>
+      <p>This is a well-known limitation that affects teams trying to:</p>
+      <ul>
+        <li>Migrate data from another project management tool (Asana, Jira, Trello) that has a task/subtask structure</li>
+        <li>Import from a spreadsheet that has a parent/child hierarchy</li>
+        <li>Re-import a monday.com board export that includes subitems</li>
+        <li>Bulk-create a project template with predefined subitems under each parent item</li>
+      </ul>
+      <p>The workaround teams resort to — creating subitems manually one by one — is time-consuming and error-prone. That's exactly why we built Monday.com Inspector.</p>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ Monday.com native import limitation</div>
+        <p>Monday.com's native CSV import creates top-level items only. There is no official way to bulk-import subitems through the monday.com UI. <a href="monday-csv-import-guide.html">See our full CSV import comparison guide →</a></p>
+      </div>
+
+      <h2 id="the-solution">The Solution: Monday.com Inspector</h2>
+      <p><a href="/">Monday.com Inspector</a> is a free, open-source Chrome extension that adds an inline panel to every monday.com board page. Its Import tab handles what monday.com can't: creating subitems under the correct parent items in bulk, from a CSV or Excel file.</p>
+      <p>Key capabilities for subitem import:</p>
+      <ul>
+        <li><strong>Flat CSV import:</strong> Map a "parent" column (by item name or ID) and a "subitem name" column — the tool finds or creates each parent and adds subitems beneath it.</li>
+        <li><strong>Monday.com export re-import:</strong> Upload a monday.com XLSX board export directly. Groups, parent items, and subitems are all preserved automatically.</li>
+        <li><strong>Full column support:</strong> Import status, people, date, timeline, dropdown, checkbox, text, numbers, link, phone, email, and rating columns — for both parent items and subitems.</li>
+        <li><strong>Live progress tracking:</strong> Real-time progress bar with percentage, ETA, rows/sec rate, and per-row status (success / error / pending).</li>
+        <li><strong>No row limits:</strong> Import thousands of subitems in one operation. Rate limit handling and automatic retry built in.</li>
+      </ul>
+
+      <div class="callout callout-success">
+        <div class="callout-title">✅ Free &amp; No account required</div>
+        <p>Monday.com Inspector is completely free, open source, and requires no account. Your API token stays in your browser. <a href="privacy.html">Privacy Policy →</a></p>
+      </div>
+
+      <h2 id="step-by-step">How to Import Subitems in Monday.com: Step-by-Step</h2>
+
+      <h3 id="step-1">Step 1: Prepare your CSV file</h3>
+      <p>Your CSV file needs at minimum three columns:</p>
+      <ol>
+        <li><strong>Parent Item</strong> — the name (or ID) of the parent item the subitem belongs to</li>
+        <li><strong>Subitem Name</strong> — the name of each subitem</li>
+        <li><strong>Any other subitem columns</strong> you want to populate (status, assignee, date, etc.)</li>
+      </ol>
+      <p>Here's an example of a valid flat CSV format for subitem import:</p>
+      <pre>Parent Item,Subitem Name,Status,Assignee,Due Date
+"Website Redesign","Write homepage copy","Working on it","Alex Johnson","2026-04-15"
+"Website Redesign","Design mockups","Done","Jordan Smith","2026-04-10"
+"Website Redesign","Developer handoff","Not started","","2026-04-20"
+"Mobile App v2","Fix login bug","In Progress","Taylor Brown","2026-04-12"
+"Mobile App v2","Update UI components","Not started","Alex Johnson","2026-04-18"</pre>
+
+      <div class="callout callout-info">
+        <div class="callout-title">💡 Pro tip: Use column names that match your board</div>
+        <p>If your CSV column names exactly match the column names in your monday.com board (case-insensitive), the tool will auto-match them. This saves time on column mapping.</p>
+      </div>
+
+      <h3 id="step-2">Step 2: Install Monday.com Inspector</h3>
+      <p>If you haven't already, install the extension from the Chrome Web Store:</p>
+      <div style="margin:20px 0">
+        <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Install Monday.com Inspector — Free</a>
+      </div>
+      <p>After installing, you'll be prompted to enter your monday.com API token. You can find this in monday.com → Profile (avatar) → Admin → API. The token is stored locally in your browser and never sent anywhere except the monday.com API.</p>
+
+      <h3 id="step-3">Step 3: Open your monday.com board and the Inspector panel</h3>
+      <p>Navigate to the monday.com board where you want to import subitems. Click the Monday.com Inspector icon in your Chrome toolbar (or press the extension shortcut). In the popup, click <strong>Open Inspector Panel</strong>. The panel slides in on the right side of your board.</p>
+
+      <h3 id="step-4">Step 4: Upload your file and map columns</h3>
+      <p>In the Inspector panel, click the <strong>Import</strong> tab. You'll see a drag-and-drop upload area. Drop your CSV or Excel file onto it, or click to browse.</p>
+      <p>Once the file is uploaded, the tool will display the <strong>Column Mapping</strong> interface:</p>
+      <ul>
+        <li>For <strong>flat CSV files</strong>: Select which column identifies the parent item and which column is the subitem name. Then map remaining columns to board columns.</li>
+        <li>For <strong>monday.com board exports (XLSX)</strong>: The format is auto-detected. Parent items and subitems are identified automatically. You just confirm/adjust the column mappings.</li>
+      </ul>
+      <p>The tool auto-matches columns with the same name. For columns that don't auto-match, use the dropdown to select the correct board column.</p>
+
+      <h3 id="step-5">Step 5: Start the import and track live progress</h3>
+      <p>Click <strong>Start Import</strong>. You'll see a live progress view with:</p>
+      <ul>
+        <li>A percentage progress bar that updates in real time</li>
+        <li>Counts of succeeded, failed, and remaining rows</li>
+        <li>An estimated time remaining (ETA) based on current processing rate</li>
+        <li>A rows/sec rate indicator</li>
+        <li>A scrollable row-by-row list showing the status of each item (✓ success, spinner in progress, ✕ error)</li>
+      </ul>
+      <p>If any rows fail, the error message is displayed next to each row so you can identify and fix the issue. You can re-run the import for just the failed rows after fixing the data.</p>
+
+      <div class="callout callout-brand">
+        <div class="callout-title">🚀 Ready to try it?</div>
+        <p>Install Monday.com Inspector for free and import your first batch of subitems in under 5 minutes.</p>
+        <div style="margin-top:14px">
+          <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome — It's Free</a>
+        </div>
+      </div>
+
+      <h2 id="column-types">Supported Column Types for Subitem Import</h2>
+      <p>Monday.com Inspector supports all writable subitem column types. Here's how to format your CSV data for each type:</p>
+
+      <table>
+        <thead><tr><th>Column Type</th><th>CSV Format</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Text</strong></td><td>Plain text string</td><td>Any text</td></tr>
+          <tr><td><strong>Numbers</strong></td><td>Numeric value</td><td>42 or 3.14</td></tr>
+          <tr><td><strong>Status</strong></td><td>Label name (as shown in monday.com)</td><td>Done, Working on it</td></tr>
+          <tr><td><strong>People</strong></td><td>Person's full name (as in monday.com)</td><td>Alex Johnson</td></tr>
+          <tr><td><strong>Date</strong></td><td>YYYY-MM-DD</td><td>2026-04-15</td></tr>
+          <tr><td><strong>Timeline</strong></td><td>YYYY-MM-DD to YYYY-MM-DD</td><td>2026-04-01 to 2026-04-15</td></tr>
+          <tr><td><strong>Dropdown</strong></td><td>Label name (as shown in monday.com)</td><td>High Priority</td></tr>
+          <tr><td><strong>Checkbox</strong></td><td>true or false</td><td>true</td></tr>
+          <tr><td><strong>Email</strong></td><td>Email address</td><td>user@example.com</td></tr>
+          <tr><td><strong>Phone</strong></td><td>Phone number string</td><td>+1-555-0100</td></tr>
+          <tr><td><strong>Link</strong></td><td>URL (https://...)</td><td>https://example.com</td></tr>
+          <tr><td><strong>Rating</strong></td><td>Number 1–5</td><td>4</td></tr>
+        </tbody>
+      </table>
+
+      <p>Read-only column types (formula, mirror, auto-number, dependency, board_relation, creation_log, last_updated) are automatically excluded from the mapping interface — you don't need to worry about them.</p>
+
+      <h2 id="tips">Tips for a Successful Import</h2>
+      <ul>
+        <li><strong>Use exact status label names.</strong> Status column values must match the label names in your monday.com board exactly (case-insensitive). Check your board's status column settings to see the available labels.</li>
+        <li><strong>For people columns</strong>, use the person's full name as it appears in monday.com. The tool matches by name automatically. If a name doesn't match, the person column will be left empty for that row.</li>
+        <li><strong>For timeline columns</strong>, the format is <code>YYYY-MM-DD to YYYY-MM-DD</code>. If your spreadsheet has separate start date and end date columns, combine them into one column with this format.</li>
+        <li><strong>Test with a small batch first.</strong> Before importing 1,000 rows, test with 10–20 rows to make sure column mappings and data formats are correct.</li>
+        <li><strong>Importing from a monday.com export?</strong> Just upload the XLSX file directly — no reformatting needed. The tool auto-detects the monday.com export structure.</li>
+        <li><strong>Parent items must exist or be imported together.</strong> If you're using flat CSV import and the parent items don't exist on the board yet, use the "Create parent items" option to create them during the same import.</li>
+      </ul>
+
+      <h2 id="faq">Frequently Asked Questions</h2>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+        <details class="faq" open>
+          <summary>Can monday.com import subitems natively?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">No. Monday.com's native CSV import only creates top-level items. There is no built-in way to bulk-import subitems through the monday.com UI. Monday.com Inspector is a free Chrome extension that fills this gap.</div>
+        </details>
+        <details class="faq">
+          <summary>What CSV format do I need to import subitems into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Your CSV needs at least a "Parent Item" column (the name or ID of the parent) and a "Subitem Name" column. You can include additional columns for any other subitem fields. Column names matching your board columns will be auto-matched during import.</div>
+        </details>
+        <details class="faq">
+          <summary>Can I import parent items and subitems at the same time?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Yes. Monday.com Inspector supports two-phase import: it first creates parent items (with all their column values), then creates subitems under each parent. This works for both flat CSV files and monday.com board exports. You can also enable or disable the "Create parent items" option if the parents already exist.</div>
+        </details>
+        <details class="faq">
+          <summary>Does Monday.com Inspector work with monday.com board exports?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Yes. Upload a monday.com XLSX board export and the tool auto-detects the format, preserving groups, parent items, and subitems. You can migrate a complete board between workspaces in minutes. No reformatting of the export file is needed.</div>
+        </details>
+        <details class="faq">
+          <summary>Is there a row limit for importing subitems?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">No row limits. You can import thousands of subitems in a single operation. The tool handles batching and rate limits automatically with built-in retry logic. For very large imports (10,000+ rows), the process may take several minutes.</div>
+        </details>
+        <details class="faq">
+          <summary>What happens if some rows fail during import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Failed rows are shown in the live progress view with the exact error message from the monday.com API. Common causes include invalid column values (e.g., a status label that doesn't exist) or a parent item name that doesn't match any board item. Fix the data and re-run.</div>
+        </details>
+      </div>
+
+      <h2 id="related">Related Guides</h2>
+      <p>Looking for more monday.com import and automation resources? These guides cover related topics:</p>
+    </article>
+
+    <!-- Sidebar TOC -->
+    <aside>
+      <div class="article-toc">
+        <h3>On this page</h3>
+        <ol>
+          <li><a href="#the-problem">Why monday.com can't do it</a></li>
+          <li><a href="#the-solution">The solution: Inspector</a></li>
+          <li><a href="#step-by-step">Step-by-step guide</a></li>
+          <li><a href="#step-1">Step 1: Prepare your CSV</a></li>
+          <li><a href="#step-2">Step 2: Install Inspector</a></li>
+          <li><a href="#step-3">Step 3: Open your board</a></li>
+          <li><a href="#step-4">Step 4: Upload &amp; map columns</a></li>
+          <li><a href="#step-5">Step 5: Start &amp; track progress</a></li>
+          <li><a href="#column-types">Supported column types</a></li>
+          <li><a href="#tips">Tips for success</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e4e4e7">
+          <p style="font-size:11.5px;font-weight:700;color:#52525b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Related guides</p>
+          <a class="related-card" href="monday-csv-import-guide.html"><h4>CSV Import Complete Guide</h4><p>Formatting, column types, comparison table</p></a>
+          <a class="related-card" href="monday-bulk-update.html"><h4>Bulk Update Guide</h4><p>Update hundreds of items at once</p></a>
+        </div>
+        <div style="margin-top:20px">
+          <a class="btn btn-primary" style="width:100%;justify-content:center" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome — Free</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Related guides below article -->
+<section style="background:#fff;padding:48px 0;border-top:1px solid #e4e4e7">
+  <div class="container-sm">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <a href="monday-csv-import-guide.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
+        <div style="font-size:20px;margin-bottom:8px">📄</div>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Monday.com CSV Import: Complete Guide</h3>
+        <p style="font-size:12.5px;color:#71717a">CSV formatting, column types, native vs. Inspector comparison</p>
+      </a>
+      <a href="monday-bulk-update.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
+        <div style="font-size:20px;margin-bottom:8px">⚡</div>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">How to Bulk Update Items in Monday.com</h3>
+        <p style="font-size:12.5px;color:#71717a">Update hundreds of items at once — all column types supported</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:#fafafa;padding:64px 0">
+  <div class="container-sm">
+    <div class="cta-banner">
+      <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-.025em">Ready to import your subitems?</h2>
+      <p style="color:rgba(255,255,255,.8);font-size:1rem;margin-bottom:28px">Free Chrome extension. No account needed. No row limits. Works in 5 minutes.</p>
+      <a class="btn btn-xl" style="background:#fff;color:#7c5cfc;font-weight:700" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank">Add to Chrome — It's Free</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="nav-logo" href="/" style="color:#f4f4f5;text-decoration:none"><div class="nav-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h8" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></div>monday<span style="color:#a78bfa">.inspector</span></a>
+        <p>The free Chrome extension that gives monday.com the power features it's missing.</p>
+      </div>
+      <div><p class="footer-col-title">Product</p><ul class="footer-links"><li><a href="/#features">Features</a></li><li><a href="/#comparison">vs. Native</a></li><li><a href="/#faq">FAQ</a></li></ul></div>
+      <div><p class="footer-col-title">Guides</p><ul class="footer-links"><li><a href="import-subitems-monday.html">Import Subitems</a></li><li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li><li><a href="monday-bulk-update.html">Bulk Update Guide</a></li></ul></div>
+      <div><p class="footer-col-title">Company</p><ul class="footer-links"><li><a href="https://www.fruitionservices.io" target="_blank">Fruition Services</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="mailto:sam@fruitionservices.io">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 Fruition Services. All rights reserved.</span><span>Free &amp; Open Source</span></div>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}}),{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const nav=document.getElementById('site-nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
+</script>
+</body>
+</html>
