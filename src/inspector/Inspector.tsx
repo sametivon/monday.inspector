@@ -52,10 +52,18 @@ export function Inspector({ boardId, onClose, hidden }: InspectorProps) {
 
   const board = useBoard(token, boardId);
 
+  // Tabs that need items: load them lazily on first visit
+  const ITEM_TABS = new Set(["hierarchy", "detail", "actions"]);
+  const handleTabChange = useCallback((tab: typeof activeTab) => {
+    setActiveTab(tab);
+    if (ITEM_TABS.has(tab)) board.loadItems();
+  }, [board]);
+
   const handleSelectItem = useCallback((item: MondayItem) => {
     setSelectedItem(item);
+    board.loadItems();
     setActiveTab("detail");
-  }, []);
+  }, [board]);
 
   const handleRefresh = useCallback(() => {
     board.refresh();
@@ -89,11 +97,11 @@ export function Inspector({ boardId, onClose, hidden }: InspectorProps) {
   return (
     <InspectorShell
       activeTab={activeTab}
-      onTabChange={setActiveTab}
+      onTabChange={handleTabChange}
       onClose={onClose}
       boardId={boardId}
       connected={!!token && !board.error}
-      loading={board.loading}
+      loading={board.loading || board.itemsLoading}
       onRefresh={handleRefresh}
       headerActions={
         <ComplexityBadge />
@@ -122,7 +130,7 @@ export function Inspector({ boardId, onClose, hidden }: InspectorProps) {
           token={token}
           groups={board.groups}
           items={board.items}
-          loading={board.loading}
+          loading={board.itemsLoading}
           selectedItemId={selectedItem?.id ?? null}
           selectedItemIds={state.selectedItemIds}
           dispatch={dispatch}

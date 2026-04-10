@@ -469,6 +469,59 @@ export const fetchBoardColumns = fetchColumns;
 /** Fetch the subitem-board's columns so we know what to populate. */
 export const fetchSubitemColumns = fetchColumns;
 
+export interface BoardSchema {
+  name: string;
+  columns: MondayColumn[];
+  groups: MondayGroup[];
+  subitemBoardId: string | null;
+}
+
+/**
+ * Fetch board name, columns, groups, and subitem board ID in a single query.
+ * Replaces four separate calls (fetchBoardName, fetchBoardColumns,
+ * fetchBoardGroups, fetchSubitemBoardId) with one round-trip.
+ */
+export async function fetchBoardSchema(
+  token: string,
+  boardId: string,
+): Promise<BoardSchema> {
+  const query = `
+    query ($boardId: [ID!]!) {
+      boards(ids: $boardId) {
+        name
+        columns { id title type settings_str }
+        groups { id title }
+      }
+    }
+  `;
+  const data = await gql<{
+    boards: { name: string; columns: MondayColumn[]; groups: MondayGroup[] }[];
+  }>(token, query, { boardId: [boardId] });
+
+  const board = data.boards[0];
+  if (!board) return { name: "", columns: [], groups: [], subitemBoardId: null };
+
+  // Extract subitem board ID from the subtasks column settings_str
+  // (avoids a separate fetchSubitemBoardId round-trip)
+  let subitemBoardId: string | null = null;
+  const subCol = board.columns.find((c) => c.type === "subtasks");
+  if (subCol?.settings_str) {
+    try {
+      const settings = JSON.parse(subCol.settings_str);
+      subitemBoardId = settings.boardIds?.[0]?.toString() ?? null;
+    } catch {
+      // settings_str not parseable — no subitem board
+    }
+  }
+
+  return {
+    name: board.name,
+    columns: board.columns,
+    groups: board.groups,
+    subitemBoardId,
+  };
+}
+
 /**
  * Fetch all groups on a board (needed to resolve group name → group ID).
  */
@@ -507,7 +560,7 @@ export async function fetchBoardItems(
       boards(ids: $boardId) {
         items_page(limit: 500) {
           cursor
-          items { id name }
+          items { id name group { id } }
         }
       }
     }
@@ -1061,7 +1114,7 @@ export async function fetchBoardItemsWithColumns(
   const firstQuery = `
     query ($boardId: [ID!]!) {
       boards(ids: $boardId) {
-        items_page(limit: 100) {
+        items_page(limit: 500) {
           cursor
           items {
             id
@@ -1089,7 +1142,7 @@ export async function fetchBoardItemsWithColumns(
   while (cursor) {
     const nextQuery = `
       query ($cursor: String!) {
-        next_items_page(limit: 100, cursor: $cursor) {
+        next_items_page(limit: 500, cursor: $cursor) {
           cursor
           items {
             id

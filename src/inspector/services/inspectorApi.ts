@@ -10,10 +10,12 @@ import {
   fetchSubitemBoardId as _fetchSubitemBoardId,
   fetchSubitemColumns as _fetchSubitemColumns,
   fetchSubitems as _fetchSubitems,
+  fetchBoardSchema as _fetchBoardSchema,
   changeColumnValue as _changeColumnValue,
   deleteItem as _deleteItem,
   executeRawQuery as _executeRawQuery,
   type RawQueryResult,
+  type BoardSchema,
   formatColumnValueForApi,
 } from "../../services/mondayApi";
 import { addComplexity } from "../services/complexityStore";
@@ -53,6 +55,10 @@ async function logged<T>(
     addLogEntry({ ...entry });
     throw err;
   }
+}
+
+export async function fetchBoardSchema(token: string, boardId: string): Promise<BoardSchema> {
+  return logged("fetchBoardSchema", { boardId }, () => _fetchBoardSchema(token, boardId));
 }
 
 export async function fetchBoardName(token: string, boardId: string): Promise<string> {

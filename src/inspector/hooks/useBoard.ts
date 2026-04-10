@@ -1,12 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { MondayColumn, MondayGroup, MondayItem } from "../../utils/types";
 import {
-  fetchBoardColumns,
-  fetchBoardGroups,
-  fetchBoardItemsWithColumns,
-  fetchSubitemBoardId,
+  fetchBoardSchema,
   fetchSubitemColumns,
-  fetchBoardName,
+  fetchBoardItemsWithColumns,
 } from "../services/inspectorApi";
 
 export interface BoardData {
@@ -16,9 +13,14 @@ export interface BoardData {
   items: MondayItem[];
   subitemBoardId: string | null;
   subitemColumns: MondayColumn[];
+  /** True while schema (columns/groups) is loading */
   loading: boolean;
+  /** True while items are loading separately */
+  itemsLoading: boolean;
   error: string | null;
   refresh: () => void;
+  /** Trigger item fetch on demand (e.g. when switching to Items/Actions tab) */
+  loadItems: () => void;
 }
 
 export function useBoard(token: string, boardId: string | null): BoardData {
@@ -29,37 +31,33 @@ export function useBoard(token: string, boardId: string | null): BoardData {
   const [subitemBoardId, setSubitemBoardId] = useState<string | null>(null);
   const [subitemColumns, setSubitemColumns] = useState<MondayColumn[]>([]);
   const [loading, setLoading] = useState(false);
+  const [itemsLoading, setItemsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fetchedRef = useRef<string | null>(null);
 
-  const load = useCallback(async (force = false) => {
+  // Track which token:boardId combo we've fetched schema/items for
+  const schemaKeyRef = useRef<string | null>(null);
+  const itemsKeyRef = useRef<string | null>(null);
+
+  // ── Schema load (name + columns + groups + subitem board ID) ──────────
+  const loadSchema = useCallback(async (force = false) => {
     if (!token || !boardId) return;
 
-    // Skip if already fetched for this token:boardId combo (unless forced)
     const key = `${token}:${boardId}`;
-    if (!force && fetchedRef.current === key) return;
-    fetchedRef.current = key;
+    if (!force && schemaKeyRef.current === key) return;
+    schemaKeyRef.current = key;
 
     setLoading(true);
     setError(null);
 
     try {
-      const [name, cols, grps, itms, subBoardId] = await Promise.all([
-        fetchBoardName(token, boardId),
-        fetchBoardColumns(token, boardId),
-        fetchBoardGroups(token, boardId),
-        fetchBoardItemsWithColumns(token, boardId),
-        fetchSubitemBoardId(token, boardId),
-      ]);
+      const schema = await fetchBoardSchema(token, boardId);
+      setBoardName(schema.name);
+      setColumns(schema.columns);
+      setGroups(schema.groups);
+      setSubitemBoardId(schema.subitemBoardId);
 
-      setBoardName(name);
-      setColumns(cols);
-      setGroups(grps);
-      setItems(itms);
-      setSubitemBoardId(subBoardId);
-
-      if (subBoardId) {
-        const subCols = await fetchSubitemColumns(token, subBoardId);
+      if (schema.subitemBoardId) {
+        const subCols = await fetchSubitemColumns(token, schema.subitemBoardId);
         setSubitemColumns(subCols);
       } else {
         setSubitemColumns([]);
@@ -71,17 +69,38 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     }
   }, [token, boardId]);
 
-  // Auto-load when token or boardId changes
+  // ── Items load (on demand) ────────────────────────────────────────────
+  const loadItems = useCallback(async () => {
+    if (!token || !boardId) return;
+
+    const key = `${token}:${boardId}`;
+    if (itemsKeyRef.current === key) return; // already loaded
+    itemsKeyRef.current = key;
+
+    setItemsLoading(true);
+    try {
+      const fetched = await fetchBoardItemsWithColumns(token, boardId);
+      setItems(fetched);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setItemsLoading(false);
+    }
+  }, [token, boardId]);
+
+  // Auto-load schema when token or boardId changes
   useEffect(() => {
     if (token && boardId) {
-      load();
+      loadSchema();
     }
-  }, [token, boardId, load]);
+  }, [token, boardId, loadSchema]);
 
   const refresh = useCallback(() => {
-    fetchedRef.current = null; // Force reload
-    load(true);
-  }, [load]);
+    schemaKeyRef.current = null;
+    itemsKeyRef.current = null;
+    setItems([]);
+    loadSchema(true);
+  }, [loadSchema]);
 
   return {
     boardName,
@@ -91,7 +110,9 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     subitemBoardId,
     subitemColumns,
     loading,
+    itemsLoading,
     error,
     refresh,
+    loadItems,
   };
 }
