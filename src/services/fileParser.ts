@@ -8,6 +8,7 @@ import type {
   MondayExportItem,
   FlatSubitemRow,
 } from "../utils/types";
+import { patchZip64Headers } from "./zip64Patcher";
 
 // ── Public entry point ────────────────────────────────────────────────
 
@@ -55,111 +56,6 @@ function parseFlatCSV(file: File): Promise<ParsedFileFlat> {
       },
     });
   });
-}
-
-// ── ZIP64 workaround ─────────────────────────────────────────────────
-
-/**
- * Patch ZIP64 local file headers in-place so the xlsx library can read them.
- * Monday.com exports use ZIP64 even for small files — the local headers have
- * 0xFFFFFFFF for compressed/uncompressed sizes, with real sizes in the ZIP64
- * extra field (tag 0x0001). The xlsx library (0.18.5) doesn't understand ZIP64
- * and tries to allocate 4GB buffers, causing "Array buffer allocation failed".
- *
- * This function reads the real sizes from ZIP64 extra fields and writes them
- * back into the standard header fields, making the file readable by any ZIP
- * library without re-compressing.
- */
-function patchZip64Headers(data: Uint8Array): Uint8Array {
-  if (data.length < 30) return data;
-  // Quick check: is the first entry ZIP64?
-  const v = new DataView(data.buffer, data.byteOffset, data.byteLength);
-  if (v.getUint32(18, true) !== 0xFFFFFFFF) return data; // Standard ZIP
-
-  // Work on a copy so we don't mutate the original
-  const patched = new Uint8Array(data);
-  const dv = new DataView(patched.buffer, patched.byteOffset, patched.byteLength);
-
-  // Helper: find and apply ZIP64 sizes from extra field
-  function patchFromExtra(
-    _headerOffset: number,
-    compSizeOffset: number,
-    uncompSizeOffset: number,
-    extraStart: number,
-    extraLen: number,
-  ) {
-    let eOff = extraStart;
-    const eEnd = extraStart + extraLen;
-    while (eOff + 4 <= eEnd) {
-      const tag = dv.getUint16(eOff, true);
-      const size = dv.getUint16(eOff + 2, true);
-      if (tag === 0x0001 && size >= 16) {
-        const realUncomp = dv.getUint32(eOff + 4, true);
-        const realComp = dv.getUint32(eOff + 12, true);
-        dv.setUint32(compSizeOffset, realComp, true);
-        dv.setUint32(uncompSizeOffset, realUncomp, true);
-        return;
-      }
-      eOff += 4 + size;
-    }
-  }
-
-  // ── Pass 1: Patch local file headers (PK\x03\x04) ──
-  let offset = 0;
-  while (offset + 30 <= patched.length) {
-    if (dv.getUint32(offset, true) !== 0x04034b50) break;
-    const compSize = dv.getUint32(offset + 18, true);
-    const uncompSize = dv.getUint32(offset + 22, true);
-    const nameLen = dv.getUint16(offset + 26, true);
-    const extraLen = dv.getUint16(offset + 28, true);
-    const extraStart = offset + 30 + nameLen;
-
-    if (compSize === 0xFFFFFFFF || uncompSize === 0xFFFFFFFF) {
-      patchFromExtra(offset, offset + 18, offset + 22, extraStart, extraLen);
-    }
-
-    const actualComp = dv.getUint32(offset + 18, true);
-    const nextOffset = extraStart + extraLen + actualComp;
-    if (nextOffset <= offset || nextOffset > patched.length) break; // bounds safety
-    offset = nextOffset;
-  }
-
-  // ── Pass 2: Patch central directory headers (PK\x01\x02) ──
-  // Central directory starts after all local entries
-  while (offset + 46 <= patched.length) {
-    if (dv.getUint32(offset, true) !== 0x02014b50) break; // Not a central dir entry
-    const compSize = dv.getUint32(offset + 20, true);
-    const uncompSize = dv.getUint32(offset + 24, true);
-    const nameLen = dv.getUint16(offset + 28, true);
-    const extraLen = dv.getUint16(offset + 30, true);
-    const commentLen = dv.getUint16(offset + 32, true);
-    const extraStart = offset + 46 + nameLen;
-
-    if (compSize === 0xFFFFFFFF || uncompSize === 0xFFFFFFFF) {
-      patchFromExtra(offset, offset + 20, offset + 24, extraStart, extraLen);
-    }
-
-    // Also patch local header offset if it's 0xFFFFFFFF
-    const localHeaderOffset = dv.getUint32(offset + 42, true);
-    if (localHeaderOffset === 0xFFFFFFFF) {
-      // Find offset in ZIP64 extra field (3rd 8-byte value after uncomp+comp sizes)
-      let eOff = extraStart;
-      const eEnd = extraStart + extraLen;
-      while (eOff + 4 <= eEnd) {
-        const tag = dv.getUint16(eOff, true);
-        const size = dv.getUint16(eOff + 2, true);
-        if (tag === 0x0001 && size >= 24) {
-          const realOffset = dv.getUint32(eOff + 20, true);
-          dv.setUint32(offset + 42, realOffset, true);
-        }
-        eOff += 4 + size;
-      }
-    }
-
-    offset += 46 + nameLen + extraLen + commentLen;
-  }
-
-  return patched;
 }
 
 // ── XLSX → detect monday export vs flat ───────────────────────────────
@@ -250,7 +146,7 @@ function getRawRows(sheet: XLSX.WorkSheet): RawRow[] {
 
 // ── Monday.com export detection ───────────────────────────────────────
 
-function isMondayExport(rows: RawRow[]): boolean {
+export function isMondayExport(rows: RawRow[]): boolean {
   let hasParentHeaderRow = false;
   let hasSubitemHeaderRow = false;
 
@@ -291,7 +187,7 @@ function isMondayExport(rows: RawRow[]): boolean {
  * Rn+1: headers repeat …
  * ```
  */
-function parseMondayExport(
+export function parseMondayExport(
   rows: RawRow[],
   fileName: string,
   boardName: string,

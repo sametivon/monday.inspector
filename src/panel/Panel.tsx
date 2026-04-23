@@ -21,6 +21,11 @@ import {
   runMondayExportImport,
   runFullMondayExportImport,
 } from "../services/mondayApi";
+import {
+  clearImportProgress,
+  loadImportProgress,
+  saveImportProgress,
+} from "../services/importProgressStorage";
 import { SUBITEM_NAME_SENTINEL } from "../utils/constants";
 import type {
   ParsedFile,
@@ -50,6 +55,14 @@ export const Panel: React.FC = () => {
   const [progress, setProgress] = useState<ImportProgressType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [lastImportBanner, setLastImportBanner] = useState<{
+    fileName: string;
+    succeeded: number;
+    failed: number;
+    total: number;
+    updatedAt: number;
+    finished: boolean;
+  } | null>(null);
 
   useEffect(() => {
     getApiToken().then((t) => {
@@ -61,6 +74,23 @@ export const Panel: React.FC = () => {
         if (res.current_board_id) setBoardId(res.current_board_id);
       });
     }
+    // Restore last import banner so a reload/return doesn't lose what just happened.
+    loadImportProgress().then((saved) => {
+      if (!saved) return;
+      setLastImportBanner({
+        fileName: saved.fileName,
+        succeeded: saved.progress.succeeded,
+        failed: saved.progress.failed,
+        total: saved.progress.total,
+        updatedAt: saved.updatedAt,
+        finished: saved.finished,
+      });
+    });
+  }, []);
+
+  const dismissLastImportBanner = useCallback(() => {
+    setLastImportBanner(null);
+    void clearImportProgress();
   }, []);
 
   const handleFileParsed = useCallback(
@@ -168,6 +198,7 @@ export const Panel: React.FC = () => {
 
     setError(null);
     setStep("importing");
+    setLastImportBanner(null);
 
     const activeSubitemMappings = mappings.filter(
       (m) => m.mondayColumnId && m.mondayColumnId !== SUBITEM_NAME_SENTINEL,
@@ -176,18 +207,71 @@ export const Panel: React.FC = () => {
       (m) => m.mondayColumnId,
     );
 
+    // Seed progress with pending rows so the UI renders immediately and
+    // onRowUpdate has something to mutate (the underlying runXXXImport
+    // functions create their own internal progress, but we need a React
+    // state copy to drive re-renders).
+    const totalRows =
+      file.kind === "monday_export"
+        ? (includeParents
+            ? file.groups.reduce((s, g) => s + g.items.length, 0)
+            : 0) + file.flatSubitems.length
+        : file.rows.length;
+
+    const initialProgress: ImportProgressType = {
+      total: totalRows,
+      completed: 0,
+      succeeded: 0,
+      failed: 0,
+      rows: Array.from({ length: totalRows }, (_, i) => ({
+        rowIndex: i,
+        kind: "subitem" as const,
+        itemName: "",
+        parentItemId: "",
+        subitemName: "",
+        status: "pending" as const,
+      })),
+    };
+    setProgress(initialProgress);
+
+    // Local live copy so onBatchComplete can persist the current snapshot
+    // without racing React's setState cycle.
+    const liveProgress: ImportProgressType = {
+      ...initialProgress,
+      rows: initialProgress.rows.map((r) => ({ ...r })),
+    };
+
     const progressCallbacks = {
       onRowUpdate: (rowIndex: number, update: Partial<ImportProgressType["rows"][0]>) => {
+        if (rowIndex >= 0 && rowIndex < liveProgress.rows.length) {
+          liveProgress.rows[rowIndex] = {
+            ...liveProgress.rows[rowIndex],
+            ...update,
+          };
+        }
         setProgress((prev) => {
           if (!prev) return prev;
           const rows = [...prev.rows];
+          if (rowIndex < 0 || rowIndex >= rows.length) return prev;
           rows[rowIndex] = { ...rows[rowIndex], ...update };
           const succeeded = rows.filter((r) => r.status === "success").length;
           const failed = rows.filter((r) => r.status === "error").length;
           return { ...prev, rows, completed: succeeded + failed, succeeded, failed };
         });
       },
-      onBatchComplete: () => {},
+      onBatchComplete: () => {
+        const succeeded = liveProgress.rows.filter((r) => r.status === "success").length;
+        const failed = liveProgress.rows.filter((r) => r.status === "error").length;
+        liveProgress.succeeded = succeeded;
+        liveProgress.failed = failed;
+        liveProgress.completed = succeeded + failed;
+        void saveImportProgress({
+          progress: liveProgress,
+          finished: false,
+          fileName: file.fileName,
+          boardId,
+        });
+      },
     };
 
     try {
@@ -229,9 +313,21 @@ export const Panel: React.FC = () => {
       setProgress(result);
       setStep("done");
       incrementImportCount();
+      void saveImportProgress({
+        progress: result,
+        finished: true,
+        fileName: file.fileName,
+        boardId,
+      });
     } catch (err) {
       setError(`Import failed: ${(err as Error).message}`);
       setStep("done");
+      void saveImportProgress({
+        progress: liveProgress,
+        finished: true,
+        fileName: file.fileName,
+        boardId,
+      });
     }
   }, [file, token, boardId, parentIdentifier, subitemNameColumn, mappings, parentMappings, includeParents, boardColumns, subitemColumns]);
 
@@ -249,6 +345,33 @@ export const Panel: React.FC = () => {
               {error}
             </p>
             <ErrorHelpCTA />
+          </CardContent>
+        </Card>
+      )}
+
+      {lastImportBanner && step !== "importing" && step !== "done" && (
+        <Card className="border-primary/30 bg-primary/5 mb-4 animate-fade-in">
+          <CardContent className="p-4 flex items-start gap-3">
+            <div className="flex-1 text-sm">
+              <p className="font-medium mb-1">
+                {lastImportBanner.finished ? "Last import" : "Previous import interrupted"}
+                {" — "}
+                <span className="text-muted-foreground font-normal">
+                  {lastImportBanner.fileName}
+                </span>
+              </p>
+              <p className="text-muted-foreground">
+                {lastImportBanner.succeeded} succeeded
+                {lastImportBanner.failed > 0 && `, ${lastImportBanner.failed} failed`}
+                {" of "}
+                {lastImportBanner.total} rows
+                {" · "}
+                {new Date(lastImportBanner.updatedAt).toLocaleString()}
+              </p>
+            </div>
+            <Button size="sm" variant="ghost" onClick={dismissLastImportBanner}>
+              Dismiss
+            </Button>
           </CardContent>
         </Card>
       )}

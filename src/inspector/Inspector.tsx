@@ -16,6 +16,11 @@ import type { MondayItem } from "../utils/types";
 
 export type InspectorTab = "schema" | "hierarchy" | "detail" | "query" | "import" | "actions" | "logs";
 
+// Tabs that need items loaded: referenced in handleTabChange to trigger lazy
+// fetching on first visit. Module-scoped so the useCallback reference stays
+// stable across re-renders.
+const ITEM_TABS: ReadonlySet<InspectorTab> = new Set(["hierarchy", "detail", "actions"]);
+
 interface InspectorProps {
   boardId: string | null;
   onClose: () => void;
@@ -52,8 +57,6 @@ export function Inspector({ boardId, onClose, hidden }: InspectorProps) {
 
   const board = useBoard(token, boardId);
 
-  // Tabs that need items: load them lazily on first visit
-  const ITEM_TABS = new Set(["hierarchy", "detail", "actions"]);
   const handleTabChange = useCallback((tab: typeof activeTab) => {
     setActiveTab(tab);
     if (ITEM_TABS.has(tab)) board.loadItems();
