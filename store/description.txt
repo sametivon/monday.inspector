@@ -1,50 +1,90 @@
-Stop wasting hours manually entering items into Monday.com. Monday.com Inspector lets you bulk import hundreds of parent items and subitems from CSV or Excel files — in seconds, not hours.
+=== SHORT SUMMARY (max 132 chars, shown under the extension name) ===
 
-No account needed. No row limits. Just install, add your Monday.com API token, and start importing.
+Free toolkit for monday.com: import subitems from CSV, bulk update items, run GraphQL queries, inspect board schema.
 
-YOUR DATA STAYS WITH YOU
-We take privacy seriously. Your API token is stored locally in your browser and never leaves your device. We don't collect, store, or transmit any of your data to external servers. Zero tracking, zero analytics, zero data collection. Period.
 
-WHAT CAN YOU DO WITH IT?
+=== DETAILED DESCRIPTION ===
 
-- Import parent items AND subitems from CSV, TSV, or Excel files
-- Auto-detect Monday.com board exports (.xlsx) — your hierarchy is preserved automatically
-- Smart column mapping — visually match your file columns to Monday.com board columns
-- Two-phase import — creates parents first, then nests subitems under them
-- Batch processing that respects Monday.com API rate limits (no more 429 errors)
-- Automatic retry with exponential backoff for any failed API calls
-- Real-time progress tracking — watch every item get imported live
-- Detailed error reporting — know exactly which rows failed and why
-- Match parents by name or ID — flexible, works with any board structure
-- Group-aware import — preserves your Monday.com board groups
-- One-click access — "Import Subitems" button appears right inside Monday.com
-- Create everything from scratch OR import only subitems under existing parents
+Monday.com Inspector gives you the power features that monday.com is missing. Bulk-import parents and subitems from CSV or Excel, bulk-update hundreds of items in one click, run real GraphQL queries, and inspect board schema — all from a sleek inline panel inside monday.com.
 
-HOW IT WORKS (4 simple steps):
+No account needed. No hidden limits. Install, paste your API token, and go.
 
-1. Install the extension and go to any Monday.com board
-2. Click "Import Subitems" in the toolbar (or use the popup)
-3. Upload your CSV or Excel file — format is auto-detected
-4. Map columns, preview data, and hit Import. Done.
 
-WHO IS THIS FOR?
+PRIVACY FIRST — YOUR DATA STAYS WITH YOU
 
-- Monday.com admins migrating data from spreadsheets
-- Project managers moving from Asana, Trello, Jira, or Excel to Monday.com
-- Teams that need to bulk-create items with subitems regularly
-- Developers and consultants setting up Monday.com boards for clients
-- Anyone tired of manually entering items one by one
+Monday.com Inspector runs entirely in your browser. Your API token is stored locally via chrome.storage.local and is only ever sent to the monday.com API. We don't collect, store, or transmit anything — zero tracking, zero analytics, zero third-party servers.
+
+Full privacy policy: https://mondayinspector.eu/privacy.html
+
+
+WHAT YOU CAN DO
+
+Import from CSV / Excel
+• Import parent items AND subitems from CSV, TSV, or Excel files
+• Auto-detect monday.com board exports (.xlsx) — group and subitem hierarchy preserved
+• Smart column mapping with type-aware inputs (status, people, date, timeline, checkbox, link)
+• Two-phase import: creates parents first, then nests subitems under them
+• Match parents by name or ID — works with any board structure
+• Real-time progress with per-row status, ETA, and retry
+• Batch processing respects monday.com API complexity limits (no 429 storms)
+• Automatic retry with exponential backoff for transient failures
+• Detailed per-row error reporting — know exactly what failed and why
+• Import progress is saved locally so a reload doesn't lose what just happened
+
+Bulk Update
+• Select hundreds of items with checkboxes, push a value to any column in one click
+• Works on parent items AND subitems
+• Dry-run mode shows exactly what will change before you apply
+
+GraphQL Query Engine
+• Write and run real GraphQL queries against your board
+• Built-in complexity-budget tracker so you don't hit rate limits
+• Starter templates to learn the monday.com API fast
+
+Schema Inspector & Export
+• Browse every column — type, ID, settings — for parents and subitems
+• One-click copy of column IDs for use elsewhere
+• Export any board to CSV or JSON, including items, subitems, and group structure
+
+Audit Log
+• Every API call the extension makes is logged locally with timestamps, durations, and results — see exactly what was touched
+
+
+HOW IT WORKS (4 steps)
+
+1. Install the extension and open any monday.com board
+2. Paste your API token in the popup (one-time setup)
+3. Click the Inspector icon in the board toolbar
+4. Pick a tab: Import, Bulk Update, Schema, GraphQL — and go
+
+
+WHO THIS IS FOR
+
+• Monday.com admins migrating data from spreadsheets
+• Project managers moving from Asana, Trello, Jira, or Excel to monday.com
+• Teams bulk-creating items + subitems regularly
+• Consultants and developers setting up monday.com boards for clients
+• Power users who want real GraphQL access without writing a custom app
+
 
 OPEN SOURCE & TRANSPARENT
-This is an open-source tool. You can inspect every line of code on GitHub: https://github.com/sametivon/monday.inspector
 
-NEED MORE HELP WITH MONDAY.COM?
-Built by Sam @ Fruition Services — Platinum monday.com consulting partner with 500+ implementations across Australia, US, and UK. Whether you need board setup, CRM configuration, workflow automation, or team training — we've got you covered.
+Every line of code is on GitHub — inspect it, audit it, contribute:
+https://github.com/sametivon/monday.inspector
 
-Book a consultation: https://calendly.com/sam-fruitionservices/30min
-Visit us: https://www.fruitionservices.io
 
-FOUND A BUG?
-Report issues on GitHub: https://github.com/sametivon/monday.inspector/issues
+BUILT BY A MONDAY.COM PARTNER
+
+Made by Sam @ Fruition Services — Platinum monday.com consulting partner with 500+ implementations across Australia, US, and UK. Need help with board setup, CRM configuration, workflow automation, or team training?
+
+Book a free consultation: https://calendly.com/sam-fruitionservices/30min
+Visit: https://www.fruitionservices.io
+
+
+SUPPORT
+
+• Website & guides: https://mondayinspector.eu
+• Report bugs: https://github.com/sametivon/monday.inspector/issues
+• Contact: sam@fruitionservices.io
 
 If this tool saves you time, consider buying me a coffee: https://buymeacoffee.com/sametivon
