@@ -348,7 +348,7 @@ export async function fetchBoardItems(
       boards(ids: $boardId) {
         items_page(limit: 500) {
           cursor
-          items { id name group { id } }
+          items { id name }
         }
       }
     }
@@ -539,7 +539,7 @@ export async function fetchBoardItemsWithColumns(
   const firstQuery = `
     query ($boardId: [ID!]!) {
       boards(ids: $boardId) {
-        items_page(limit: 500) {
+        items_page(limit: 100) {
           cursor
           items {
             id
@@ -567,7 +567,7 @@ export async function fetchBoardItemsWithColumns(
   while (cursor) {
     const nextQuery = `
       query ($cursor: String!) {
-        next_items_page(limit: 500, cursor: $cursor) {
+        next_items_page(limit: 100, cursor: $cursor) {
           cursor
           items {
             id
