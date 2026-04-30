@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type {
   ParsedFile,
   ColumnMapping,
@@ -71,6 +71,245 @@ function buildParentMappings(
     });
 }
 
+/** Format seconds into mm:ss */
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+// ── Live Progress Component ─────────────────────────────────────────
+
+function ImportProgressView({
+  progress,
+  isDone,
+  onReset,
+  startTime,
+}: {
+  progress: ImportProgressType;
+  isDone: boolean;
+  onReset: () => void;
+  startTime: number;
+}) {
+  const [elapsed, setElapsed] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Elapsed timer
+  useEffect(() => {
+    if (isDone) return;
+    const interval = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isDone, startTime]);
+
+  // Auto-scroll to latest active row
+  useEffect(() => {
+    if (listRef.current) {
+      const active = listRef.current.querySelector('[data-status="importing"]');
+      if (active) {
+        active.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }
+  }, [progress.completed]);
+
+  const pct = progress.total > 0 ? (progress.completed / progress.total) * 100 : 0;
+  const rate = elapsed > 0 ? progress.completed / elapsed : 0;
+  const remaining = rate > 0 ? Math.ceil((progress.total - progress.completed) / rate) : 0;
+
+  return (
+    <div>
+      {/* Header stats */}
+      <div className="card" style={{ marginBottom: 10, padding: "10px 14px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {!isDone && <div className="spinner" style={{ width: 14, height: 14 }} />}
+            <span style={{ fontWeight: 700, fontSize: 13 }}>
+              {isDone ? "Import Complete" : "Importing..."}
+            </span>
+          </div>
+          <span style={{ fontSize: 11, color: "hsl(var(--muted-foreground))", fontFamily: "monospace" }}>
+            {formatTime(elapsed)}
+          </span>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginBottom: 4, color: "hsl(var(--muted-foreground))" }}>
+            <span style={{ fontWeight: 600, color: "hsl(var(--foreground))" }}>
+              {Math.round(pct)}%
+            </span>
+            <span>{progress.completed} / {progress.total} rows</span>
+          </div>
+          <div className="progress-bar" style={{ height: 8, borderRadius: 4 }}>
+            <div
+              className={`progress-bar-fill ${isDone ? (progress.failed > 0 ? "error" : "success") : ""}`}
+              style={{
+                width: `${pct}%`,
+                borderRadius: 4,
+                transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Stats row */}
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+          <div style={{
+            flex: 1, minWidth: 70, padding: "6px 8px", borderRadius: 8,
+            background: "hsl(150 60% 46% / 0.08)", textAlign: "center",
+          }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "hsl(150 60% 36%)" }}>
+              {progress.succeeded}
+            </div>
+            <div style={{ fontSize: 9, color: "hsl(150 60% 40%)", fontWeight: 600 }}>Success</div>
+          </div>
+          {progress.failed > 0 && (
+            <div style={{
+              flex: 1, minWidth: 70, padding: "6px 8px", borderRadius: 8,
+              background: "hsl(0 72% 56% / 0.08)", textAlign: "center",
+            }}>
+              <div style={{ fontSize: 16, fontWeight: 800, color: "hsl(0 72% 45%)" }}>
+                {progress.failed}
+              </div>
+              <div style={{ fontSize: 9, color: "hsl(0 72% 50%)", fontWeight: 600 }}>Failed</div>
+            </div>
+          )}
+          <div style={{
+            flex: 1, minWidth: 70, padding: "6px 8px", borderRadius: 8,
+            background: "hsl(var(--muted) / 0.5)", textAlign: "center",
+          }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "hsl(var(--foreground))" }}>
+              {progress.total - progress.completed}
+            </div>
+            <div style={{ fontSize: 9, color: "hsl(var(--muted-foreground))", fontWeight: 600 }}>Remaining</div>
+          </div>
+        </div>
+
+        {/* ETA */}
+        {!isDone && remaining > 0 && (
+          <div style={{
+            marginTop: 8, fontSize: 10, color: "hsl(var(--muted-foreground))",
+            textAlign: "center", fontStyle: "italic",
+          }}>
+            ~{formatTime(remaining)} remaining ({rate.toFixed(1)} rows/sec)
+          </div>
+        )}
+      </div>
+
+      {/* Live row list */}
+      <div style={{ marginBottom: 10 }}>
+        <div className="section-header" style={{ marginBottom: 6 }}>
+          <span>Row Details</span>
+          <span className="type-badge" style={{ fontSize: 9 }}>{progress.rows.length}</span>
+        </div>
+        <div
+          ref={listRef}
+          style={{
+            maxHeight: 200,
+            overflowY: "auto",
+            borderRadius: 10,
+            border: "1px solid hsl(var(--border) / 0.6)",
+            background: "hsl(var(--card))",
+          }}
+        >
+          {progress.rows.map((row) => (
+            <div
+              key={`${row.kind}-${row.rowIndex}`}
+              data-status={row.status}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "6px 10px",
+                borderBottom: "1px solid hsl(var(--border) / 0.25)",
+                fontSize: 11,
+                transition: "all 0.2s ease",
+                background: row.status === "importing"
+                  ? "hsl(256 72% 56% / 0.04)"
+                  : row.status === "error"
+                  ? "hsl(0 72% 56% / 0.03)"
+                  : row.status === "success"
+                  ? "hsl(150 60% 46% / 0.02)"
+                  : "transparent",
+              }}
+            >
+              {/* Status icon */}
+              <div style={{ width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                {row.status === "pending" && (
+                  <div style={{
+                    width: 8, height: 8, borderRadius: "50%",
+                    background: "hsl(var(--muted-foreground) / 0.2)",
+                  }} />
+                )}
+                {row.status === "importing" && (
+                  <div className="spinner" style={{ width: 14, height: 14 }} />
+                )}
+                {row.status === "success" && (
+                  <span style={{ color: "hsl(150 60% 42%)", fontSize: 14, fontWeight: 700 }}>✓</span>
+                )}
+                {row.status === "error" && (
+                  <span style={{ color: "hsl(0 72% 50%)", fontSize: 14, fontWeight: 700 }}>✗</span>
+                )}
+              </div>
+
+              {/* Row kind badge */}
+              <span style={{
+                fontSize: 8, fontWeight: 700, textTransform: "uppercase",
+                padding: "1px 5px", borderRadius: 4, flexShrink: 0,
+                background: row.kind === "parent" ? "hsl(256 72% 56% / 0.1)" : "hsl(200 80% 50% / 0.1)",
+                color: row.kind === "parent" ? "hsl(256 72% 48%)" : "hsl(200 80% 40%)",
+              }}>
+                {row.kind === "parent" ? "item" : "sub"}
+              </span>
+
+              {/* Item name */}
+              <span style={{
+                flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                color: row.status === "error" ? "hsl(0 72% 50%)" : "hsl(var(--foreground))",
+                fontWeight: row.status === "importing" ? 600 : 400,
+              }}>
+                {row.itemName || `Row ${row.rowIndex + 1}`}
+              </span>
+
+              {/* Error text */}
+              {row.error && (
+                <span style={{
+                  fontSize: 9, color: "hsl(0 72% 50%)", maxWidth: 120,
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  flexShrink: 0,
+                }} title={row.error}>
+                  {row.error}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Done actions */}
+      {isDone && (
+        <div style={{ animation: "fadeInUp 0.3s ease" }}>
+          {progress.failed === 0 && (
+            <div className="status-message success" style={{ marginBottom: 10, textAlign: "center", fontSize: 12 }}>
+              All {progress.succeeded} rows imported successfully!
+            </div>
+          )}
+          <button
+            className="btn-primary"
+            style={{ width: "100%", padding: "10px 12px", fontSize: 12 }}
+            onClick={onReset}
+          >
+            Import Another File
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main ImportTab ──────────────────────────────────────────────────
+
 export function ImportTab({ boardId, token }: ImportTabProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -89,6 +328,8 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
   const [progress, setProgress] = useState<ImportProgressType | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [importStartTime, setImportStartTime] = useState(0);
 
   const mappableSubitemCols = subitemColumns.filter((c) => !READ_ONLY_COL_TYPES.has(c.type));
   const mappableBoardCols = boardColumns.filter((c) => !READ_ONLY_COL_TYPES.has(c.type));
@@ -99,6 +340,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
     async (f: File) => {
       setError(null);
       setLoading(true);
+      setUploadSuccess(false);
       try {
         const parsed = await parseFile(f);
         setFile(parsed);
@@ -122,9 +364,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
         }
 
         if (parsed.kind === "monday_export") {
-          // Auto-match subitem columns
           setMappings(autoMatchMappings(parsed.subitemHeaders, sCols));
-          // Filter + auto-match parent columns (excludes mirrors)
           setParentMappings(buildParentMappings(parsed.parentHeaders, bCols));
           setParentIdentifier({ type: "item_name", fileColumn: "__auto__" });
           setSubitemNameColumn("__auto__");
@@ -133,7 +373,11 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
           setParentMappings([]);
         }
 
-        setStep("map");
+        setUploadSuccess(true);
+        setTimeout(() => {
+          setUploadSuccess(false);
+          setStep("map");
+        }, 600);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -161,6 +405,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
 
     setError(null);
     setStep("importing");
+    setImportStartTime(Date.now());
 
     const activeSub = mappings.filter(
       (m) => m.mondayColumnId && m.mondayColumnId !== SUBITEM_NAME_SENTINEL,
@@ -213,6 +458,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
     setParentMappings([]);
     setStep("upload");
     setError(null);
+    setImportStartTime(0);
   };
 
   const updateMapping = (idx: number, mondayColumnId: string) => {
@@ -263,10 +509,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
   return (
     <div>
       {error && (
-        <div style={{
-          fontSize: 11, color: "hsl(var(--destructive))", background: "hsl(var(--destructive) / 0.08)",
-          padding: "8px 10px", borderRadius: 6, marginBottom: 10, border: "1px solid hsl(var(--destructive) / 0.2)",
-        }}>
+        <div className="status-message error" style={{ marginBottom: 10 }}>
           {error}
         </div>
       )}
@@ -286,41 +529,50 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
             }}
           />
           <div
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
+            onClick={() => !loading && fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = "hsl(256 72% 56%)"; e.currentTarget.style.background = "hsl(256 72% 56% / 0.06)"; }}
+            onDragLeave={(e) => { e.currentTarget.style.borderColor = "hsl(var(--border))"; e.currentTarget.style.background = "hsl(var(--muted) / 0.3)"; }}
             onDrop={(e) => {
               e.preventDefault();
+              e.currentTarget.style.borderColor = "hsl(var(--border))";
+              e.currentTarget.style.background = "hsl(var(--muted) / 0.3)";
               const f = e.dataTransfer.files[0];
               if (f) handleFile(f);
             }}
             style={{
               border: "2px dashed hsl(var(--border))",
-              borderRadius: 8,
-              padding: "28px 16px",
+              borderRadius: 12,
+              padding: "32px 16px",
               textAlign: "center",
-              cursor: "pointer",
-              transition: "border-color 0.15s, background 0.15s",
-              background: "hsl(var(--muted) / 0.3)",
+              cursor: loading ? "wait" : "pointer",
+              transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+              background: uploadSuccess ? "hsl(150 60% 46% / 0.06)" : "hsl(var(--muted) / 0.3)",
+              borderColor: uploadSuccess ? "hsl(150 60% 46%)" : undefined,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "hsl(var(--primary))"; e.currentTarget.style.background = "hsl(var(--primary) / 0.04)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "hsl(var(--border))"; e.currentTarget.style.background = "hsl(var(--muted) / 0.3)"; }}
+            onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.borderColor = "hsl(var(--primary))"; e.currentTarget.style.background = "hsl(var(--primary) / 0.04)"; e.currentTarget.style.transform = "translateY(-2px)"; } }}
+            onMouseLeave={(e) => { if (!loading) { e.currentTarget.style.borderColor = "hsl(var(--border))"; e.currentTarget.style.background = "hsl(var(--muted) / 0.3)"; e.currentTarget.style.transform = "translateY(0)"; } }}
           >
             {loading ? (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                 <div className="spinner" />
-                <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>Parsing file...</span>
+                <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))", fontWeight: 500 }}>Parsing file...</span>
+              </div>
+            ) : uploadSuccess ? (
+              <div style={{ animation: "popIn 0.3s ease" }}>
+                <div style={{ fontSize: 28, marginBottom: 4 }}>✓</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "hsl(150 60% 36%)" }}>File parsed successfully!</div>
               </div>
             ) : (
               <>
-                <div style={{ fontSize: 24, marginBottom: 6, opacity: 0.5 }}>📥</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "hsl(var(--foreground))" }}>Drop CSV/Excel file here</div>
-                <div style={{ fontSize: 11, color: "hsl(var(--muted-foreground))", marginTop: 3 }}>
+                <div style={{ fontSize: 28, marginBottom: 8, opacity: 0.5 }}>📥</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--foreground))" }}>Drop CSV/Excel file here</div>
+                <div style={{ fontSize: 11, color: "hsl(var(--muted-foreground))", marginTop: 4 }}>
                   or click to browse
                 </div>
               </>
             )}
           </div>
-          <div style={{ fontSize: 10, color: "hsl(var(--muted-foreground))", marginTop: 8 }}>
+          <div style={{ fontSize: 10, color: "hsl(var(--muted-foreground))", marginTop: 8, textAlign: "center" }}>
             Supports flat CSV/TSV, Excel, and monday.com board exports.
           </div>
         </div>
@@ -329,16 +581,21 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
       {/* Step 2: Map columns */}
       {step === "map" && file && (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600 }}>
-                {file.kind === "monday_export" ? "Monday Export" : file.fileName}
+          <div className="card" style={{ marginBottom: 10, padding: "10px 12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700 }}>
+                  {file.kind === "monday_export" ? "Monday Export" : file.fileName}
+                </div>
+                <div style={{ fontSize: 10, color: "hsl(var(--muted-foreground))", marginTop: 2 }}>
+                  {getCounts().total} rows to import
+                  {file.kind === "monday_export" && (
+                    <span> ({getCounts().parents} items, {getCounts().subitems} subitems)</span>
+                  )}
+                </div>
               </div>
-              <div style={{ fontSize: 10, color: "hsl(var(--muted-foreground))", marginTop: 1 }}>
-                {getCounts().total} rows to import
-              </div>
+              <button className="btn-ghost" style={{ fontSize: 10 }} onClick={handleReset}>Change</button>
             </div>
-            <button className="btn-ghost" style={{ fontSize: 10 }} onClick={handleReset}>Change file</button>
           </div>
 
           {/* Flat file: parent identifier + subitem name column */}
@@ -374,8 +631,9 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
           {file.kind === "monday_export" && (
             <label style={{
               display: "flex", alignItems: "center", gap: 8, fontSize: 11,
-              marginBottom: 10, cursor: "pointer", padding: "6px 8px",
-              borderRadius: 6, background: "hsl(var(--muted) / 0.5)",
+              marginBottom: 10, cursor: "pointer", padding: "8px 10px",
+              borderRadius: 8, background: "hsl(var(--muted) / 0.5)",
+              transition: "background 0.15s",
             }}>
               <input
                 type="checkbox"
@@ -385,7 +643,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
               />
               <span>
                 Create parent items
-                <span className="type-badge" style={{ marginLeft: 4 }}>{getCounts().parents}</span>
+                <span className="type-badge" style={{ marginLeft: 6 }}>{getCounts().parents}</span>
               </span>
             </label>
           )}
@@ -393,9 +651,11 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
           {/* Parent column mappings */}
           {file.kind === "monday_export" && includeParents && parentMappings.length > 0 && (
             <div style={{ marginBottom: 12 }}>
-              <div className="section-header" style={{ marginBottom: 4 }}>
+              <div className="section-header" style={{ marginBottom: 6 }}>
                 Parent Columns
-                <span className="type-badge">{parentMappings.filter((m) => m.mondayColumnId).length}/{parentMappings.length}</span>
+                <span className="type-badge" style={{ background: "hsl(150 60% 46% / 0.1)", color: "hsl(150 60% 36%)" }}>
+                  {parentMappings.filter((m) => m.mondayColumnId).length}/{parentMappings.length} mapped
+                </span>
               </div>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 {parentMappings.map((m, i) => (
@@ -422,10 +682,12 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
           <div className="separator" />
 
           {/* Subitem column mappings */}
-          <div style={{ marginBottom: 12 }}>
-            <div className="section-header" style={{ marginBottom: 4 }}>
+          <div style={{ marginBottom: 14 }}>
+            <div className="section-header" style={{ marginBottom: 6 }}>
               {file.kind === "monday_export" ? "Subitem Columns" : "Column Mapping"}
-              <span className="type-badge">{mappings.filter((m) => m.mondayColumnId).length}/{mappings.length}</span>
+              <span className="type-badge" style={{ background: "hsl(200 80% 50% / 0.1)", color: "hsl(200 80% 40%)" }}>
+                {mappings.filter((m) => m.mondayColumnId).length}/{mappings.length} mapped
+              </span>
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               {mappings.map((m, i) => (
@@ -450,7 +712,7 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
 
           <button
             className="btn-primary"
-            style={{ width: "100%", padding: "8px 12px", fontSize: 12 }}
+            style={{ width: "100%", padding: "10px 12px", fontSize: 12.5 }}
             onClick={handleStartImport}
             disabled={!canImport()}
           >
@@ -459,57 +721,14 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
         </div>
       )}
 
-      {/* Step 3: Progress */}
+      {/* Step 3 & 4: Progress & Done */}
       {(step === "importing" || step === "done") && progress && (
-        <div>
-          <div style={{ marginBottom: 10 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 6 }}>
-              <span style={{ fontWeight: 600 }}>{step === "importing" ? "Importing..." : "Import Complete"}</span>
-              <span>{progress.completed}/{progress.total}</span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className={`progress-bar-fill ${progress.failed > 0 ? "error" : "success"}`}
-                style={{ width: `${progress.total > 0 ? (progress.completed / progress.total) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: 10, fontSize: 11, marginBottom: 10 }}>
-            <span style={{ color: "hsl(142 76% 36%)" }}>✓ {progress.succeeded} succeeded</span>
-            {progress.failed > 0 && (
-              <span style={{ color: "hsl(var(--destructive))" }}>✗ {progress.failed} failed</span>
-            )}
-          </div>
-
-          {/* Error details */}
-          {progress.failed > 0 && (
-            <details style={{ marginBottom: 10 }}>
-              <summary style={{ fontSize: 11, cursor: "pointer", color: "hsl(var(--destructive))", fontWeight: 500 }}>
-                Show errors ({progress.failed})
-              </summary>
-              <div style={{ maxHeight: 150, overflowY: "auto", marginTop: 6, borderRadius: 6, border: "1px solid hsl(var(--border))" }}>
-                {progress.rows
-                  .filter((r) => r.status === "error")
-                  .slice(0, 20)
-                  .map((r) => (
-                    <div key={r.rowIndex} style={{
-                      fontSize: 10, padding: "4px 8px",
-                      borderBottom: "1px solid hsl(var(--border) / 0.3)",
-                    }}>
-                      <strong>Row {r.rowIndex + 1}:</strong> {r.error}
-                    </div>
-                  ))}
-              </div>
-            </details>
-          )}
-
-          {step === "done" && (
-            <button className="btn-primary" style={{ width: "100%", padding: "8px 12px", fontSize: 12 }} onClick={handleReset}>
-              Import Another File
-            </button>
-          )}
-        </div>
+        <ImportProgressView
+          progress={progress}
+          isDone={step === "done"}
+          onReset={handleReset}
+          startTime={importStartTime}
+        />
       )}
     </div>
   );

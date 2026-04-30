@@ -4,36 +4,57 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 7px 16px;
   margin: 0 8px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #fff;
-  background: #6161ff;
+  background: linear-gradient(135deg, #7c5cfc 0%, #5a3ed8 100%);
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 9999;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(108, 75, 228, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+#msi-inspector-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s;
 }
 
 #msi-inspector-btn:hover {
-  background: #4b4bd4;
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(108, 75, 228, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+#msi-inspector-btn:hover::before {
+  opacity: 1;
 }
 
 #msi-inspector-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 2px 6px rgba(108, 75, 228, 0.25);
+  transition-duration: 0.08s;
 }
 
 #msi-inspector-btn.msi-active {
-  background: #e53e3e;
+  background: linear-gradient(135deg, #ef4444 0%, #c82333 100%);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
 }
 
 #msi-inspector-btn.msi-active:hover {
-  background: #c53030;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
 }
 
 /* Floating fallback position */
@@ -41,8 +62,13 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  padding: 12px 22px;
+  font-size: 13px;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(108, 75, 228, 0.35), 0 3px 10px rgba(0,0,0,0.12);
+}
+
+#msi-inspector-btn.msi-floating:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 14px 36px rgba(108, 75, 228, 0.4), 0 4px 12px rgba(0,0,0,0.15);
 }

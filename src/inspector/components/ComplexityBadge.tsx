@@ -3,13 +3,18 @@ import { useComplexity } from "../services/complexityStore";
 export function ComplexityBadge() {
   const { remaining, budget, used } = useComplexity();
 
-  if (used === 0) return null; // Don't show until first query
+  if (used === 0) return null;
 
   const pct = remaining / budget;
   const color =
-    pct > 0.7 ? "hsl(142 76% 46%)" :
+    pct > 0.7 ? "hsl(150 60% 46%)" :
     pct > 0.3 ? "hsl(38 92% 50%)" :
-    "hsl(0 84% 60%)";
+    "hsl(0 72% 56%)";
+
+  const bgColor =
+    pct > 0.7 ? "hsl(150 60% 46% / 0.12)" :
+    pct > 0.3 ? "hsl(38 92% 50% / 0.12)" :
+    "hsl(0 72% 56% / 0.12)";
 
   const formatted = remaining >= 1_000_000
     ? `${(remaining / 1_000_000).toFixed(1)}M`
@@ -23,28 +28,33 @@ export function ComplexityBadge() {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 4,
+        gap: 5,
         fontSize: 9,
         color: "hsl(var(--muted-foreground))",
         cursor: "default",
+        padding: "3px 8px",
+        borderRadius: 8,
+        background: bgColor,
+        transition: "all 0.3s ease",
       }}
     >
       <div style={{
-        width: 40,
-        height: 4,
-        borderRadius: 2,
+        width: 44,
+        height: 5,
+        borderRadius: 3,
         background: "hsl(var(--muted))",
         overflow: "hidden",
       }}>
         <div style={{
-          width: `${Math.max(2, pct * 100)}%`,
+          width: `${Math.max(3, pct * 100)}%`,
           height: "100%",
           background: color,
-          borderRadius: 2,
-          transition: "width 0.3s, background 0.3s",
+          borderRadius: 3,
+          transition: "width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s",
+          boxShadow: `0 0 6px ${color}`,
         }} />
       </div>
-      <span style={{ fontFamily: "monospace", fontSize: 8, color }}>{formatted}</span>
+      <span style={{ fontFamily: "monospace", fontSize: 9, fontWeight: 700, color }}>{formatted}</span>
     </div>
   );
 }

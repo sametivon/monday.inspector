@@ -194,6 +194,33 @@ function init(): void {
   observeNavigation();
 }
 
+// ── Message listener for popup communication ────────────────────────
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === "TOGGLE_PANEL") {
+    if (!isBoardPage()) {
+      sendResponse({ ok: false, reason: "not_board_page" });
+      return;
+    }
+    const boardId = getBoardIdFromUrl();
+    if (boardId) {
+      chrome.storage.local.set({ current_board_id: boardId });
+    }
+    togglePanel();
+    sendResponse({ ok: true, isOpen });
+    return;
+  }
+  if (message.type === "GET_STATUS") {
+    sendResponse({
+      isBoardPage: isBoardPage(),
+      boardId: getBoardIdFromUrl(),
+      isOpen,
+    });
+    return;
+  }
+});
+
+// ── Bootstrap ────────────────────────────────────────────────────────
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
 } else {
