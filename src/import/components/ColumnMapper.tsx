@@ -6,6 +6,7 @@ import type {
   ParsedFile,
 } from "../../utils/types";
 import { SUBITEM_NAME_SENTINEL } from "../../utils/constants";
+import { READ_ONLY_COLUMN_TYPES } from "../../services/columnValueFormatters";
 
 interface Props {
   file: ParsedFile;
@@ -23,21 +24,11 @@ interface Props {
   onIncludeParentsChange: (v: boolean) => void;
 }
 
-const READ_ONLY = new Set([
-  "mirror",
-  "board_relation",
-  "dependency",
-  "creation_log",
-  "formula",
-  "auto_number",
-  "item_id",
-  "last_updated",
-  "lookup",
-  "color_picker",
-  "button",
-  "file",
-  "subtasks",
-]);
+// Centralised — same set used by formatColumnValueForApi so the mapper UI
+// matches what the import orchestrator will actually try to write. Note
+// that board_relation/dependency are SUPPORTED writes (you can connect
+// items by id) so they're absent here on purpose.
+const READ_ONLY = READ_ONLY_COLUMN_TYPES;
 
 /**
  * Step-3 mapper. Renders two big cards stacked vertically:
@@ -71,8 +62,127 @@ export function ColumnMapper(props: Props) {
   );
   const writableBoardCols = schema.columns.filter((c) => !READ_ONLY.has(c.type));
 
+  // Mirror + formula + computed columns we silently dropped — surface the
+  // count and the names so users aren't confused why they're missing.
+  const skippedBoardCols = schema.columns.filter((c) => READ_ONLY.has(c.type));
+  const skippedSubitemCols = subitemColumns.filter((c) => READ_ONLY.has(c.type));
+
+  // Multi-level board exports lose hierarchy information on the way out of
+  // monday.com — flag this prominently so users don't expect the importer
+  // to magically reconstruct it.
+  const isMultiLevelExport =
+    file.kind === "flat" && !!file.mondayMultiLevel;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      {isMultiLevelExport && (
+        <div
+          style={{
+            padding: "12px 14px",
+            background: "hsl(38 92% 96%)",
+            border: "1px solid hsl(38 92% 80%)",
+            borderRadius: "var(--qi-radius)",
+            fontSize: 12.5,
+            color: "hsl(38 80% 28%)",
+            lineHeight: 1.55,
+          }}
+        >
+          <strong>Multi-level board export detected.</strong>{" "}
+          monday.com&apos;s multi-level XLSX export does not preserve the
+          parent/child hierarchy — every row will be created as a top-level
+          item. To re-create the hierarchy, add a <code>Parent</code> column
+          to a CSV with the parent item&apos;s name in each child row, then
+          upload that CSV instead.
+        </div>
+      )}
+
+      {(skippedBoardCols.length > 0 || skippedSubitemCols.length > 0) && (
+        <details
+          style={{
+            border: "1px solid hsl(var(--qi-border))",
+            borderRadius: "var(--qi-radius-sm)",
+            background: "hsl(var(--qi-bg))",
+            fontSize: 12,
+          }}
+        >
+          <summary
+            style={{
+              padding: "8px 12px",
+              cursor: "pointer",
+              userSelect: "none",
+              color: "hsl(var(--qi-fg-soft))",
+            }}
+          >
+            <strong>{skippedBoardCols.length + skippedSubitemCols.length}</strong>{" "}
+            non-writable column
+            {skippedBoardCols.length + skippedSubitemCols.length === 1 ? "" : "s"}
+            {" "}skipped (mirror, formula, auto-number, file, etc.) — click to
+            view
+          </summary>
+          <div
+            style={{
+              padding: "8px 12px 12px",
+              borderTop: "1px solid hsl(var(--qi-border))",
+              color: "hsl(var(--qi-muted-foreground))",
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+            }}
+          >
+            {skippedBoardCols.length > 0 && (
+              <div>
+                <div style={{ fontWeight: 600, color: "hsl(var(--qi-fg-soft))", marginBottom: 4 }}>
+                  Parent columns
+                </div>
+                {skippedBoardCols.map((c) => (
+                  <span
+                    key={c.id}
+                    style={{
+                      display: "inline-block",
+                      margin: "2px 6px 2px 0",
+                      padding: "2px 8px",
+                      borderRadius: 999,
+                      background: "hsl(var(--qi-muted))",
+                      fontSize: 11,
+                    }}
+                  >
+                    {c.title}{" "}
+                    <span style={{ opacity: 0.55, fontFamily: "var(--qi-font-mono)" }}>
+                      ({c.type})
+                    </span>
+                  </span>
+                ))}
+              </div>
+            )}
+            {skippedSubitemCols.length > 0 && schema.hierarchyType !== "multi_level" && (
+              <div>
+                <div style={{ fontWeight: 600, color: "hsl(var(--qi-fg-soft))", marginBottom: 4 }}>
+                  Subitem columns
+                </div>
+                {skippedSubitemCols.map((c) => (
+                  <span
+                    key={c.id}
+                    style={{
+                      display: "inline-block",
+                      margin: "2px 6px 2px 0",
+                      padding: "2px 8px",
+                      borderRadius: 999,
+                      background: "hsl(var(--qi-muted))",
+                      fontSize: 11,
+                    }}
+                  >
+                    {c.title}{" "}
+                    <span style={{ opacity: 0.55, fontFamily: "var(--qi-font-mono)" }}>
+                      ({c.type})
+                    </span>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </details>
+      )}
+
       {/* Mode picker */}
       {file.kind === "monday_export" && (
         <div>

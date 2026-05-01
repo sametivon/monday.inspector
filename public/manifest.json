@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Monday.com Inspector",
   "short_name": "monday.inspector",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, import/export, and more.",
   "author": "Fruition Services",
   "homepage_url": "https://mondayinspector.eu",

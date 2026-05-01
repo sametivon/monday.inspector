@@ -119,3 +119,223 @@ export function parseLinkValue(raw: string): { url: string; text: string } {
   }
   return { url: trimmed, text: trimmed };
 }
+
+/**
+ * Parse a 1–5 rating cell. Accepts "4", "4 stars", "★★★★", etc.
+ * Returns null if no integer 1–5 can be inferred.
+ */
+export function parseRatingValue(raw: string): { rating: number } | null {
+  const stars = (raw.match(/[★⭐✦]/g) ?? []).length;
+  if (stars >= 1 && stars <= 5) return { rating: stars };
+  const m = raw.match(/(\d+)/);
+  if (!m) return null;
+  const n = parseInt(m[1], 10);
+  if (Number.isNaN(n) || n < 1 || n > 5) return null;
+  return { rating: n };
+}
+
+/**
+ * Parse a country cell. Accepts:
+ *   "US"
+ *   "United States"
+ *   "US:United States"  (preferred — both halves)
+ * Returns null when a 2-letter code can't be inferred.
+ */
+export function parseCountryValue(
+  raw: string,
+): { countryCode: string; countryName: string } | null {
+  const v = raw.trim();
+  if (!v) return null;
+  if (v.includes(":")) {
+    const [code, name] = v.split(":", 2).map((s) => s.trim());
+    if (code.length === 2 && name) {
+      return { countryCode: code.toUpperCase(), countryName: name };
+    }
+  }
+  // Bare ISO-2 code
+  if (/^[A-Za-z]{2}$/.test(v)) {
+    return { countryCode: v.toUpperCase(), countryName: v.toUpperCase() };
+  }
+  // Bare full name — monday accepts countryCode + countryName, but without the
+  // code we can't be precise. Fall back to a heuristic that lets the user
+  // self-correct in the UI: send the value as both, monday will reject if the
+  // code is invalid and the row gets a clear error.
+  if (v.length >= 3 && v.length <= 56) {
+    return { countryCode: v.slice(0, 2).toUpperCase(), countryName: v };
+  }
+  return null;
+}
+
+/**
+ * Parse an "hour" cell (24h or 12h). Returns null when unparseable.
+ *   "14:30"     → { hour: 14, minute: 30 }
+ *   "2:30 PM"   → { hour: 14, minute: 30 }
+ *   "9"         → { hour: 9, minute: 0 }
+ */
+export function parseHourValue(
+  raw: string,
+): { hour: number; minute: number } | null {
+  const v = raw.trim();
+  if (!v) return null;
+  const ampmMatch = v.match(/^(\d{1,2})(?::(\d{1,2}))?\s*(AM|PM|am|pm)$/);
+  if (ampmMatch) {
+    let h = parseInt(ampmMatch[1], 10);
+    const m = ampmMatch[2] ? parseInt(ampmMatch[2], 10) : 0;
+    const isPm = /PM/i.test(ampmMatch[3]);
+    if (h === 12) h = 0;
+    if (isPm) h += 12;
+    if (h >= 0 && h <= 23 && m >= 0 && m <= 59) return { hour: h, minute: m };
+    return null;
+  }
+  const hm = v.match(/^(\d{1,2})(?::(\d{1,2}))?$/);
+  if (hm) {
+    const h = parseInt(hm[1], 10);
+    const m = hm[2] ? parseInt(hm[2], 10) : 0;
+    if (h >= 0 && h <= 23 && m >= 0 && m <= 59) return { hour: h, minute: m };
+  }
+  return null;
+}
+
+/**
+ * Parse a "week" cell — monday expects { week: { startDate, endDate } }.
+ * Accepts the same combined-date syntax as timeline ("YYYY-MM-DD - YYYY-MM-DD")
+ * or a single date that gets used as both endpoints.
+ */
+export function parseWeekValue(
+  raw: string,
+): { week: { startDate: string; endDate: string } } | null {
+  const tl = parseTimelineValue(raw);
+  if (!tl) return null;
+  return { week: { startDate: tl.from, endDate: tl.to } };
+}
+
+/**
+ * Parse a "location" cell. Optional lat/lng can be included via
+ *   "address|lat,lng"
+ * otherwise just sends the address string and lets monday geocode.
+ */
+export function parseLocationValue(
+  raw: string,
+): { address: string; lat?: number; lng?: number } | null {
+  const v = raw.trim();
+  if (!v) return null;
+  if (v.includes("|")) {
+    const [addr, coords] = v.split("|", 2).map((s) => s.trim());
+    const parts = coords.split(",").map((s) => s.trim());
+    if (parts.length === 2) {
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+      if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        return { address: addr, lat, lng };
+      }
+    }
+    return { address: addr };
+  }
+  return { address: v };
+}
+
+/** Parse a world-clock cell — IANA timezone string, e.g. "America/New_York" */
+export function parseWorldClockValue(raw: string): { timezone: string } | null {
+  const v = raw.trim();
+  if (!v || !/^[A-Za-z_]+\/[A-Za-z_]+/.test(v)) return null;
+  return { timezone: v };
+}
+
+/** Parse a phone cell. Optional country: "+1 555 1234 | US". */
+export function parsePhoneValue(raw: string): {
+  phone: string;
+  countryShortName: string;
+} {
+  const v = raw.trim();
+  if (v.includes("|")) {
+    const [phone, country] = v.split("|", 2).map((s) => s.trim());
+    return { phone, countryShortName: country.toUpperCase().slice(0, 2) || "US" };
+  }
+  return { phone: v, countryShortName: "US" };
+}
+
+/**
+ * Parse an email cell. Format: "user@host" or "user@host|Display Name".
+ */
+export function parseEmailValue(raw: string): { email: string; text: string } {
+  const v = raw.trim();
+  if (v.includes("|")) {
+    const [email, text] = v.split("|", 2).map((s) => s.trim());
+    return { email, text: text || email };
+  }
+  return { email: v, text: v };
+}
+
+/**
+ * Parse a connect-boards / dependency cell (comma- or semicolon-separated
+ * monday item IDs). The actual id resolution from item NAMES is handled in
+ * the import orchestrator (it has board context); this helper only handles
+ * the case where the user already has IDs in their CSV.
+ */
+export function parseItemIdsValue(raw: string): { item_ids: number[] } | null {
+  const v = raw.trim();
+  if (!v) return null;
+  const ids = v
+    .split(/[,;]\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => parseInt(s, 10))
+    .filter((n) => !Number.isNaN(n));
+  if (ids.length === 0) return null;
+  return { item_ids: ids };
+}
+
+/**
+ * Single source of truth for which monday.com column types CANNOT be set
+ * via the API at all (mirror columns are computed; formulas are computed;
+ * file requires a separate upload mutation; etc.). Used by the importer to
+ * filter out non-mappable columns from both parent and subitem mapping
+ * tables, plus to grey them out in the schema viewer.
+ */
+export const READ_ONLY_COLUMN_TYPES: ReadonlySet<string> = new Set([
+  // Computed columns — values come from other cells / boards
+  "mirror",
+  "formula",
+  "auto_number",
+  "lookup",
+  "creation_log",
+  "last_updated",
+  "item_id",
+  // UI-only
+  "button",
+  "color_picker",
+  // Files need a separate upload mutation we don't implement
+  "file",
+  // Subitems metadata, not a real column
+  "subtasks",
+]);
+
+/**
+ * Column types we DO support writing to via the API. Used as a positive
+ * allowlist when surfacing the "what we can map" count in the importer.
+ */
+export const SUPPORTED_COLUMN_TYPES: ReadonlySet<string> = new Set([
+  "text",
+  "long_text",
+  "numbers",
+  "status",
+  "dropdown",
+  "date",
+  "timeline",
+  "people",
+  "person",
+  "checkbox",
+  "link",
+  "email",
+  "phone",
+  "rating",
+  "country",
+  "hour",
+  "week",
+  "location",
+  "world_clock",
+  "tags", // accepts a comma-separated list of tag IDs (best-effort)
+  "board_relation", // connect boards — accepts item ids
+  "dependency", // accepts item ids
+  "name", // handled separately as the row name
+]);

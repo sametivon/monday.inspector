@@ -209,3 +209,205 @@ describe("parseLinkValue", () => {
     });
   });
 });
+
+import {
+  parseRatingValue,
+  parseCountryValue,
+  parseHourValue,
+  parseWeekValue,
+  parseLocationValue,
+  parseWorldClockValue,
+  parsePhoneValue,
+  parseEmailValue,
+  parseItemIdsValue,
+  READ_ONLY_COLUMN_TYPES,
+  SUPPORTED_COLUMN_TYPES,
+} from "./columnValueFormatters";
+
+describe("parseRatingValue", () => {
+  it.each([
+    ["1", { rating: 1 }],
+    ["3", { rating: 3 }],
+    ["5 stars", { rating: 5 }],
+    ["★★★★", { rating: 4 }],
+    ["6", null],
+    ["0", null],
+    ["", null],
+    ["abc", null],
+  ])("parses %s", (input, expected) => {
+    expect(parseRatingValue(input)).toEqual(expected);
+  });
+});
+
+describe("parseCountryValue", () => {
+  it("accepts ISO-2 + name combined", () => {
+    expect(parseCountryValue("US:United States")).toEqual({
+      countryCode: "US",
+      countryName: "United States",
+    });
+  });
+  it("uppercases bare ISO-2 codes", () => {
+    expect(parseCountryValue("us")).toEqual({
+      countryCode: "US",
+      countryName: "US",
+    });
+  });
+  it("returns null for empty", () => {
+    expect(parseCountryValue("")).toBeNull();
+    expect(parseCountryValue("  ")).toBeNull();
+  });
+  it("makes a best-effort guess from a full name", () => {
+    const r = parseCountryValue("Germany");
+    expect(r?.countryName).toBe("Germany");
+    expect(r?.countryCode).toMatch(/^[A-Z]{2}$/);
+  });
+});
+
+describe("parseHourValue", () => {
+  it.each([
+    ["14:30", { hour: 14, minute: 30 }],
+    ["09:05", { hour: 9, minute: 5 }],
+    ["9", { hour: 9, minute: 0 }],
+    ["2:30 PM", { hour: 14, minute: 30 }],
+    ["12:00 AM", { hour: 0, minute: 0 }],
+    ["12:00 PM", { hour: 12, minute: 0 }],
+    ["25:00", null],
+    ["abc", null],
+  ])("parses %s", (input, expected) => {
+    expect(parseHourValue(input)).toEqual(expected);
+  });
+});
+
+describe("parseWeekValue", () => {
+  it("wraps a timeline-style range as { week: { startDate, endDate } }", () => {
+    expect(parseWeekValue("2026-04-01 - 2026-04-07")).toEqual({
+      week: { startDate: "2026-04-01", endDate: "2026-04-07" },
+    });
+  });
+  it("treats a single date as both endpoints", () => {
+    expect(parseWeekValue("2026-04-01")).toEqual({
+      week: { startDate: "2026-04-01", endDate: "2026-04-01" },
+    });
+  });
+  it("returns null for unparseable input", () => {
+    expect(parseWeekValue("not a date")).toBeNull();
+  });
+});
+
+describe("parseLocationValue", () => {
+  it("accepts a bare address", () => {
+    expect(parseLocationValue("221B Baker Street")).toEqual({
+      address: "221B Baker Street",
+    });
+  });
+  it("parses the optional |lat,lng suffix", () => {
+    expect(parseLocationValue("221B Baker Street|51.5237,-0.1585")).toEqual({
+      address: "221B Baker Street",
+      lat: 51.5237,
+      lng: -0.1585,
+    });
+  });
+  it("ignores invalid coords gracefully", () => {
+    expect(parseLocationValue("Office|nope")).toEqual({ address: "Office" });
+  });
+});
+
+describe("parseWorldClockValue", () => {
+  it("accepts an IANA timezone", () => {
+    expect(parseWorldClockValue("America/New_York")).toEqual({
+      timezone: "America/New_York",
+    });
+  });
+  it("rejects bare names", () => {
+    expect(parseWorldClockValue("New York")).toBeNull();
+  });
+});
+
+describe("parsePhoneValue / parseEmailValue", () => {
+  it("phone defaults country to US", () => {
+    expect(parsePhoneValue("+1 555 1234")).toEqual({
+      phone: "+1 555 1234",
+      countryShortName: "US",
+    });
+  });
+  it("phone honours the |COUNTRY suffix", () => {
+    expect(parsePhoneValue("+44 20 1234 5678 | GB")).toEqual({
+      phone: "+44 20 1234 5678",
+      countryShortName: "GB",
+    });
+  });
+  it("email uses display-name suffix when present", () => {
+    expect(parseEmailValue("sam@x.io|Sam K")).toEqual({
+      email: "sam@x.io",
+      text: "Sam K",
+    });
+  });
+  it("email defaults display name to the address", () => {
+    expect(parseEmailValue("sam@x.io")).toEqual({
+      email: "sam@x.io",
+      text: "sam@x.io",
+    });
+  });
+});
+
+describe("parseItemIdsValue (board_relation / dependency)", () => {
+  it("parses comma-separated IDs", () => {
+    expect(parseItemIdsValue("123,456")).toEqual({
+      item_ids: [123, 456],
+    });
+  });
+  it("parses semicolon-separated IDs", () => {
+    expect(parseItemIdsValue("123; 456; 789")).toEqual({
+      item_ids: [123, 456, 789],
+    });
+  });
+  it("ignores non-numeric tokens", () => {
+    expect(parseItemIdsValue("123, abc, 456")).toEqual({
+      item_ids: [123, 456],
+    });
+  });
+  it("returns null when nothing numeric", () => {
+    expect(parseItemIdsValue("abc, xyz")).toBeNull();
+    expect(parseItemIdsValue("")).toBeNull();
+  });
+});
+
+describe("READ_ONLY_COLUMN_TYPES", () => {
+  it("flags computed columns as read-only", () => {
+    for (const t of [
+      "mirror",
+      "formula",
+      "auto_number",
+      "lookup",
+      "creation_log",
+      "last_updated",
+      "item_id",
+      "button",
+      "color_picker",
+      "file",
+      "subtasks",
+    ]) {
+      expect(READ_ONLY_COLUMN_TYPES.has(t)).toBe(true);
+    }
+  });
+
+  it("does not flag writable types as read-only", () => {
+    for (const t of [
+      "text",
+      "status",
+      "date",
+      "people",
+      "board_relation",
+      "dependency",
+      "rating",
+    ]) {
+      expect(READ_ONLY_COLUMN_TYPES.has(t)).toBe(false);
+    }
+  });
+
+  it("supported set covers everything that's writable in the importer", () => {
+    expect(SUPPORTED_COLUMN_TYPES.has("board_relation")).toBe(true);
+    expect(SUPPORTED_COLUMN_TYPES.has("dependency")).toBe(true);
+    expect(SUPPORTED_COLUMN_TYPES.has("rating")).toBe(true);
+  });
+});

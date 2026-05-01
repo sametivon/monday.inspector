@@ -9,9 +9,19 @@ import type {
 } from "../../utils/types";
 import {
   isCheckedValue,
+  parseCountryValue,
+  parseEmailValue,
+  parseHourValue,
+  parseItemIdsValue,
   parseLinkValue,
+  parseLocationValue,
+  parsePhoneValue,
+  parseRatingValue,
   parseTimelineValue,
   parseToYYYYMMDD,
+  parseWeekValue,
+  parseWorldClockValue,
+  READ_ONLY_COLUMN_TYPES,
   resolveStatusLabel,
 } from "../columnValueFormatters";
 import { gql, withRetry } from "./graphqlClient";
@@ -103,6 +113,9 @@ export async function formatColumnValueForApi(
   const trimmed = value?.trim();
   if (!trimmed) return null;
 
+  // Read-only / unwritable column types — never touch them.
+  if (READ_ONLY_COLUMN_TYPES.has(columnType)) return null;
+
   switch (columnType) {
     case "people":
     case "person": {
@@ -125,20 +138,130 @@ export async function formatColumnValueForApi(
     case "timeline":
       return parseTimelineValue(trimmed);
     case "dropdown":
-      return { labels: [trimmed] };
+      // Allow comma-separated list for multi-select dropdowns.
+      return {
+        labels: trimmed
+          .split(/\s*,\s*/)
+          .map((s) => s.trim())
+          .filter(Boolean),
+      };
     case "tags":
-      return null;
+      // Tag IDs only (we don't resolve names → ids yet); skip if non-numeric.
+      return parseItemIdsValue(trimmed);
     case "link":
       return parseLinkValue(trimmed);
+    case "rating":
+      return parseRatingValue(trimmed);
+    case "country":
+      return parseCountryValue(trimmed);
+    case "hour":
+      return parseHourValue(trimmed);
+    case "week":
+      return parseWeekValue(trimmed);
+    case "location":
+      return parseLocationValue(trimmed);
+    case "world_clock":
+      return parseWorldClockValue(trimmed);
+    case "email":
+      return parseEmailValue(trimmed);
+    case "phone":
+      return parsePhoneValue(trimmed);
+    case "board_relation":
+    case "dependency":
+      // Connect-boards / dependency: monday accepts { item_ids: [n,n] }.
+      // The value here is expected to already be numeric IDs (the ImportPage
+      // resolves names → ids before calling). Numeric-only fast path.
+      return parseItemIdsValue(trimmed);
     case "text":
     case "long_text":
     case "numbers":
-    case "email":
-    case "phone":
       return trimmed;
     default:
       return trimmed;
   }
+}
+
+/**
+ * Cache of linked-board item lookups for board_relation / dependency
+ * resolution. Keyed by `${token}:${linkedBoardId}` so a single import
+ * doesn't refetch the same neighbour board for every row.
+ */
+const linkedBoardItemsCache = new Map<string, Map<string, string>>();
+
+/**
+ * Pull the list of linked board IDs out of a board_relation column's
+ * settings_str. Both `boardIds` (newer) and `linkedPulseId` (older) are
+ * tolerated.
+ */
+function extractLinkedBoardIds(col: MondayColumn): string[] {
+  if (!col.settings_str) return [];
+  try {
+    const settings = JSON.parse(col.settings_str);
+    if (Array.isArray(settings.boardIds)) {
+      return settings.boardIds.map((b: unknown) => String(b));
+    }
+  } catch {
+    /* settings not JSON */
+  }
+  return [];
+}
+
+/**
+ * Resolve a board_relation cell value. Accepts:
+ *   • "123, 456"            — numeric IDs, pass through
+ *   • "Item Name"           — looked up in the linked board(s)
+ *   • "Item A, Item B; 789" — mixed; numeric tokens pass through, names
+ *                              are resolved against the linked board(s)
+ *
+ * Returns null when nothing resolves so the cell is silently skipped
+ * rather than poisoning the row.
+ */
+async function resolveBoardRelationValue(
+  token: string,
+  raw: string,
+  col: MondayColumn,
+): Promise<{ item_ids: number[] } | null> {
+  const tokens = raw
+    .split(/[,;]\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (tokens.length === 0) return null;
+
+  const numericIds: number[] = [];
+  const nameTokens: string[] = [];
+  for (const t of tokens) {
+    if (/^\d+$/.test(t)) numericIds.push(parseInt(t, 10));
+    else nameTokens.push(t);
+  }
+
+  if (nameTokens.length > 0) {
+    const linkedBoards = extractLinkedBoardIds(col);
+    for (const linkedBoardId of linkedBoards) {
+      const cacheKey = `${token}:${linkedBoardId}`;
+      let nameMap = linkedBoardItemsCache.get(cacheKey);
+      if (!nameMap) {
+        try {
+          const items = await fetchBoardItems(token, linkedBoardId);
+          nameMap = new Map(items.map((i) => [i.name.trim().toLowerCase(), i.id]));
+          linkedBoardItemsCache.set(cacheKey, nameMap);
+        } catch {
+          continue; // skip this linked board if it can't be read
+        }
+      }
+      for (const name of [...nameTokens]) {
+        const hit = nameMap.get(name.toLowerCase());
+        if (hit) {
+          const asNum = parseInt(hit, 10);
+          if (!Number.isNaN(asNum)) numericIds.push(asNum);
+          // Remove this token so we don't double-resolve across linked boards
+          nameTokens.splice(nameTokens.indexOf(name), 1);
+        }
+      }
+      if (nameTokens.length === 0) break;
+    }
+  }
+
+  return numericIds.length > 0 ? { item_ids: numericIds } : null;
 }
 
 /** Build column values with proper formatting for people/status/timeline columns */
@@ -214,6 +337,16 @@ export async function buildColumnValues(
 
     const raw = values[m.fileColumn] ?? "";
     if (!raw.trim()) continue;
+
+    // Connect-boards / dependency need linked-board context, which the
+    // generic formatter doesn't have — handle them here so we can resolve
+    // names → ids transparently.
+    if (col?.type === "board_relation" || col?.type === "dependency") {
+      const resolved = await resolveBoardRelationValue(token, raw.trim(), col);
+      if (resolved) result[m.mondayColumnId] = resolved;
+      continue;
+    }
+
     const formatted = col
       ? await formatColumnValueForApi(token, col.type, raw, col)
       : raw.trim();

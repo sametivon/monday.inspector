@@ -89,9 +89,17 @@ async function parseXLSX(file: File): Promise<ParsedFile> {
     throw new Error("Excel sheet is empty");
   }
 
-  // Detect monday.com export by its characteristic pattern
+  // Detect monday.com classic export (parent + indented subitem sections).
   if (isMondayExport(rawRows)) {
     return parseMondayExport(rawRows, file.name, sheetName);
+  }
+
+  // Detect monday.com multi-level board export. These have a single
+  // ["Name","Subitems",...] header row but NO repeated subitem-header
+  // sections — every row is a leaf in monday's flattened tree (the
+  // hierarchy is sadly stripped on export).
+  if (isMondayMultiLevelExport(rawRows)) {
+    return parseMondayMultiLevelExport(rawRows, file.name, sheetName);
   }
 
   // Otherwise treat as flat XLSX
@@ -127,10 +135,23 @@ function getRawRows(sheet: XLSX.WorkSheet): RawRow[] {
       const addr = XLSX.utils.encode_cell({ r, c });
       const cell = sheet[addr];
       if (cell) {
-        // Format dates properly (Excel serial dates are numbers 40000–60000)
+        // Format dates properly (Excel serial dates are numbers 40000–60000).
+        // Prefer the cell's pre-formatted text (cell.w) which is what monday
+        // ships in its exports; fall back to SSF.format if available; final
+        // fallback is the raw numeric value as a string.
         if (cell.t === "n" && cell.v > 40000 && cell.v < 60000) {
-          const date = XLSX.SSF.format("yyyy-mm-dd", cell.v);
-          row.push(date);
+          if (cell.w) {
+            row.push(String(cell.w));
+          } else if ((XLSX as { SSF?: { format: (fmt: string, v: unknown) => string } }).SSF?.format) {
+            row.push(
+              (XLSX as { SSF: { format: (fmt: string, v: unknown) => string } }).SSF.format(
+                "yyyy-mm-dd",
+                cell.v,
+              ),
+            );
+          } else {
+            row.push(String(cell.v));
+          }
         } else {
           row.push(String(cell.v ?? ""));
         }
@@ -169,6 +190,104 @@ export function isMondayExport(rows: RawRow[]): boolean {
   return hasParentHeaderRow && hasSubitemHeaderRow;
 }
 
+/**
+ * Detect a multi-level board export. Multi-level exports look like:
+ *
+ *   R0: BoardName
+ *   R1: GroupName (often the same as the board name)
+ *   R2: Name | Subitems | <columns…>     ← single header row
+ *   R3+: items (every row has its name in col A, no indentation, no
+ *        repeated subitem-header section)
+ *   Rlast: aggregate footer row (col A empty, contains rolled-up values)
+ *
+ * The presence of a `["Name","Subitems",...]` header WITHOUT any
+ * `["Subitems","Name",...]` row is the disambiguator.
+ */
+export function isMondayMultiLevelExport(rows: RawRow[]): boolean {
+  let hasParentHeaderRow = false;
+  let hasSubitemHeaderRow = false;
+
+  for (const row of rows) {
+    const colA = row[0]?.trim() ?? "";
+    const colB = row[1]?.trim() ?? "";
+    if (colA === "Name" && colB === "Subitems") hasParentHeaderRow = true;
+    if (colA === "Subitems" && colB === "Name") hasSubitemHeaderRow = true;
+  }
+
+  return hasParentHeaderRow && !hasSubitemHeaderRow;
+}
+
+/**
+ * Parse a monday.com multi-level board export into a flat ParsedFileFlat.
+ *
+ * Monday's export strips the parent/child hierarchy, so we don't pretend
+ * to reconstruct it — every leaf becomes a top-level item. The
+ * `mondayMultiLevel` flag on the returned ParsedFileFlat tells the
+ * importer UI to show a clear warning so the user isn't surprised.
+ */
+export function parseMondayMultiLevelExport(
+  rows: RawRow[],
+  fileName: string,
+  fallbackBoardName: string,
+): ParsedFileFlat {
+  // Locate the header row.
+  let headerIdx = -1;
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if ((r[0]?.trim() ?? "") === "Name" && (r[1]?.trim() ?? "") === "Subitems") {
+      headerIdx = i;
+      break;
+    }
+  }
+  if (headerIdx === -1) {
+    // Shouldn't happen if isMondayMultiLevelExport returned true, but fall
+    // back to the standard flat parser to avoid hard-failing.
+    return parseFlatXLSX(rows, fileName);
+  }
+
+  // Board name from R0; group name from the row immediately above the
+  // header (typical layout). Both are best-effort and only used for UI
+  // breadcrumbs.
+  const boardName = rows[0]?.[0]?.trim() || fallbackBoardName;
+  const groupName = headerIdx >= 1 ? rows[headerIdx - 1]?.[0]?.trim() || boardName : boardName;
+
+  // Headers minus the "Subitems" sentinel column (always empty in multi-level
+  // — it's a relic of the classic format).
+  const rawHeaders = rows[headerIdx].map((c) => c.trim());
+  const usefulHeaders = rawHeaders.filter((h) => h && h !== "Subitems");
+
+  // Map header label → column index (using rawHeaders since we kept the
+  // Subitems column for indexing).
+  const headerIndex = new Map<string, number>();
+  rawHeaders.forEach((h, i) => {
+    if (h && !headerIndex.has(h)) headerIndex.set(h, i);
+  });
+
+  const dataRows: Record<string, string>[] = [];
+  for (let r = headerIdx + 1; r < rows.length; r++) {
+    const row = rows[r];
+    // Skip rows where col A is empty — those are the aggregate / footer
+    // rows monday appends at the end.
+    if (!row[0] || row[0].trim() === "") continue;
+
+    const obj: Record<string, string> = {};
+    for (const h of usefulHeaders) {
+      const idx = headerIndex.get(h);
+      obj[h] = idx != null ? row[idx]?.trim() ?? "" : "";
+    }
+    dataRows.push(obj);
+  }
+
+  return {
+    kind: "flat",
+    headers: usefulHeaders,
+    rows: dataRows,
+    fileName,
+    rowCount: dataRows.length,
+    mondayMultiLevel: { boardName, groupName },
+  };
+}
+
 // ── Monday.com export parser ──────────────────────────────────────────
 
 /**
@@ -205,16 +324,44 @@ export function parseMondayExport(
   // Detect board name from first row (single non-empty cell)
   const detectedBoardName = rows[0]?.[0]?.trim() || boardName;
 
+  // Track whether we've ever seen a parent-headers row. Description rows
+  // sometimes appear immediately after the board name (e.g. R1 of the
+  // Financial Tracking export), and they have the same single-cell shape
+  // as a group name. We treat single-cell rows that occur BEFORE the
+  // first parent-headers row AND before the first real group has begun
+  // as a description, not a group name — but only the first such row.
+  // Anything after that we let the existing classifier handle.
+  let seenAnyParentHeader = false;
+
   function classifyRow(
     row: RawRow,
     rowIndex: number,
-  ): "board_name" | "group_name" | "parent_headers" | "parent_item" | "subitem_headers" | "subitem_row" | "empty" {
+  ):
+    | "board_name"
+    | "description"
+    | "group_name"
+    | "parent_headers"
+    | "parent_item"
+    | "subitem_headers"
+    | "subitem_row"
+    | "empty" {
     const colA = row[0]?.trim() ?? "";
     const colB = row[1]?.trim() ?? "";
     const nonEmpty = row.filter((c) => c.trim() !== "").length;
 
     if (nonEmpty === 0) return "empty";
     if (rowIndex === 0 && nonEmpty === 1) return "board_name";
+    // Single-cell row at rowIndex 1 (right after the board name), with no
+    // parent header seen yet, and the very next non-empty row is NOT a
+    // parent-headers row → description.
+    if (
+      rowIndex === 1 &&
+      nonEmpty === 1 &&
+      !seenAnyParentHeader &&
+      !nextNonEmptyIsParentHeader(rowIndex)
+    ) {
+      return "description";
+    }
     if (colA === "Name" && colB === "Subitems") return "parent_headers";
     if (colA === "Subitems" && colB === "Name") return "subitem_headers";
 
@@ -243,12 +390,29 @@ export function parseMondayExport(
     return "empty";
   }
 
+  /** Look ahead past empty rows for a Name|Subitems header. */
+  function nextNonEmptyIsParentHeader(fromRow: number): boolean {
+    for (let j = fromRow + 1; j < rows.length; j++) {
+      const r = rows[j];
+      const nonEmpty = r.filter((c) => c.trim() !== "").length;
+      if (nonEmpty === 0) continue;
+      const a = r[0]?.trim() ?? "";
+      const b = r[1]?.trim() ?? "";
+      return a === "Name" && b === "Subitems";
+    }
+    return false;
+  }
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const type = classifyRow(row, i);
 
     switch (type) {
       case "board_name":
+        break;
+
+      case "description":
+        // Skip — board-level description doesn't carry items.
         break;
 
       case "group_name": {
@@ -267,6 +431,7 @@ export function parseMondayExport(
       case "parent_headers": {
         parentHeaders = row.map((c) => c.trim()).filter((c) => c !== "");
         insideParentSection = true;
+        seenAnyParentHeader = true;
         break;
       }
 
