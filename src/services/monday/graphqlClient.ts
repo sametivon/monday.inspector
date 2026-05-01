@@ -41,7 +41,10 @@ async function postGraphQL<T = unknown>(
     headers: {
       "Content-Type": "application/json",
       Authorization: token,
-      "API-Version": "2024-10",
+      // 2026-04 unlocks multi-level boards: hierarchy_types argument,
+      // hierarchy_scope_config, and rollup column capabilities. Classic
+      // boards continue to work the same — additive change.
+      "API-Version": "2026-04",
     },
     body: JSON.stringify({ query, variables }),
   });

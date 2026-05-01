@@ -105,6 +105,7 @@ export function Inspector({ boardId, onClose, hidden }: InspectorProps) {
       boardId={boardId}
       connected={!!token && !board.error}
       loading={board.loading || board.itemsLoading}
+      hierarchyType={board.hierarchyType}
       onRefresh={handleRefresh}
       headerActions={
         <ComplexityBadge />
@@ -125,6 +126,7 @@ export function Inspector({ boardId, onClose, hidden }: InspectorProps) {
           groups={board.groups}
           subitemColumns={board.subitemColumns}
           subitemBoardId={board.subitemBoardId}
+          hierarchyType={board.hierarchyType}
           loading={board.loading}
         />
       )}

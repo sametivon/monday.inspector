@@ -5,6 +5,7 @@ import {
   fetchSubitemColumns,
   fetchBoardItemsWithColumns,
 } from "../services/inspectorApi";
+import type { BoardHierarchyType } from "../../services/monday/queries";
 
 export interface BoardData {
   boardName: string;
@@ -13,6 +14,8 @@ export interface BoardData {
   items: MondayItem[];
   subitemBoardId: string | null;
   subitemColumns: MondayColumn[];
+  /** "classic" or "multi_level" — drives import + createSubitem behaviour */
+  hierarchyType: BoardHierarchyType;
   /** True while schema (columns/groups) is loading */
   loading: boolean;
   /** True while items are loading separately */
@@ -32,6 +35,7 @@ export function useBoard(token: string, boardId: string | null): BoardData {
   const [items, setItems] = useState<MondayItem[]>([]);
   const [subitemBoardId, setSubitemBoardId] = useState<string | null>(null);
   const [subitemColumns, setSubitemColumns] = useState<MondayColumn[]>([]);
+  const [hierarchyType, setHierarchyType] = useState<BoardHierarchyType>("classic");
   const [loading, setLoading] = useState(false);
   const [itemsLoading, setItemsLoading] = useState(false);
   const [itemsLoadedCount, setItemsLoadedCount] = useState(0);
@@ -58,8 +62,13 @@ export function useBoard(token: string, boardId: string | null): BoardData {
       setColumns(schema.columns);
       setGroups(schema.groups);
       setSubitemBoardId(schema.subitemBoardId);
+      setHierarchyType(schema.hierarchyType);
 
-      if (schema.subitemBoardId) {
+      // Multi-level boards reuse the parent's column schema for children of
+      // every depth, so skip the second fetchSubitemColumns round-trip.
+      if (schema.hierarchyType === "multi_level") {
+        setSubitemColumns(schema.columns);
+      } else if (schema.subitemBoardId) {
         const subCols = await fetchSubitemColumns(token, schema.subitemBoardId);
         setSubitemColumns(subCols);
       } else {
@@ -120,6 +129,7 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     items,
     subitemBoardId,
     subitemColumns,
+    hierarchyType,
     loading,
     itemsLoading,
     itemsLoadedCount,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { BRAND } from "../utils/brandConfig";
 import { TokenCard } from "../components/TokenCard";
-import { Coffee, Globe, Layout, ArrowRight, Code2 } from "lucide-react";
+import { Coffee, Globe, Layout, ArrowRight, Code2, Download } from "lucide-react";
 
 type PageStatus =
   | { type: "loading" }
@@ -93,6 +93,17 @@ export const Popup: React.FC = () => {
     window.close();
   };
 
+  const openImporter = () => {
+    const boardId =
+      status.type === "monday_board" && status.boardId
+        ? `?boardId=${status.boardId}`
+        : "";
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("src/import/index.html") + boardId,
+    });
+    window.close();
+  };
+
   return (
     <div className="p-4 w-[340px]">
       {/* Header */}
@@ -177,6 +188,30 @@ export const Popup: React.FC = () => {
         </div>
       )}
 
+      {/* Importer launcher — full-page CSV/XLSX import with multi-level support */}
+      <button
+        onClick={openImporter}
+        className="w-full mb-2 rounded-lg border border-border bg-card hover:bg-accent hover:border-primary/40 transition-all p-3 text-left group"
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+            <Download className="w-4 h-4 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-semibold text-foreground flex items-center gap-1">
+              Importer
+              <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-emerald-100 text-emerald-700">
+                MULTI-LEVEL
+              </span>
+            </div>
+            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+              CSV / Excel into classic or multi-level boards · auto-detected
+            </p>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
+        </div>
+      </button>
+
       {/* Query Inspector launcher — full-page tool for power users */}
       <button
         onClick={openQueryInspector}
@@ -190,7 +225,7 @@ export const Popup: React.FC = () => {
             <div className="text-xs font-semibold text-foreground flex items-center gap-1">
               Query Inspector
               <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-primary/15 text-primary">
-                NEW
+                GraphQL
               </span>
             </div>
             <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
