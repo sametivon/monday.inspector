@@ -84,30 +84,78 @@ export function ColumnMapper(props: Props) {
     return t != null && READ_ONLY.has(t);
   }
 
-  // The actual file headers we hand to the mapping table — already
-  // pre-filtered against the corresponding board side.
-  const visibleParentHeaders =
+  // ── Timeline export-quirk filter ─────────────────────────────────────
+  // monday's classic XLSX export expands a single timeline column into
+  // THREE file columns: "<X>", "<X> - Start", and "<X> - End". The "<X>"
+  // file column already carries the full date range as text (formatColumn
+  // / parseTimelineValue handle the combined "YYYY-MM-DD - YYYY-MM-DD"),
+  // so the - Start / - End auxiliaries are redundant and only clutter the
+  // mapping table.
+  //
+  // We drop a "<X> - Start" / "<X> - End" file header iff:
+  //   • the file ALSO has the bare "<X>" column, AND
+  //   • the corresponding board side has a writable timeline column titled "<X>".
+  // That keeps user-named columns like "ETA - Start" untouched if the
+  // board doesn't actually have a matching timeline.
+  function isTimelineAux(
+    fileHeader: string,
+    siblingHeaders: ReadonlySet<string>,
+    typeByTitle: Map<string, string>,
+  ): boolean {
+    const m = fileHeader.match(/^(.+?)\s*-\s*(Start|End)$/i);
+    if (!m) return false;
+    const baseName = m[1];
+    if (!siblingHeaders.has(baseName)) return false;
+    return typeByTitle.get(baseName.toLowerCase()) === "timeline";
+  }
+
+  const parentFileHeadersAll =
+    file.kind === "monday_export" ? parentMappingHeaders(file) : [];
+  const subitemFileHeadersAll =
     file.kind === "monday_export"
-      ? parentMappingHeaders(file).filter((h) => !isReadOnlyParentHeader(h))
-      : [];
-  const visibleSubitemHeaders =
-    file.kind === "monday_export"
-      ? file.subitemHeaders
-          .filter((h) => h !== "Name")
-          .filter((h) => !isReadOnlySubitemHeader(h))
+      ? file.subitemHeaders.filter((h) => h !== "Name")
       : [];
 
-  // What got dropped — added to the existing skipped-columns disclosure.
-  const droppedParentFileHeaders =
-    file.kind === "monday_export"
-      ? parentMappingHeaders(file).filter(isReadOnlyParentHeader)
-      : [];
-  const droppedSubitemFileHeaders =
-    file.kind === "monday_export"
-      ? file.subitemHeaders
-          .filter((h) => h !== "Name")
-          .filter(isReadOnlySubitemHeader)
-      : [];
+  const parentFileHeadersSet = new Set(parentFileHeadersAll);
+  const subitemFileHeadersSet = new Set(subitemFileHeadersAll);
+
+  function isParentTimelineAux(h: string): boolean {
+    return isTimelineAux(h, parentFileHeadersSet, boardTypeByTitle);
+  }
+  function isSubitemTimelineAux(h: string): boolean {
+    return isTimelineAux(h, subitemFileHeadersSet, subitemTypeByTitle);
+  }
+
+  // The actual file headers we hand to the mapping table — already
+  // pre-filtered against the corresponding board side AND against the
+  // timeline export-quirk.
+  const visibleParentHeaders = parentFileHeadersAll.filter(
+    (h) => !isReadOnlyParentHeader(h) && !isParentTimelineAux(h),
+  );
+  const visibleSubitemHeaders = subitemFileHeadersAll.filter(
+    (h) => !isReadOnlySubitemHeader(h) && !isSubitemTimelineAux(h),
+  );
+
+  // What got dropped, partitioned by reason — surfaced in the disclosure
+  // below so the user knows nothing was hidden silently.
+  const droppedParentReadOnly = parentFileHeadersAll.filter(isReadOnlyParentHeader);
+  const droppedParentTimelineAux = parentFileHeadersAll.filter(
+    (h) => !isReadOnlyParentHeader(h) && isParentTimelineAux(h),
+  );
+  const droppedSubitemReadOnly = subitemFileHeadersAll.filter(isReadOnlySubitemHeader);
+  const droppedSubitemTimelineAux = subitemFileHeadersAll.filter(
+    (h) => !isReadOnlySubitemHeader(h) && isSubitemTimelineAux(h),
+  );
+
+  // Combined arrays to keep the existing disclosure layout simple.
+  const droppedParentFileHeaders = [
+    ...droppedParentReadOnly,
+    ...droppedParentTimelineAux,
+  ];
+  const droppedSubitemFileHeaders = [
+    ...droppedSubitemReadOnly,
+    ...droppedSubitemTimelineAux,
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -182,7 +230,10 @@ export function ColumnMapper(props: Props) {
                   Hidden parent file columns
                 </div>
                 {droppedParentFileHeaders.map((h) => {
-                  const t = boardTypeByTitle.get(h.toLowerCase()) ?? "?";
+                  const isAux = droppedParentTimelineAux.includes(h);
+                  const reason = isAux
+                    ? "timeline split — already in the bare 'Timeline' column"
+                    : boardTypeByTitle.get(h.toLowerCase()) ?? "?";
                   return (
                     <span
                       key={`p-${h}`}
@@ -202,7 +253,7 @@ export function ColumnMapper(props: Props) {
                           fontFamily: "var(--qi-font-mono)",
                         }}
                       >
-                        ({t})
+                        ({reason})
                       </span>
                     </span>
                   );
@@ -221,7 +272,10 @@ export function ColumnMapper(props: Props) {
                   Hidden subitem file columns
                 </div>
                 {droppedSubitemFileHeaders.map((h) => {
-                  const t = subitemTypeByTitle.get(h.toLowerCase()) ?? "?";
+                  const isAux = droppedSubitemTimelineAux.includes(h);
+                  const reason = isAux
+                    ? "timeline split — already in the bare 'Timeline' column"
+                    : subitemTypeByTitle.get(h.toLowerCase()) ?? "?";
                   return (
                     <span
                       key={`s-${h}`}
@@ -241,7 +295,7 @@ export function ColumnMapper(props: Props) {
                           fontFamily: "var(--qi-font-mono)",
                         }}
                       >
-                        ({t})
+                        ({reason})
                       </span>
                     </span>
                   );
