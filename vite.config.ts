@@ -28,6 +28,7 @@ export default defineConfig({
         popup: resolve(__dirname, "src/popup/index.html"),
         panel: resolve(__dirname, "src/panel/index.html"),
         query: resolve(__dirname, "src/query/index.html"),
+        importer: resolve(__dirname, "src/import/index.html"),
         background: resolve(__dirname, "src/background/index.ts"),
       },
       output: {

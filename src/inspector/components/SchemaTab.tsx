@@ -7,6 +7,7 @@ interface SchemaTabProps {
   groups: MondayGroup[];
   subitemColumns: MondayColumn[];
   subitemBoardId: string | null;
+  hierarchyType?: "classic" | "multi_level";
   loading: boolean;
 }
 
@@ -15,6 +16,7 @@ export function SchemaTab({
   groups,
   subitemColumns,
   subitemBoardId,
+  hierarchyType,
   loading,
 }: SchemaTabProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -101,6 +103,60 @@ export function SchemaTab({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* Board-type info card — explains classic vs multi-level so the user
+          knows which import / createSubitem path is in play. */}
+      <div
+        className="card"
+        style={{
+          background:
+            hierarchyType === "multi_level"
+              ? "linear-gradient(135deg, hsl(256 72% 96%), hsl(256 72% 99%))"
+              : "linear-gradient(135deg, hsl(220 60% 97%), hsl(220 60% 99%))",
+          borderColor:
+            hierarchyType === "multi_level"
+              ? "hsl(256 72% 86%)"
+              : "hsl(220 60% 88%)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span
+            style={{
+              padding: "3px 9px",
+              borderRadius: 999,
+              fontSize: 9.5,
+              fontWeight: 700,
+              letterSpacing: "0.04em",
+              background:
+                hierarchyType === "multi_level"
+                  ? "hsl(256 72% 56%)"
+                  : "hsl(220 70% 50%)",
+              color: "white",
+            }}
+          >
+            {hierarchyType === "multi_level" ? "MULTI-LEVEL" : "CLASSIC"}
+          </span>
+          <span style={{ fontSize: 11.5, fontWeight: 600 }}>
+            {hierarchyType === "multi_level"
+              ? "Items can have items underneath, up to 5 levels"
+              : "Parents + subitems on a separate subitem board"}
+          </span>
+        </div>
+        <div
+          style={{
+            fontSize: 10.5,
+            color: "hsl(var(--muted-foreground))",
+            marginTop: 5,
+            lineHeight: 1.5,
+          }}
+        >
+          {hierarchyType === "multi_level"
+            ? "All depths share one column schema. Imports use the same board id for every level via create_subitem."
+            : subitemBoardId
+              ? `Subitems live on board ${subitemBoardId}.`
+              : "This board has no subitems configured."}
+        </div>
+      </div>
+
       {/* Groups */}
       <div className="card">
         <div className="section-header" style={{ marginBottom: 6 }}>

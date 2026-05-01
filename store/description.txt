@@ -9,6 +9,13 @@ Monday.com Inspector gives you the power features that monday.com is missing. Bu
 
 No account needed. No hidden limits. Install, paste your API token, and go.
 
+WHAT'S NEW IN v1.5
+
+• Full-page Importer — dedicated importer page with a clear 4-step stepper (Connect → Upload → Map → Run). Sticky footer always shows the next action, the board you're targeting, and the import counts.
+• Multi-level board support — auto-detects monday.com's new multi-level boards (API 2026-04). Same import flow works for classic boards and multi-level boards: parents go on the main board, child items at any depth use create_subitem with the parent's id. No separate subitem-board lookup needed for multi-level.
+• Multi-level pill in the inline panel header so you always know which board model you're working with. The Schema tab now leads with a board-type info card explaining how that board's import path will work.
+• Open Importer / Open Query Inspector hand-offs from the inline panel and the popup so you can move from "in the board, quick check" to "I have all the room I need" in one click.
+
 WHAT'S NEW IN v1.4
 
 • Full-page Query Inspector — opens in its own tab with a 3-pane layout (templates · editor · results). 14 ready-made templates including queries for monday's new multi-level boards.

@@ -9,6 +9,8 @@ interface InspectorShellProps {
   boardId: string | null;
   connected: boolean;
   loading: boolean;
+  /** classic | multi_level — drives the board-type pill in the header */
+  hierarchyType?: "classic" | "multi_level";
   children: React.ReactNode;
   headerActions?: React.ReactNode;
   exportMenu?: React.ReactNode;
@@ -37,6 +39,7 @@ export function InspectorShell({
   boardId,
   connected,
   loading,
+  hierarchyType,
   children,
   headerActions,
   exportMenu,
@@ -164,6 +167,23 @@ export function InspectorShell({
           {boardId && (
             <span className="type-badge" style={{ fontSize: 9, fontFamily: "monospace", padding: "2px 7px" }}>
               #{boardId}
+            </span>
+          )}
+          {hierarchyType === "multi_level" && (
+            <span
+              title="Multi-level board: items can have items underneath, up to 5 levels deep. Subitem operations use the same board id."
+              style={{
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: "0.04em",
+                padding: "2px 7px",
+                borderRadius: 999,
+                background: "hsl(256 72% 95%)",
+                color: "hsl(256 72% 38%)",
+                border: "1px solid hsl(256 72% 86%)",
+              }}
+            >
+              MULTI-LEVEL
             </span>
           )}
           {/* Connection indicator */}

@@ -10,6 +10,7 @@ export {
 
 export {
   type BoardSchema,
+  type BoardHierarchyType,
   type WorkspaceUser,
   buildColumnValues,
   changeColumnValue,

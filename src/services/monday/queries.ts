@@ -257,17 +257,35 @@ async function fetchColumns(
 export const fetchBoardColumns = fetchColumns;
 export const fetchSubitemColumns = fetchColumns;
 
+/** Board hierarchy variant returned by monday.com on API 2026-04+ */
+export type BoardHierarchyType = "classic" | "multi_level";
+
 export interface BoardSchema {
   name: string;
   columns: MondayColumn[];
   groups: MondayGroup[];
+  /**
+   * For classic boards: id of the separate subitem board (looked up via
+   * the `subtasks` column's settings_str).
+   *
+   * For multi-level boards: equals the main `boardId`. There is no
+   * separate subitem board on multi-level boards — children of any depth
+   * live on the same board and use the same column set.
+   */
   subitemBoardId: string | null;
+  /** "classic" | "multi_level" — drives import/createSubitem behaviour. */
+  hierarchyType: BoardHierarchyType;
 }
 
 /**
- * Fetch board name, columns, groups, and subitem board ID in a single query.
- * Replaces four separate calls (fetchBoardName, fetchBoardColumns,
- * fetchBoardGroups, fetchSubitemBoardId) with one round-trip.
+ * Fetch board name, columns, groups, hierarchy type, and subitem board ID
+ * in a single query. Replaces four separate calls (fetchBoardName,
+ * fetchBoardColumns, fetchBoardGroups, fetchSubitemBoardId) with one
+ * round-trip.
+ *
+ * `hierarchy_types: [classic, multi_level]` is required (since 2026-04)
+ * to include multi-level boards in the result — they are excluded from
+ * the default `boards` query.
  */
 export async function fetchBoardSchema(
   token: string,
@@ -275,25 +293,80 @@ export async function fetchBoardSchema(
 ): Promise<BoardSchema> {
   const query = `
     query ($boardId: [ID!]!) {
-      boards(ids: $boardId) {
+      boards(ids: $boardId, hierarchy_types: [classic, multi_level]) {
         name
+        hierarchy_type
         columns { id title type settings_str }
         groups { id title }
       }
     }
   `;
-  const data = await gql<{
-    boards: { name: string; columns: MondayColumn[]; groups: MondayGroup[] }[];
-  }>(token, query, { boardId: [boardId] });
+  let board: {
+    name: string;
+    hierarchy_type?: BoardHierarchyType;
+    columns: MondayColumn[];
+    groups: MondayGroup[];
+  } | undefined;
+  try {
+    const data = await gql<{
+      boards: {
+        name: string;
+        hierarchy_type?: BoardHierarchyType;
+        columns: MondayColumn[];
+        groups: MondayGroup[];
+      }[];
+    }>(token, query, { boardId: [boardId] });
+    board = data.boards[0];
+  } catch (err) {
+    // If a workspace is on an older API version where hierarchy_types is
+    // unknown, fall back to the legacy query so classic-board users keep
+    // working.
+    if (/hierarchy_type|Unknown argument/i.test((err as Error).message)) {
+      const legacy = await gql<{
+        boards: { name: string; columns: MondayColumn[]; groups: MondayGroup[] }[];
+      }>(
+        token,
+        `query ($boardId: [ID!]!) {
+          boards(ids: $boardId) {
+            name
+            columns { id title type settings_str }
+            groups { id title }
+          }
+        }`,
+        { boardId: [boardId] },
+      );
+      board = legacy.boards[0];
+    } else {
+      throw err;
+    }
+  }
 
-  const board = data.boards[0];
-  if (!board) return { name: "", columns: [], groups: [], subitemBoardId: null };
+  if (!board) {
+    return {
+      name: "",
+      columns: [],
+      groups: [],
+      subitemBoardId: null,
+      hierarchyType: "classic",
+    };
+  }
+
+  const hierarchyType: BoardHierarchyType = board.hierarchy_type ?? "classic";
+
+  // Multi-level boards reuse the main board id for subitem operations and
+  // share the same column schema as the parent. Classic boards have a
+  // separate subitem board referenced by the `subtasks` column.
+  const subitemBoardId =
+    hierarchyType === "multi_level"
+      ? boardId
+      : extractSubitemBoardId(board.columns);
 
   return {
     name: board.name,
     columns: board.columns,
     groups: board.groups,
-    subitemBoardId: extractSubitemBoardId(board.columns),
+    subitemBoardId,
+    hierarchyType,
   };
 }
 

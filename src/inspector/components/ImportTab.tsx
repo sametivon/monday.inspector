@@ -514,6 +514,43 @@ export function ImportTab({ boardId, token }: ImportTabProps) {
         </div>
       )}
 
+      {/* "Open full Importer" hand-off — full page is much clearer for big imports */}
+      {step === "upload" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 10px",
+            marginBottom: 8,
+            background: "linear-gradient(135deg, hsl(256 72% 96%), hsl(256 72% 99%))",
+            border: "1px solid hsl(256 72% 88%)",
+            borderRadius: 8,
+            fontSize: 11,
+          }}
+        >
+          <span style={{ fontSize: 14 }}>↗</span>
+          <div style={{ flex: 1, lineHeight: 1.45 }}>
+            <strong style={{ color: "hsl(256 72% 36%)" }}>Use the full Importer</strong> for the
+            best experience — clear stepper, multi-level board support, big mapping table.
+          </div>
+          <button
+            className="btn-primary"
+            style={{ padding: "5px 9px", fontSize: 10, whiteSpace: "nowrap" }}
+            onClick={() => {
+              const url =
+                typeof chrome !== "undefined" && chrome.runtime?.getURL
+                  ? chrome.runtime.getURL("src/import/index.html")
+                  : "/src/import/index.html";
+              const sep = boardId ? "?boardId=" + boardId : "";
+              window.open(`${url}${sep}`, "_blank", "noopener,noreferrer");
+            }}
+          >
+            Open Importer
+          </button>
+        </div>
+      )}
+
       {/* Step 1: Upload */}
       {step === "upload" && (
         <div>
