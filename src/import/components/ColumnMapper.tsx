@@ -62,10 +62,52 @@ export function ColumnMapper(props: Props) {
   );
   const writableBoardCols = schema.columns.filter((c) => !READ_ONLY.has(c.type));
 
-  // Mirror + formula + computed columns we silently dropped — surface the
-  // count and the names so users aren't confused why they're missing.
-  const skippedBoardCols = schema.columns.filter((c) => READ_ONLY.has(c.type));
-  const skippedSubitemCols = subitemColumns.filter((c) => READ_ONLY.has(c.type));
+  // Lowercased title → type lookup. Used to drop file headers whose
+  // matching board column is read-only (e.g. mirror columns at the parent
+  // level that pull data from subitems, or Creation log auto-fields).
+  // Without this filter, those file headers showed up as mappable rows
+  // even though there was nothing useful to map them to — confusing users
+  // and bloating the UI.
+  const boardTypeByTitle = new Map(
+    schema.columns.map((c) => [c.title.toLowerCase(), c.type]),
+  );
+  const subitemTypeByTitle = new Map(
+    subitemColumns.map((c) => [c.title.toLowerCase(), c.type]),
+  );
+
+  function isReadOnlyParentHeader(fileHeader: string): boolean {
+    const t = boardTypeByTitle.get(fileHeader.toLowerCase());
+    return t != null && READ_ONLY.has(t);
+  }
+  function isReadOnlySubitemHeader(fileHeader: string): boolean {
+    const t = subitemTypeByTitle.get(fileHeader.toLowerCase());
+    return t != null && READ_ONLY.has(t);
+  }
+
+  // The actual file headers we hand to the mapping table — already
+  // pre-filtered against the corresponding board side.
+  const visibleParentHeaders =
+    file.kind === "monday_export"
+      ? parentMappingHeaders(file).filter((h) => !isReadOnlyParentHeader(h))
+      : [];
+  const visibleSubitemHeaders =
+    file.kind === "monday_export"
+      ? file.subitemHeaders
+          .filter((h) => h !== "Name")
+          .filter((h) => !isReadOnlySubitemHeader(h))
+      : [];
+
+  // What got dropped — added to the existing skipped-columns disclosure.
+  const droppedParentFileHeaders =
+    file.kind === "monday_export"
+      ? parentMappingHeaders(file).filter(isReadOnlyParentHeader)
+      : [];
+  const droppedSubitemFileHeaders =
+    file.kind === "monday_export"
+      ? file.subitemHeaders
+          .filter((h) => h !== "Name")
+          .filter(isReadOnlySubitemHeader)
+      : [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -90,7 +132,8 @@ export function ColumnMapper(props: Props) {
         </div>
       )}
 
-      {(skippedBoardCols.length > 0 || skippedSubitemCols.length > 0) && (
+      {(droppedParentFileHeaders.length > 0 ||
+        droppedSubitemFileHeaders.length > 0) && (
         <details
           style={{
             border: "1px solid hsl(var(--qi-border))",
@@ -107,11 +150,15 @@ export function ColumnMapper(props: Props) {
               color: "hsl(var(--qi-fg-soft))",
             }}
           >
-            <strong>{skippedBoardCols.length + skippedSubitemCols.length}</strong>{" "}
-            non-writable column
-            {skippedBoardCols.length + skippedSubitemCols.length === 1 ? "" : "s"}
-            {" "}skipped (mirror, formula, auto-number, file, etc.) — click to
-            view
+            <strong>
+              {droppedParentFileHeaders.length + droppedSubitemFileHeaders.length}
+            </strong>{" "}
+            file column
+            {droppedParentFileHeaders.length + droppedSubitemFileHeaders.length === 1
+              ? ""
+              : "s"}{" "}
+            hidden — they map to non-writable board columns (mirror, formula,
+            creation log, etc.). Click to view.
           </summary>
           <div
             style={{
@@ -120,57 +167,85 @@ export function ColumnMapper(props: Props) {
               color: "hsl(var(--qi-muted-foreground))",
               display: "flex",
               flexDirection: "column",
-              gap: 6,
+              gap: 10,
             }}
           >
-            {skippedBoardCols.length > 0 && (
+            {droppedParentFileHeaders.length > 0 && (
               <div>
-                <div style={{ fontWeight: 600, color: "hsl(var(--qi-fg-soft))", marginBottom: 4 }}>
-                  Parent columns
+                <div
+                  style={{
+                    fontWeight: 600,
+                    color: "hsl(var(--qi-fg-soft))",
+                    marginBottom: 4,
+                  }}
+                >
+                  Hidden parent file columns
                 </div>
-                {skippedBoardCols.map((c) => (
-                  <span
-                    key={c.id}
-                    style={{
-                      display: "inline-block",
-                      margin: "2px 6px 2px 0",
-                      padding: "2px 8px",
-                      borderRadius: 999,
-                      background: "hsl(var(--qi-muted))",
-                      fontSize: 11,
-                    }}
-                  >
-                    {c.title}{" "}
-                    <span style={{ opacity: 0.55, fontFamily: "var(--qi-font-mono)" }}>
-                      ({c.type})
+                {droppedParentFileHeaders.map((h) => {
+                  const t = boardTypeByTitle.get(h.toLowerCase()) ?? "?";
+                  return (
+                    <span
+                      key={`p-${h}`}
+                      style={{
+                        display: "inline-block",
+                        margin: "2px 6px 2px 0",
+                        padding: "2px 8px",
+                        borderRadius: 999,
+                        background: "hsl(var(--qi-muted))",
+                        fontSize: 11,
+                      }}
+                    >
+                      {h}{" "}
+                      <span
+                        style={{
+                          opacity: 0.6,
+                          fontFamily: "var(--qi-font-mono)",
+                        }}
+                      >
+                        ({t})
+                      </span>
                     </span>
-                  </span>
-                ))}
+                  );
+                })}
               </div>
             )}
-            {skippedSubitemCols.length > 0 && schema.hierarchyType !== "multi_level" && (
+            {droppedSubitemFileHeaders.length > 0 && (
               <div>
-                <div style={{ fontWeight: 600, color: "hsl(var(--qi-fg-soft))", marginBottom: 4 }}>
-                  Subitem columns
+                <div
+                  style={{
+                    fontWeight: 600,
+                    color: "hsl(var(--qi-fg-soft))",
+                    marginBottom: 4,
+                  }}
+                >
+                  Hidden subitem file columns
                 </div>
-                {skippedSubitemCols.map((c) => (
-                  <span
-                    key={c.id}
-                    style={{
-                      display: "inline-block",
-                      margin: "2px 6px 2px 0",
-                      padding: "2px 8px",
-                      borderRadius: 999,
-                      background: "hsl(var(--qi-muted))",
-                      fontSize: 11,
-                    }}
-                  >
-                    {c.title}{" "}
-                    <span style={{ opacity: 0.55, fontFamily: "var(--qi-font-mono)" }}>
-                      ({c.type})
+                {droppedSubitemFileHeaders.map((h) => {
+                  const t = subitemTypeByTitle.get(h.toLowerCase()) ?? "?";
+                  return (
+                    <span
+                      key={`s-${h}`}
+                      style={{
+                        display: "inline-block",
+                        margin: "2px 6px 2px 0",
+                        padding: "2px 8px",
+                        borderRadius: 999,
+                        background: "hsl(var(--qi-muted))",
+                        fontSize: 11,
+                      }}
+                    >
+                      {h}{" "}
+                      <span
+                        style={{
+                          opacity: 0.6,
+                          fontFamily: "var(--qi-font-mono)",
+                        }}
+                      >
+                        ({t})
+                      </span>
                     </span>
-                  </span>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -307,12 +382,13 @@ export function ColumnMapper(props: Props) {
           title={
             schema.hierarchyType === "multi_level"
               ? "Parent items mapping"
-              : `Parent mapping → board ${schema.columns.length} columns`
+              : `Parent mapping → ${writableBoardCols.length} writable board columns`
           }
-          fileHeaders={parentMappingHeaders(file)}
+          fileHeaders={visibleParentHeaders}
           mappings={parentMappings}
           onMappingsChange={onParentMappingsChange}
           targetCols={writableBoardCols}
+          autoMappedNote="Name → item name (auto)"
         />
       )}
 
@@ -322,12 +398,13 @@ export function ColumnMapper(props: Props) {
           title={
             schema.hierarchyType === "multi_level"
               ? "Child items mapping (same column schema)"
-              : `Subitem mapping → ${writableSubitemCols.length} writable columns`
+              : `Subitem mapping → ${writableSubitemCols.length} writable subitem columns`
           }
-          fileHeaders={file.subitemHeaders.filter((h) => h !== "Name")}
+          fileHeaders={visibleSubitemHeaders}
           mappings={mappings}
           onMappingsChange={onMappingsChange}
           targetCols={writableSubitemCols}
+          autoMappedNote="Name → subitem name (auto)"
         />
       ) : (
         <MappingTable
@@ -354,6 +431,8 @@ interface MappingTableProps {
   mappings: ColumnMapping[];
   onMappingsChange: (m: ColumnMapping[]) => void;
   targetCols: MondayColumn[];
+  /** Optional info row pinned at the top — e.g. "Name → item name (auto)". */
+  autoMappedNote?: string;
 }
 
 function MappingTable({
@@ -362,6 +441,7 @@ function MappingTable({
   mappings,
   onMappingsChange,
   targetCols,
+  autoMappedNote,
 }: MappingTableProps) {
   // Keep a stable mapping order matching fileHeaders so the UI doesn't reshuffle
   const byHeader = new Map(mappings.map((m) => [m.fileColumn, m]));
@@ -409,6 +489,36 @@ function MappingTable({
           overflow: "hidden",
         }}
       >
+        {autoMappedNote && (
+          <div
+            className="imp-mapping-row"
+            style={{
+              background: "hsl(142 71% 96%)",
+              fontSize: 11.5,
+              fontStyle: "italic",
+              color: "hsl(142 71% 28%)",
+            }}
+          >
+            <div className="imp-mapping-source" style={{ fontStyle: "normal" }}>
+              ✓ {autoMappedNote}
+            </div>
+            <div className="imp-mapping-arrow"></div>
+            <div style={{ fontSize: 11 }}>handled automatically</div>
+          </div>
+        )}
+        {ordered.length === 0 && !autoMappedNote && (
+          <div
+            style={{
+              padding: "14px 16px",
+              fontSize: 12.5,
+              color: "hsl(var(--qi-muted-foreground))",
+              textAlign: "center",
+            }}
+          >
+            No mappable columns — every file column on this side maps to a
+            non-writable board column. See the disclosure above.
+          </div>
+        )}
         {ordered.map((m) => (
           <div className="imp-mapping-row" key={m.fileColumn}>
             <div className="imp-mapping-source" title={m.fileColumn}>
