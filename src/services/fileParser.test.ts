@@ -3,7 +3,6 @@ import {
   isMondayExport,
   isMondayMultiLevelExport,
   parseMondayExport,
-  parseMondayMultiLevelExport,
 } from "./fileParser";
 
 // Tests for the monday.com hierarchical export parser.
@@ -326,55 +325,6 @@ describe("isMondayMultiLevelExport", () => {
   });
 });
 
-describe("parseMondayMultiLevelExport", () => {
-  it("flattens the Mollu export to top-level rows + flags mondayMultiLevel", () => {
-    const rows = [
-      ["Mollu"],
-      ["Mollu"],
-      ["Name", "Subitems", "People", "Status", "Timeline", "Date", "Dropdown", "Numbers", "Label"],
-      ["Phase 1", "", "", "Working on it, Done", "2026-04-30 - 2026-05-09", "", "1, 2", "", "Label 2"],
-      ["Task 1", "", "", "Working on it, Done", "2026-04-30 - 2026-05-09", "", "", "", "Label 2"],
-      ["Subitem Task", "", "", "Done", "2026-04-30 - 2026-04-30", "", "", "", "Label 2"],
-      ["Subitem Task 2", "", "", "Working on it", "2026-05-08 - 2026-05-09", "", "1"],
-      ["TEst", "", "", "Working on it", "2026-05-08 - 2026-05-09"],
-      ["Phase 2", "", "", "", "", "", "1"],
-      ["Task 2"],
-      // Aggregate footer row monday appends — col A empty, must be dropped.
-      ["", "", "", "", "4/30/26", "5/9/26", "", "", "0"],
-    ];
-    const result = parseMondayMultiLevelExport(rows, "Mollu.xlsx", "fallback");
-
-    expect(result.kind).toBe("flat");
-    expect(result.fileName).toBe("Mollu.xlsx");
-    expect(result.mondayMultiLevel?.boardName).toBe("Mollu");
-    expect(result.mondayMultiLevel?.groupName).toBe("Mollu");
-
-    // Subitems sentinel column is dropped from the visible header list.
-    expect(result.headers).not.toContain("Subitems");
-    expect(result.headers).toEqual([
-      "Name",
-      "People",
-      "Status",
-      "Timeline",
-      "Date",
-      "Dropdown",
-      "Numbers",
-      "Label",
-    ]);
-
-    // 7 data rows (Phase 1, Task 1, Subitem Task, Subitem Task 2, TEst,
-    // Phase 2, Task 2) — the trailing aggregate row is dropped.
-    expect(result.rowCount).toBe(7);
-    expect(result.rows[0].Name).toBe("Phase 1");
-    expect(result.rows[0].Status).toBe("Working on it, Done");
-    expect(result.rows[0].Timeline).toBe("2026-04-30 - 2026-05-09");
-    expect(result.rows[6].Name).toBe("Task 2");
-  });
-
-  it("falls back gracefully when the header row can't be located", () => {
-    const rows = [["Random data"], ["Nothing matches"]];
-    const result = parseMondayMultiLevelExport(rows, "f.xlsx", "Fallback");
-    // Should not throw; returns a degenerate but valid ParsedFileFlat.
-    expect(result.kind).toBe("flat");
-  });
-});
+// We deliberately don't have a parseMondayMultiLevelExport — see the
+// comment in fileParser.ts for why importing those exports isn't safe.
+// The detector still exists so parseFile() can throw a useful error.

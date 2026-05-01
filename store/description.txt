@@ -12,8 +12,11 @@ No account needed. No hidden limits. Install, paste your API token, and go.
 WHAT'S NEW IN v1.5
 
 • Full-page Importer — dedicated importer page with a clear 4-step stepper (Connect → Upload → Map → Run). Sticky footer always shows the next action, the board you're targeting, and the import counts.
-• Multi-level board support — auto-detects monday.com's new multi-level boards (API 2026-04). Same import flow works for classic boards and multi-level boards: parents go on the main board, child items at any depth use create_subitem with the parent's id. No separate subitem-board lookup needed for multi-level.
-• Multi-level pill in the inline panel header so you always know which board model you're working with. The Schema tab now leads with a board-type info card explaining how that board's import path will work.
+• Real-export shapes locked in — tested end-to-end against monday classic exports and improved the parser to handle description rows correctly (a row that used to swallow the first group's items).
+• Connect Boards (board_relation) writes — map a CSV column with item names or IDs and the importer will resolve them against the linked board(s) at write time. Per-token cache keeps a 200-row import to one round-trip per linked board.
+• 7 new column-type formatters — rating, country, hour, week, location, world_clock, plus richer email/phone shapes. Multi-select dropdowns accept comma-separated labels.
+• Centralised read-only column list — mirror, formula, auto-number, lookup, last-updated, item-id, button, color-picker, and file are skipped consistently in the mapper UI and the API formatter. Skipped columns are listed under a disclosure so nothing disappears silently.
+• Multi-level board awareness — the inline panel header, schema viewer, and importer all show a "MULTI-LEVEL" pill so you know which model you're on. The importer warns that parent rows on multi-level boards will roll up from their children. monday's native multi-level XLSX exports lose hierarchy on the way out and are explicitly refused with a clear message + recovery path (use a flat CSV with a Parent column).
 • Open Importer / Open Query Inspector hand-offs from the inline panel and the popup so you can move from "in the board, quick check" to "I have all the room I need" in one click.
 
 WHAT'S NEW IN v1.4

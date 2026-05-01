@@ -67,15 +67,9 @@ export function ColumnMapper(props: Props) {
   const skippedBoardCols = schema.columns.filter((c) => READ_ONLY.has(c.type));
   const skippedSubitemCols = subitemColumns.filter((c) => READ_ONLY.has(c.type));
 
-  // Multi-level board exports lose hierarchy information on the way out of
-  // monday.com — flag this prominently so users don't expect the importer
-  // to magically reconstruct it.
-  const isMultiLevelExport =
-    file.kind === "flat" && !!file.mondayMultiLevel;
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      {isMultiLevelExport && (
+      {schema.hierarchyType === "multi_level" && (
         <div
           style={{
             padding: "12px 14px",
@@ -87,12 +81,12 @@ export function ColumnMapper(props: Props) {
             lineHeight: 1.55,
           }}
         >
-          <strong>Multi-level board export detected.</strong>{" "}
-          monday.com&apos;s multi-level XLSX export does not preserve the
-          parent/child hierarchy — every row will be created as a top-level
-          item. To re-create the hierarchy, add a <code>Parent</code> column
-          to a CSV with the parent item&apos;s name in each child row, then
-          upload that CSV instead.
+          <strong>Importing into a multi-level board.</strong> On multi-level
+          boards, parent items&apos; column values are{" "}
+          <em>computed rollups</em> from their children — writes to those
+          columns silently no-op once children exist. The Importer will
+          create the rows you give it, but if you map columns to a parent-row
+          target, monday will keep its rolled-up value instead.
         </div>
       )}
 

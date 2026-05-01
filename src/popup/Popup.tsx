@@ -188,7 +188,7 @@ export const Popup: React.FC = () => {
         </div>
       )}
 
-      {/* Importer launcher — full-page CSV/XLSX import with multi-level support */}
+      {/* Importer launcher — full-page CSV/XLSX import for classic boards */}
       <button
         onClick={openImporter}
         className="w-full mb-2 rounded-lg border border-border bg-card hover:bg-accent hover:border-primary/40 transition-all p-3 text-left group"
@@ -200,12 +200,9 @@ export const Popup: React.FC = () => {
           <div className="flex-1 min-w-0">
             <div className="text-xs font-semibold text-foreground flex items-center gap-1">
               Importer
-              <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-emerald-100 text-emerald-700">
-                MULTI-LEVEL
-              </span>
             </div>
             <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
-              CSV / Excel into classic or multi-level boards · auto-detected
+              CSV / Excel into your boards · auto-detects monday exports
             </p>
           </div>
           <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
