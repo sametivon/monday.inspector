@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   fetchBoardSchema,
+  fetchSubitemColumns,
   runFullMondayExportImport,
   runMondayExportImport,
   runImport,
@@ -45,6 +46,11 @@ export function ImportPage() {
   const [schema, setSchema] = useState<BoardSchema | null>(null);
   const [schemaLoading, setSchemaLoading] = useState(false);
   const [schemaError, setSchemaError] = useState<string | null>(null);
+  // Subitem board's columns are fetched in a separate round-trip after the
+  // parent schema lands, because classic boards keep them on a different
+  // board (subitemBoardId). Multi-level boards share the parent's column
+  // schema, so we just reuse it.
+  const [subitemColumnsState, setSubitemColumnsState] = useState<MondayColumn[]>([]);
 
   // ── File state ─────────────────────────────────────────────────────
   const [file, setFile] = useState<ParsedFile | null>(null);
@@ -91,16 +97,36 @@ export function ImportPage() {
   useEffect(() => {
     if (!token || !boardId) {
       setSchema(null);
+      setSubitemColumnsState([]);
       return;
     }
     let cancelled = false;
     setSchemaLoading(true);
     setSchemaError(null);
     setSchema(null);
+    setSubitemColumnsState([]);
     fetchBoardSchema(token, boardId)
-      .then((s) => {
+      .then(async (s) => {
         if (cancelled) return;
         setSchema(s);
+        // Multi-level boards share the parent column schema for every
+        // depth — no separate subitem board to fetch.
+        if (s.hierarchyType === "multi_level") {
+          setSubitemColumnsState(s.columns);
+          return;
+        }
+        // Classic board: fetch the actual subitem board's columns.
+        if (s.subitemBoardId) {
+          try {
+            const subCols = await fetchSubitemColumns(token, s.subitemBoardId);
+            if (!cancelled) setSubitemColumnsState(subCols);
+          } catch {
+            // Non-fatal — the user can still import flat / parents-only.
+            if (!cancelled) setSubitemColumnsState([]);
+          }
+        } else {
+          setSubitemColumnsState([]);
+        }
       })
       .catch((err) => {
         if (cancelled) return;
@@ -124,12 +150,10 @@ export function ImportPage() {
   }, [running, progress, file, schema, token]);
 
   // ── Derived data ───────────────────────────────────────────────────
-  // For multi-level boards we use the parent's columns for subitems too.
-  const subitemColumns: MondayColumn[] = useMemo(() => {
-    if (!schema) return [];
-    if (schema.hierarchyType === "multi_level") return schema.columns;
-    return schema.columns;
-  }, [schema]);
+  // Use the columns we actually fetched (subitem board for classic, parent
+  // schema for multi-level) — NOT schema.columns directly, which was the
+  // pre-1.5.4 bug that made subitem-mapping dropdowns show parent columns.
+  const subitemColumns: MondayColumn[] = subitemColumnsState;
 
   const counts = useMemo(() => {
     if (!file) return { parents: 0, subitems: 0, total: 0 };

@@ -118,3 +118,95 @@ describe("ColumnMapper file-header filtering (sam_test scenario)", () => {
     expect(dropped).toEqual([]);
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────
+// Timeline export-quirk filter
+// monday.com classic export expands ONE timeline column into THREE
+// file columns: "<X>", "<X> - Start", "<X> - End". Only the bare "<X>"
+// column is needed for import — parseTimelineValue handles the combined
+// "YYYY-MM-DD - YYYY-MM-DD" string. The - Start / - End auxiliaries
+// are redundant and used to clutter the mapping table.
+// ─────────────────────────────────────────────────────────────────────
+
+function isTimelineAux(
+  fileHeader: string,
+  siblingHeaders: ReadonlySet<string>,
+  typeByTitle: Map<string, string>,
+): boolean {
+  const m = fileHeader.match(/^(.+?)\s*-\s*(Start|End)$/i);
+  if (!m) return false;
+  const baseName = m[1];
+  if (!siblingHeaders.has(baseName)) return false;
+  return typeByTitle.get(baseName.toLowerCase()) === "timeline";
+}
+
+describe("Timeline export-quirk filter", () => {
+  it("flags 'Timeline - Start' / '- End' as aux when bare 'Timeline' is also in the file", () => {
+    const headers = new Set(["Timeline", "Timeline - Start", "Timeline - End"]);
+    const types = new Map([["timeline", "timeline"]]);
+    expect(isTimelineAux("Timeline - Start", headers, types)).toBe(true);
+    expect(isTimelineAux("Timeline - End", headers, types)).toBe(true);
+    expect(isTimelineAux("Timeline", headers, types)).toBe(false);
+  });
+
+  it("does NOT flag a user-named '<X> - Start' if the file has no bare '<X>'", () => {
+    // The file only has the - Start column; the user explicitly wants
+    // to map this single date column. Don't drop it.
+    const headers = new Set(["ETA - Start"]);
+    const types = new Map([["eta", "timeline"]]);
+    expect(isTimelineAux("ETA - Start", headers, types)).toBe(false);
+  });
+
+  it("does NOT flag '<X> - Start' when '<X>' isn't a timeline column on the board", () => {
+    // E.g. the user has a custom "Sprint" status column and also
+    // happens to have a "Sprint - Start" date column. Both real.
+    const headers = new Set(["Sprint", "Sprint - Start"]);
+    const types = new Map([["sprint", "status"]]);
+    expect(isTimelineAux("Sprint - Start", headers, types)).toBe(false);
+  });
+
+  it("is case-insensitive on the suffix", () => {
+    const headers = new Set(["Timeline", "Timeline - start", "Timeline - END"]);
+    const types = new Map([["timeline", "timeline"]]);
+    expect(isTimelineAux("Timeline - start", headers, types)).toBe(true);
+    expect(isTimelineAux("Timeline - END", headers, types)).toBe(true);
+  });
+
+  it("correctly drops the parent Timeline expansion in the real sam_test header row", () => {
+    // The sam_test parent header row, post the Subitems-sentinel strip.
+    const parentHeaders = [
+      "People",
+      "Test Stage Type",
+      "System / Equipment",
+      "Level / Area",
+      "Timeline",
+      "Priority",
+      "Status",
+      "Blocker / Comment",
+      "Timeline - Start",
+      "Timeline - End",
+      "Creation log",
+      "link to sam test",
+    ];
+    const headerSet = new Set(parentHeaders);
+    // Plausible board: ONE Timeline (timeline) column, the - Start / - End
+    // are not real board columns at all.
+    const boardTypes = new Map<string, string>([
+      ["people", "people"],
+      ["test stage type", "status"],
+      ["system / equipment", "dropdown"],
+      ["level / area", "dropdown"],
+      ["timeline", "timeline"],
+      ["priority", "status"],
+      ["status", "status"],
+      ["blocker / comment", "long_text"],
+      ["creation log", "creation_log"],
+      ["link to sam test", "board_relation"],
+    ]);
+
+    const dropped = parentHeaders.filter((h) =>
+      isTimelineAux(h, headerSet, boardTypes),
+    );
+    expect(dropped).toEqual(["Timeline - Start", "Timeline - End"]);
+  });
+});
