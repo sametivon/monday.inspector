@@ -193,6 +193,11 @@
   min-height: 30px;
   position: relative;
   overflow: hidden;
+  /* Native browser virtualization: skip rendering offscreen rows.
+     contain-intrinsic-size reserves layout space so the scrollbar
+     doesn't jump as rows get rendered/hidden. */
+  content-visibility: auto;
+  contain-intrinsic-size: 30px;
 }
 .tree-item:hover {
   background: hsl(var(--muted));
