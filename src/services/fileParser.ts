@@ -94,12 +94,21 @@ async function parseXLSX(file: File): Promise<ParsedFile> {
     return parseMondayExport(rawRows, file.name, sheetName);
   }
 
-  // Detect monday.com multi-level board export. These have a single
-  // ["Name","Subitems",...] header row but NO repeated subitem-header
-  // sections — every row is a leaf in monday's flattened tree (the
-  // hierarchy is sadly stripped on export).
+  // Detect monday.com multi-level board export and refuse it explicitly.
+  // monday's multi-level XLSX export strips the parent-child hierarchy
+  // (only the root prefix is kept; intermediate parents are lost), so any
+  // import we did from it would create disconnected top-level items with
+  // duplicated column values that the user can't undo. Refuse with a
+  // clear message + recovery path instead.
   if (isMondayMultiLevelExport(rawRows)) {
-    return parseMondayMultiLevelExport(rawRows, file.name, sheetName);
+    throw new Error(
+      "This is a monday.com multi-level board export. monday strips the " +
+        "parent–child hierarchy from these XLSX exports, so we cannot import " +
+        "them safely (every leaf would become a duplicated top-level item). " +
+        "To bulk-import into a multi-level board, use a flat CSV with a " +
+        "'Parent' column containing each leaf's parent name, or call " +
+        "create_subitem directly via the Query Inspector.",
+    );
   }
 
   // Otherwise treat as flat XLSX
@@ -198,10 +207,13 @@ export function isMondayExport(rows: RawRow[]): boolean {
  *   R2: Name | Subitems | <columns…>     ← single header row
  *   R3+: items (every row has its name in col A, no indentation, no
  *        repeated subitem-header section)
- *   Rlast: aggregate footer row (col A empty, contains rolled-up values)
  *
  * The presence of a `["Name","Subitems",...]` header WITHOUT any
  * `["Subitems","Name",...]` row is the disambiguator.
+ *
+ * We detect them only to refuse them explicitly — monday's export strips
+ * the hierarchy in a way that makes safe re-import impossible. See
+ * parseFile() above for the user-facing error message.
  */
 export function isMondayMultiLevelExport(rows: RawRow[]): boolean {
   let hasParentHeaderRow = false;
@@ -215,77 +227,6 @@ export function isMondayMultiLevelExport(rows: RawRow[]): boolean {
   }
 
   return hasParentHeaderRow && !hasSubitemHeaderRow;
-}
-
-/**
- * Parse a monday.com multi-level board export into a flat ParsedFileFlat.
- *
- * Monday's export strips the parent/child hierarchy, so we don't pretend
- * to reconstruct it — every leaf becomes a top-level item. The
- * `mondayMultiLevel` flag on the returned ParsedFileFlat tells the
- * importer UI to show a clear warning so the user isn't surprised.
- */
-export function parseMondayMultiLevelExport(
-  rows: RawRow[],
-  fileName: string,
-  fallbackBoardName: string,
-): ParsedFileFlat {
-  // Locate the header row.
-  let headerIdx = -1;
-  for (let i = 0; i < rows.length; i++) {
-    const r = rows[i];
-    if ((r[0]?.trim() ?? "") === "Name" && (r[1]?.trim() ?? "") === "Subitems") {
-      headerIdx = i;
-      break;
-    }
-  }
-  if (headerIdx === -1) {
-    // Shouldn't happen if isMondayMultiLevelExport returned true, but fall
-    // back to the standard flat parser to avoid hard-failing.
-    return parseFlatXLSX(rows, fileName);
-  }
-
-  // Board name from R0; group name from the row immediately above the
-  // header (typical layout). Both are best-effort and only used for UI
-  // breadcrumbs.
-  const boardName = rows[0]?.[0]?.trim() || fallbackBoardName;
-  const groupName = headerIdx >= 1 ? rows[headerIdx - 1]?.[0]?.trim() || boardName : boardName;
-
-  // Headers minus the "Subitems" sentinel column (always empty in multi-level
-  // — it's a relic of the classic format).
-  const rawHeaders = rows[headerIdx].map((c) => c.trim());
-  const usefulHeaders = rawHeaders.filter((h) => h && h !== "Subitems");
-
-  // Map header label → column index (using rawHeaders since we kept the
-  // Subitems column for indexing).
-  const headerIndex = new Map<string, number>();
-  rawHeaders.forEach((h, i) => {
-    if (h && !headerIndex.has(h)) headerIndex.set(h, i);
-  });
-
-  const dataRows: Record<string, string>[] = [];
-  for (let r = headerIdx + 1; r < rows.length; r++) {
-    const row = rows[r];
-    // Skip rows where col A is empty — those are the aggregate / footer
-    // rows monday appends at the end.
-    if (!row[0] || row[0].trim() === "") continue;
-
-    const obj: Record<string, string> = {};
-    for (const h of usefulHeaders) {
-      const idx = headerIndex.get(h);
-      obj[h] = idx != null ? row[idx]?.trim() ?? "" : "";
-    }
-    dataRows.push(obj);
-  }
-
-  return {
-    kind: "flat",
-    headers: usefulHeaders,
-    rows: dataRows,
-    fileName,
-    rowCount: dataRows.length,
-    mondayMultiLevel: { boardName, groupName },
-  };
 }
 
 // ── Monday.com export parser ──────────────────────────────────────────

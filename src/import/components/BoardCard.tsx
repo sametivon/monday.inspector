@@ -120,19 +120,26 @@ export function BoardCard({
       {schema?.hierarchyType === "multi_level" && (
         <div
           style={{
-            background: "hsl(262 84% 97%)",
-            border: "1px solid hsl(262 84% 88%)",
+            background: "hsl(38 92% 96%)",
+            border: "1px solid hsl(38 92% 80%)",
             borderRadius: "var(--qi-radius)",
             padding: "10px 12px",
             fontSize: 12,
-            color: "hsl(262 60% 32%)",
+            color: "hsl(38 80% 28%)",
             lineHeight: 1.55,
           }}
         >
-          <strong>Multi-level board detected.</strong> All items share one column
-          schema. The Importer creates parents on this board, then nests
-          children of any depth using the parent&apos;s id — no separate
-          subitem-board needed.
+          <strong>Heads up — multi-level board.</strong> Only LEAF items
+          (rows with no children) accept column-value writes; values on
+          parents are computed rollups from their descendants. The Importer
+          will create rows you give it, but mappings to a row that ends up
+          with children will be silently ignored by monday once the
+          children exist. <br />
+          <br />
+          monday&apos;s native multi-level XLSX exports lose the parent /
+          child structure on the way out, so we don&apos;t accept them as
+          import sources. Use a flat CSV with a <code>Parent</code> column
+          to import children at any depth.
         </div>
       )}
 

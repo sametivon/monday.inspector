@@ -52,16 +52,6 @@ export interface ParsedFileFlat {
   rows: Record<string, string>[];
   fileName: string;
   rowCount: number;
-  /**
-   * Set when the upload was actually a monday.com multi-level board export.
-   * Monday's multi-level XLSX strips the parent-child hierarchy on the way
-   * out, so we surface the import as a flat list of top-level items but
-   * preserve the board/group metadata for UI breadcrumbs and warnings.
-   */
-  mondayMultiLevel?: {
-    boardName: string;
-    groupName: string;
-  };
 }
 
 /** A monday.com hierarchical export */
