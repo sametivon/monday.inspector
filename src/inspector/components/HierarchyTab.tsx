@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { MondayGroup, MondayItem } from "../../utils/types";
 import { fetchSubitems } from "../services/inspectorApi";
 import type { Action } from "../hooks/useInspectorStore";
@@ -89,10 +89,36 @@ export function HierarchyTab({
   };
 
   const query = searchQuery.toLowerCase().trim();
-  const matchesSearch = (item: MondayItem) =>
-    !query || item.name.toLowerCase().includes(query) || item.id.includes(query);
 
-  const filteredItems = () => items.filter(matchesSearch);
+  // Memoize the expensive shape — rebuilding a Map of 5000 items on every
+  // keystroke / selection change was the main render-time cost on big boards.
+  const { itemsByGroup, filtered } = useMemo(() => {
+    const matches = (item: MondayItem) =>
+      !query ||
+      item.name.toLowerCase().includes(query) ||
+      item.id.includes(query);
+
+    const byGroup = new Map<string, MondayItem[]>();
+    const filteredList: MondayItem[] = [];
+    for (const item of items) {
+      if (matches(item)) filteredList.push(item);
+      const groupId = item.group?.id ?? "__ungrouped__";
+      const arr = byGroup.get(groupId);
+      if (arr) arr.push(item);
+      else byGroup.set(groupId, [item]);
+    }
+    return { itemsByGroup: byGroup, filtered: filteredList };
+  }, [items, query]);
+
+  const matchesSearch = useCallback(
+    (item: MondayItem) =>
+      !query ||
+      item.name.toLowerCase().includes(query) ||
+      item.id.includes(query),
+    [query],
+  );
+
+  const filteredItems = () => filtered;
 
   if (loading && items.length === 0) {
     return (
@@ -112,13 +138,6 @@ export function HierarchyTab({
     );
   }
 
-  const itemsByGroup = new Map<string, MondayItem[]>();
-  for (const item of items) {
-    const groupId = item.group?.id ?? "__ungrouped__";
-    if (!itemsByGroup.has(groupId)) itemsByGroup.set(groupId, []);
-    itemsByGroup.get(groupId)!.push(item);
-  }
-
   const checkboxStyle: React.CSSProperties = {
     width: 14, height: 14, cursor: "pointer", flexShrink: 0, accentColor: "hsl(262 83% 58%)",
   };
@@ -136,7 +155,14 @@ export function HierarchyTab({
 
       {/* Selection bar */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6, fontSize: 10, color: "hsl(var(--muted-foreground))" }}>
-        <span>{items.length} items</span>
+        <span>
+          {items.length} items
+          {loading && (
+            <span style={{ marginLeft: 4, color: "hsl(262 83% 58%)" }}>
+              · loading more…
+            </span>
+          )}
+        </span>
         <span>·</span>
         <button
           className="btn-ghost"

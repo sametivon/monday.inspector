@@ -10,6 +10,7 @@ import {
   fetchSubitemBoardId as _fetchSubitemBoardId,
   fetchSubitemColumns as _fetchSubitemColumns,
   fetchSubitems as _fetchSubitems,
+  fetchSubitemsForMany as _fetchSubitemsForMany,
   fetchBoardSchema as _fetchBoardSchema,
   changeColumnValue as _changeColumnValue,
   deleteItem as _deleteItem,
@@ -73,9 +74,13 @@ export async function fetchBoardGroups(token: string, boardId: string): Promise<
   return logged("fetchBoardGroups", { boardId }, () => _fetchBoardGroups(token, boardId));
 }
 
-export async function fetchBoardItemsWithColumns(token: string, boardId: string): Promise<MondayItem[]> {
+export async function fetchBoardItemsWithColumns(
+  token: string,
+  boardId: string,
+  onPage?: (page: MondayItem[], total: number) => void,
+): Promise<MondayItem[]> {
   return logged("fetchBoardItemsWithColumns", { boardId }, () =>
-    _fetchBoardItemsWithColumns(token, boardId),
+    _fetchBoardItemsWithColumns(token, boardId, onPage),
   );
 }
 
@@ -91,6 +96,15 @@ export async function fetchSubitemColumns(token: string, boardId: string): Promi
 
 export async function fetchSubitems(token: string, parentItemId: string): Promise<MondayItem[]> {
   return logged("fetchSubitems", { parentItemId }, () => _fetchSubitems(token, parentItemId));
+}
+
+export async function fetchSubitemsForMany(
+  token: string,
+  parentItemIds: string[],
+): Promise<Record<string, MondayItem[]>> {
+  return logged("fetchSubitemsForMany", { count: parentItemIds.length }, () =>
+    _fetchSubitemsForMany(token, parentItemIds),
+  );
 }
 
 export async function changeColumnValue(

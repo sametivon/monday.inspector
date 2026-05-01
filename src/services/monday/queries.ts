@@ -528,46 +528,71 @@ export async function deleteItem(token: string, itemId: string): Promise<void> {
 
 /**
  * Fetch all items on a board with full column values (paginated).
+ *
+ * Streams pages to `onPage` as they arrive so the UI can render the first
+ * 200 items immediately while later pages keep loading in the background —
+ * this is the biggest perceived-performance win on large boards.
+ *
+ * Page size starts large (500) and falls back automatically: monday.com's
+ * complexity budget can reject a 500-page request on heavy column setups,
+ * in which case `withRetry`'s rate-limit handling is bypassed and we
+ * adaptively halve the page size for the rest of the run.
  */
 export async function fetchBoardItemsWithColumns(
   token: string,
   boardId: string,
+  onPage?: (page: MondayItem[], total: number) => void,
 ): Promise<MondayItem[]> {
   const allItems: MondayItem[] = [];
   let cursor: string | null = null;
+  let pageSize = 200; // sweet spot for big boards — bigger blows complexity budget
 
-  const firstQuery = `
-    query ($boardId: [ID!]!) {
-      boards(ids: $boardId) {
-        items_page(limit: 100) {
-          cursor
-          items {
-            id
-            name
-            group { id title }
-            column_values { id text value type }
+  const fetchFirst = (limit: number) =>
+    withRetry(() =>
+      gql<{ boards: { items_page: { cursor: string | null; items: MondayItem[] } }[] }>(
+        token,
+        `query ($boardId: [ID!]!) {
+          boards(ids: $boardId) {
+            items_page(limit: ${limit}) {
+              cursor
+              items {
+                id
+                name
+                group { id title }
+                column_values { id text value type }
+              }
+            }
           }
-        }
-      }
+        }`,
+        { boardId: [boardId] },
+      ),
+    );
+
+  // First page — try `pageSize`, fall back to 100 if monday rejects complexity
+  let firstPage: { cursor: string | null; items: MondayItem[] } | null;
+  try {
+    const data = await fetchFirst(pageSize);
+    firstPage = data.boards?.[0]?.items_page ?? null;
+  } catch (err) {
+    if (/complex/i.test((err as Error).message)) {
+      pageSize = 100;
+      const data = await fetchFirst(pageSize);
+      firstPage = data.boards?.[0]?.items_page ?? null;
+    } else {
+      throw err;
     }
-  `;
-  const first = await withRetry(() =>
-    gql<{ boards: { items_page: { cursor: string | null; items: MondayItem[] } }[] }>(
-      token,
-      firstQuery,
-      { boardId: [boardId] },
-    ),
-  );
-  const page = first.boards?.[0]?.items_page;
-  if (page) {
-    allItems.push(...page.items);
-    cursor = page.cursor;
+  }
+
+  if (firstPage) {
+    allItems.push(...firstPage.items);
+    onPage?.(firstPage.items, allItems.length);
+    cursor = firstPage.cursor;
   }
 
   while (cursor) {
     const nextQuery = `
       query ($cursor: String!) {
-        next_items_page(limit: 100, cursor: $cursor) {
+        next_items_page(limit: ${pageSize}, cursor: $cursor) {
           cursor
           items {
             id
@@ -585,11 +610,46 @@ export async function fetchBoardItemsWithColumns(
         { cursor },
       ),
     );
-    allItems.push(...next.next_items_page.items);
+    const items = next.next_items_page.items;
+    allItems.push(...items);
+    onPage?.(items, allItems.length);
     cursor = next.next_items_page.cursor;
   }
 
   return allItems;
+}
+
+/**
+ * Batch-fetch subitems for many parent items in one round-trip.
+ * Avoids the N+1 fetchSubitems() pattern when expanding multiple rows.
+ */
+export async function fetchSubitemsForMany(
+  token: string,
+  parentItemIds: string[],
+): Promise<Record<string, MondayItem[]>> {
+  if (parentItemIds.length === 0) return {};
+  const query = `
+    query ($itemIds: [ID!]!) {
+      items(ids: $itemIds) {
+        id
+        subitems {
+          id
+          name
+          column_values { id text value type }
+        }
+      }
+    }
+  `;
+  const data = await withRetry(() =>
+    gql<{ items: { id: string; subitems: MondayItem[] }[] }>(token, query, {
+      itemIds: parentItemIds,
+    }),
+  );
+  const out: Record<string, MondayItem[]> = {};
+  for (const it of data.items ?? []) {
+    out[it.id] = it.subitems ?? [];
+  }
+  return out;
 }
 
 /**

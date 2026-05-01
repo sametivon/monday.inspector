@@ -17,6 +17,8 @@ export interface BoardData {
   loading: boolean;
   /** True while items are loading separately */
   itemsLoading: boolean;
+  /** Number of items received so far (for progress UI while loading) */
+  itemsLoadedCount: number;
   error: string | null;
   refresh: () => void;
   /** Trigger item fetch on demand (e.g. when switching to Items/Actions tab) */
@@ -32,6 +34,7 @@ export function useBoard(token: string, boardId: string | null): BoardData {
   const [subitemColumns, setSubitemColumns] = useState<MondayColumn[]>([]);
   const [loading, setLoading] = useState(false);
   const [itemsLoading, setItemsLoading] = useState(false);
+  const [itemsLoadedCount, setItemsLoadedCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   // Track which token:boardId combo we've fetched schema/items for
@@ -69,7 +72,9 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     }
   }, [token, boardId]);
 
-  // ── Items load (on demand) ────────────────────────────────────────────
+  // ── Items load (on demand, streaming) ─────────────────────────────────
+  // Pages append into `items` as they arrive so the UI starts rendering
+  // (and stays interactive) before the full board is loaded.
   const loadItems = useCallback(async () => {
     if (!token || !boardId) return;
 
@@ -78,11 +83,16 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     itemsKeyRef.current = key;
 
     setItemsLoading(true);
+    setItems([]);
+    setItemsLoadedCount(0);
     try {
-      const fetched = await fetchBoardItemsWithColumns(token, boardId);
-      setItems(fetched);
+      await fetchBoardItemsWithColumns(token, boardId, (page, total) => {
+        setItems((prev) => prev.concat(page));
+        setItemsLoadedCount(total);
+      });
     } catch (err) {
       setError((err as Error).message);
+      itemsKeyRef.current = null; // allow retry
     } finally {
       setItemsLoading(false);
     }
@@ -99,6 +109,7 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     schemaKeyRef.current = null;
     itemsKeyRef.current = null;
     setItems([]);
+    setItemsLoadedCount(0);
     loadSchema(true);
   }, [loadSchema]);
 
@@ -111,6 +122,7 @@ export function useBoard(token: string, boardId: string | null): BoardData {
     subitemColumns,
     loading,
     itemsLoading,
+    itemsLoadedCount,
     error,
     refresh,
     loadItems,

@@ -26,6 +26,7 @@ export {
   fetchSubitemBoardId,
   fetchSubitemColumns,
   fetchSubitems,
+  fetchSubitemsForMany,
   formatColumnValueForApi,
   getWorkspaceUsers,
   resolvePersonByNameOrEmail,
