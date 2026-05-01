@@ -258,9 +258,25 @@ export function QueryTab({ token, boardId }: QueryTabProps) {
     tabSize: 2,
   };
 
+  const openFullPage = () => {
+    try {
+      const params = new URLSearchParams();
+      if (query.trim()) params.set("query", query);
+      if (variables.trim() && variables.trim() !== "{}") params.set("variables", variables);
+      const url =
+        typeof chrome !== "undefined" && chrome.runtime?.getURL
+          ? chrome.runtime.getURL("src/query/index.html")
+          : "/src/query/index.html";
+      const separator = params.toString() ? "?" : "";
+      window.open(`${url}${separator}${params.toString()}`, "_blank", "noopener,noreferrer");
+    } catch {
+      // ignore
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, height: "100%" }}>
-      {/* Template selector */}
+      {/* Template selector + open in full page */}
       <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
         <select
           className="editor-select"
@@ -272,6 +288,14 @@ export function QueryTab({ token, boardId }: QueryTabProps) {
             <option key={i} value={i}>{t.name}</option>
           ))}
         </select>
+        <button
+          className="btn-primary"
+          style={{ padding: "5px 9px", fontSize: 10, whiteSpace: "nowrap" }}
+          onClick={openFullPage}
+          title="Open the Query Inspector in a full page (more templates, saved queries, big result table)"
+        >
+          ↗ Full Inspector
+        </button>
       </div>
 
       {/* Query editor */}
