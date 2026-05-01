@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { BRAND } from "../utils/brandConfig";
 import { TokenCard } from "../components/TokenCard";
-import { Coffee, Globe, Layout, ArrowRight } from "lucide-react";
+import { Coffee, Globe, Layout, ArrowRight, Code2 } from "lucide-react";
 
 type PageStatus =
   | { type: "loading" }
@@ -85,6 +85,11 @@ export const Popup: React.FC = () => {
 
   const openMonday = () => {
     chrome.tabs.create({ url: "https://monday.com" });
+    window.close();
+  };
+
+  const openQueryInspector = () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("src/query/index.html") });
     window.close();
   };
 
@@ -171,6 +176,30 @@ export const Popup: React.FC = () => {
           </Button>
         </div>
       )}
+
+      {/* Query Inspector launcher — full-page tool for power users */}
+      <button
+        onClick={openQueryInspector}
+        className="w-full mb-3 rounded-lg border border-border bg-card hover:bg-accent hover:border-primary/40 transition-all p-3 text-left group"
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+            <Code2 className="w-4 h-4 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-semibold text-foreground flex items-center gap-1">
+              Query Inspector
+              <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-primary/15 text-primary">
+                NEW
+              </span>
+            </div>
+            <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+              Full-page GraphQL editor with templates &amp; saved queries
+            </p>
+          </div>
+          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
+        </div>
+      </button>
 
       {/* Token card */}
       <TokenCard />

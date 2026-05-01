@@ -5,9 +5,17 @@ Free toolkit for monday.com: import subitems from CSV, bulk update items, run Gr
 
 === DETAILED DESCRIPTION ===
 
-Monday.com Inspector gives you the power features that monday.com is missing. Bulk-import parents and subitems from CSV or Excel, bulk-update hundreds of items in one click, run real GraphQL queries, and inspect board schema — all from a sleek inline panel inside monday.com.
+Monday.com Inspector gives you the power features that monday.com is missing. Bulk-import parents and subitems from CSV or Excel, bulk-update hundreds of items in one click, run real GraphQL queries in a Salesforce-Inspector-style full-page workspace, and inspect board schema — all from a sleek inline panel inside monday.com plus a dedicated full-page Query Inspector.
 
 No account needed. No hidden limits. Install, paste your API token, and go.
+
+WHAT'S NEW IN v1.4
+
+• Full-page Query Inspector — opens in its own tab with a 3-pane layout (templates · editor · results). 14 ready-made templates including queries for monday's new multi-level boards.
+• Saved query library — name and persist your favourite queries; export the whole library as JSON to share with teammates.
+• Smart results pane — auto-detects table-shaped data, with one-click CSV / JSON export and full JSON drill-down.
+• Streaming item loads — items now stream in as pages arrive instead of blocking on a single fetch. Big boards stay responsive.
+• Native row virtualization in the inline tree (content-visibility) — scrolling 5,000+ items is smooth.
 
 
 PRIVACY FIRST — YOUR DATA STAYS WITH YOU
@@ -36,7 +44,15 @@ Bulk Update
 • Works on parent items AND subitems
 • Dry-run mode shows exactly what will change before you apply
 
-GraphQL Query Engine
+GraphQL Query Inspector (full page, NEW in v1.4)
+• 3-pane workspace: templates · editor · results
+• 14 starter templates spanning boards, items, subitems, users, workspaces, audit
+• Saved query library (chrome.storage.local) with JSON export / import for sharing with teammates
+• Auto-detected table view of results with CSV + JSON export
+• Cmd / Ctrl + Enter to run; complexity & timing pills always visible
+• Templates included for monday.com's new multi-level boards (API 2026-04)
+
+Inline GraphQL Query Engine
 • Write and run real GraphQL queries against your board
 • Built-in complexity-budget tracker so you don't hit rate limits
 • Starter templates to learn the monday.com API fast

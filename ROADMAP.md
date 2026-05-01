@@ -5,6 +5,31 @@ official monday API changelog. Items are ordered roughly by impact × effort.
 
 ---
 
+## Shipped — v1.4.0 (Query Inspector)
+
+- **Full-page Query Inspector** at `chrome-extension://…/src/query/index.html`.
+  Salesforce-Inspector-style 3-pane workspace: templates left, editor centre,
+  results right. SaaS-style design system (custom CSS tokens, polished
+  typography, scrollbars, empty states, shadows).
+- **14 starter templates** in 6 categories (Boards, Items, Subitems, Schema,
+  Users, Workspaces, Audit). Includes templates for monday's new
+  multi-level boards (API 2026-04: `hierarchy_types`, rollup columns,
+  `BatteryValue` fragments).
+- **Saved query library** persisted to `chrome.storage.local`. JSON
+  export/import for sharing libraries with teammates.
+- **Smart results pane**: auto-detects the deepest object array in the
+  GraphQL response and renders it as a table with stable column ordering.
+  Toggle to JSON for full inspection. CSV/JSON export with one click.
+- **Cmd/Ctrl + Enter** to run; query/variables can be deep-linked into the
+  page via `?query=…&variables=…` so the inline panel's "Open Full
+  Inspector" button hands off the current draft.
+- **Popup launcher**: new "Query Inspector" card in the popup opens the
+  full page directly, no need to be on a monday.com board page.
+- **Inline QueryTab → full page** hand-off button with current query +
+  variables passed via URL params.
+- **`web_accessible_resources`** added to the manifest so the inline panel
+  can open the page reliably.
+
 ## Shipped — v1.3.3 (Performance + DX)
 
 - **Streaming pagination**: `fetchBoardItemsWithColumns` now streams pages
