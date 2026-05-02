@@ -44,14 +44,94 @@ img { max-width: 100%; display: block; }
 .nav-links a.active { color: #7c5cfc; background: #edeafc; }
 
 /* ─── Buttons ────────────────────────────────────────── */
-.btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 9px; font-weight: 600; font-size: 13.5px; text-decoration: none; transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1); border: none; cursor: pointer; line-height: 1; white-space: nowrap; }
-.btn-primary { background: #7c5cfc; color: #fff; box-shadow: 0 2px 8px rgba(124,92,252,0.22); }
-.btn-primary:hover { background: #6d4ef5; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,92,252,0.28); }
-.btn-primary:active { transform: scale(0.97); box-shadow: none; }
-.btn-secondary { background: transparent; color: #7c5cfc; border: 1.5px solid #d0c8fd; }
-.btn-secondary:hover { background: #f5f3ff; border-color: #a48ffa; transform: translateY(-1px); }
-.btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 11px; }
-.btn-xl { padding: 15px 34px; font-size: 16px; border-radius: 12px; }
+/* Note on specificity: every .btn rule below uses the .btn class twice
+   (.btn.btn) to push specificity to (0,2,0). That beats `.prose a`
+   (specificity 0,1,1) so buttons keep their own color when placed
+   inside an <article class="prose">. Without this, .prose a forces
+   the button text to #7c5cfc on a #7c5cfc background — invisible. */
+.btn,
+.btn.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.12s cubic-bezier(0.34, 1.2, 0.64, 1),
+    box-shadow 0.18s ease;
+}
+.btn:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 2px;
+}
+
+/* Primary — gradient + soft shadow for SaaS-style depth */
+.btn.btn-primary {
+  background: linear-gradient(135deg, #8b6cff 0%, #7c5cfc 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 4px 14px rgba(124, 92, 252, 0.28),
+    0 1px 2px rgba(124, 92, 252, 0.12);
+}
+.btn.btn-primary:hover {
+  background: linear-gradient(135deg, #7a5cff 0%, #6d4ef5 100%);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 8px 22px rgba(124, 92, 252, 0.34),
+    0 2px 4px rgba(124, 92, 252, 0.14);
+}
+.btn.btn-primary:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 2px 6px rgba(124, 92, 252, 0.22);
+}
+
+/* Secondary — outline + subtle hover wash */
+.btn.btn-secondary {
+  background: #fff;
+  color: #7c5cfc;
+  border-color: #d6cdfb;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.btn.btn-secondary:hover {
+  background: #f6f3ff;
+  border-color: #b29dfa;
+  transform: translateY(-1px);
+}
+.btn.btn-secondary:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Sizes */
+.btn.btn-lg { padding: 13px 28px; font-size: 14.5px; border-radius: 11px; }
+.btn.btn-xl { padding: 15px 34px; font-size: 15.5px; border-radius: 12px; }
+
+/* ─── Buttons inside long-form prose articles ────────────────────────
+   .prose a { color: #7c5cfc } is intentional for inline links, but
+   it clobbers .btn-primary's white text. The selectors below pin
+   button colors back to where they belong. */
+.prose .btn { text-decoration: none; }
+.prose .btn:hover { text-decoration: none; }
+.prose .btn.btn-primary { color: #fff; }
+.prose .btn.btn-secondary { color: #7c5cfc; }
+.prose a.btn { color: inherit; }                   /* fallback for any future variant */
+.prose a.btn.btn-primary { color: #fff; }
+.prose a.btn.btn-secondary { color: #7c5cfc; }
 
 /* ─── Badges ─────────────────────────────────────────── */
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11.5px; font-weight: 600; }
