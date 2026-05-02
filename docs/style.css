@@ -43,25 +43,30 @@ img { max-width: 100%; display: block; }
 .nav-links a:hover { color: #1e1a2e; background: #f3f1f9; }
 .nav-links a.active { color: #7c5cfc; background: #edeafc; }
 
-/* ─── Buttons ────────────────────────────────────────── */
-/* Note on specificity: every .btn rule below uses the .btn class twice
-   (.btn.btn) to push specificity to (0,2,0). That beats `.prose a`
-   (specificity 0,1,1) so buttons keep their own color when placed
-   inside an <article class="prose">. Without this, .prose a forces
-   the button text to #7c5cfc on a #7c5cfc background — invisible. */
-.btn,
-.btn.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
+/* ─── Buttons (SaaS design system) ───────────────────────────────────
+   Implementation note: every property that can collide with a tag
+   selector inside a long-form article (.prose a) is marked !important.
+   This is the nuclear option deliberately — earlier specificity-only
+   fixes still showed the bug in the wild, almost certainly because
+   the browser had a stale cache of the older stylesheet. !important
+   plus a fresh filename will make the buttons bulletproof regardless
+   of caching behaviour. */
+
+a.btn,
+button.btn,
+.btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px;
   padding: 11px 20px;
   border-radius: 10px;
-  font-weight: 600;
+  font-family: inherit;
+  font-weight: 600 !important;
   font-size: 13.5px;
   letter-spacing: -0.005em;
   line-height: 1;
-  text-decoration: none;
+  text-decoration: none !important;
   white-space: nowrap;
   border: 1px solid transparent;
   cursor: pointer;
@@ -73,65 +78,105 @@ img { max-width: 100%; display: block; }
     transform 0.12s cubic-bezier(0.34, 1.2, 0.64, 1),
     box-shadow 0.18s ease;
 }
+a.btn:hover,
+button.btn:hover,
+.btn:hover { text-decoration: none !important; }
+a.btn:focus-visible,
+button.btn:focus-visible,
 .btn:focus-visible {
   outline: 2px solid #c4b5fd;
   outline-offset: 2px;
 }
 
-/* Primary — gradient + soft shadow for SaaS-style depth */
-.btn.btn-primary {
-  background: linear-gradient(135deg, #8b6cff 0%, #7c5cfc 100%);
-  color: #fff;
-  border-color: transparent;
+/* Primary — gradient + layered shadow for SaaS-style depth.
+   Tag+class selectors ensure this beats .prose a (also tag+class). */
+a.btn-primary,
+button.btn-primary,
+.btn-primary {
+  background: linear-gradient(135deg, #8b6cff 0%, #7c5cfc 100%) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
     0 4px 14px rgba(124, 92, 252, 0.28),
     0 1px 2px rgba(124, 92, 252, 0.12);
 }
-.btn.btn-primary:hover {
-  background: linear-gradient(135deg, #7a5cff 0%, #6d4ef5 100%);
+a.btn-primary:hover,
+button.btn-primary:hover,
+.btn-primary:hover {
+  background: linear-gradient(135deg, #7a5cff 0%, #6d4ef5 100%) !important;
+  color: #ffffff !important;
   transform: translateY(-1px);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
     0 8px 22px rgba(124, 92, 252, 0.34),
     0 2px 4px rgba(124, 92, 252, 0.14);
 }
-.btn.btn-primary:active {
+a.btn-primary:active,
+button.btn-primary:active,
+.btn-primary:active {
   transform: translateY(0) scale(0.99);
   box-shadow: 0 2px 6px rgba(124, 92, 252, 0.22);
 }
 
 /* Secondary — outline + subtle hover wash */
-.btn.btn-secondary {
-  background: #fff;
-  color: #7c5cfc;
-  border-color: #d6cdfb;
+a.btn-secondary,
+button.btn-secondary,
+.btn-secondary {
+  background: #ffffff !important;
+  color: #7c5cfc !important;
+  border-color: #d6cdfb !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
-.btn.btn-secondary:hover {
-  background: #f6f3ff;
-  border-color: #b29dfa;
+a.btn-secondary:hover,
+button.btn-secondary:hover,
+.btn-secondary:hover {
+  background: #f6f3ff !important;
+  color: #6d4ef5 !important;
+  border-color: #b29dfa !important;
   transform: translateY(-1px);
 }
-.btn.btn-secondary:active {
-  transform: translateY(0) scale(0.99);
+
+/* Inverted button for dark CTA banners — replaces the inline
+   style="background:#fff;color:#7c5cfc" hack scattered around. */
+a.btn-on-dark,
+button.btn-on-dark,
+.btn-on-dark {
+  background: #ffffff !important;
+  color: #7c5cfc !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 1px 0 rgba(0, 0, 0, 0.04);
+}
+a.btn-on-dark:hover,
+button.btn-on-dark:hover,
+.btn-on-dark:hover {
+  background: #f5f3ff !important;
+  color: #6d4ef5 !important;
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.16),
+    0 1px 0 rgba(0, 0, 0, 0.04);
 }
 
 /* Sizes */
-.btn.btn-lg { padding: 13px 28px; font-size: 14.5px; border-radius: 11px; }
-.btn.btn-xl { padding: 15px 34px; font-size: 15.5px; border-radius: 12px; }
+a.btn-lg, button.btn-lg, .btn-lg { padding: 13px 26px; font-size: 14.5px; border-radius: 11px; }
+a.btn-xl, button.btn-xl, .btn-xl { padding: 15px 32px; font-size: 15.5px; border-radius: 12px; }
 
-/* ─── Buttons inside long-form prose articles ────────────────────────
-   .prose a { color: #7c5cfc } is intentional for inline links, but
-   it clobbers .btn-primary's white text. The selectors below pin
-   button colors back to where they belong. */
-.prose .btn { text-decoration: none; }
-.prose .btn:hover { text-decoration: none; }
-.prose .btn.btn-primary { color: #fff; }
-.prose .btn.btn-secondary { color: #7c5cfc; }
-.prose a.btn { color: inherit; }                   /* fallback for any future variant */
-.prose a.btn.btn-primary { color: #fff; }
-.prose a.btn.btn-secondary { color: #7c5cfc; }
+/* ─── Inside long-form prose articles ────────────────────────────────
+   .prose a { color: #7c5cfc } is intentional for inline links, but it
+   used to clobber button text. The !important above already wins, but
+   we also re-state colors here for clarity and to guard against any
+   future .prose rule with extra specificity. */
+.prose a.btn { text-decoration: none !important; }
+.prose a.btn:hover { text-decoration: none !important; }
+.prose a.btn-primary,
+.prose .btn-primary { color: #ffffff !important; }
+.prose a.btn-secondary,
+.prose .btn-secondary { color: #7c5cfc !important; }
+.prose a.btn-on-dark,
+.prose .btn-on-dark { color: #7c5cfc !important; }
 
 /* ─── Badges ─────────────────────────────────────────── */
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 11.5px; font-weight: 600; }
