@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)</title>
+  <meta name="description" content="Run real GraphQL queries against monday.com without writing custom code. Covers the GraphQL API basics, the new multi-level boards (API 2026-04), 14 ready-to-use query templates, and how to use them inside the Monday.com Inspector Query Inspector." />
+  <meta name="keywords" content="monday.com graphql, monday.com api, monday.com graphql tutorial, monday.com query examples, monday.com api playground, monday.com developer tools, monday.com inspector, multi-level boards api, monday.com 2026-04 api" />
+  <link rel="canonical" href="https://mondayinspector.eu/monday-graphql-query-guide.html" />
+  <meta property="og:title" content="Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)" />
+  <meta property="og:description" content="Run real GraphQL queries against monday.com — beginner-friendly tutorial, 14 ready-made templates, multi-level boards coverage." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://mondayinspector.eu/monday-graphql-query-guide.html" />
+  <meta property="og:image" content="https://mondayinspector.eu/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Monday.com Inspector" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Monday.com GraphQL API — Tutorial + 14 Query Templates" />
+  <meta name="twitter:description" content="Beginner-friendly monday.com GraphQL guide with ready-made query templates." />
+  <meta name="twitter:image" content="https://mondayinspector.eu/og-image.png" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Sam @ Fruition Services" />
+  <meta name="theme-color" content="#7c5cfc" />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)",
+    "description": "Beginner-friendly monday.com GraphQL tutorial. Covers the API basics, the multi-level boards model (2026-04), and 14 ready-to-run query templates including boards, items, subitems, users, workspaces, and audit queries.",
+    "author": { "@type": "Organization", "name": "Fruition Services", "url": "https://www.fruitionservices.io" },
+    "image": "https://mondayinspector.eu/og-image.png",
+    "datePublished": "2026-05-02",
+    "dateModified": "2026-05-02",
+    "publisher": { "@type": "Organization", "name": "Monday.com Inspector", "url": "https://mondayinspector.eu" },
+    "mainEntityOfPage": "https://mondayinspector.eu/monday-graphql-query-guide.html"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mondayinspector.eu/" },
+      { "@type": "ListItem", "position": 2, "name": "Monday.com GraphQL API Guide", "item": "https://mondayinspector.eu/monday-graphql-query-guide.html" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Do I need to be a developer to use monday.com's GraphQL API?", "acceptedAnswer": { "@type": "Answer", "text": "No. With the Query Inspector you pick a template, plug in your board ID, and run. No code, no setup. The 14 starter templates cover boards, items, subitems, users, workspaces, and audit queries. You can save your own customised queries to a local library." } },
+      { "@type": "Question", "name": "How do I get a monday.com API token?", "acceptedAnswer": { "@type": "Answer", "text": "In monday.com, click your avatar (top right) → Admin → API. Generate a personal API v2 token and copy it. Paste it into Monday.com Inspector's first-run setup card. The token is stored in chrome.storage.local and is only ever sent to https://api.monday.com/v2." } },
+      { "@type": "Question", "name": "What's the difference between API version 2024-10 and 2026-04?", "acceptedAnswer": { "@type": "Answer", "text": "API 2026-04 unlocks multi-level boards — up to 5 nested levels on the same board, with rolled-up parent values. The hierarchy_types argument and the BatteryValue rollup column type are 2026-04+ features. Monday.com Inspector ships with API-Version 2026-04 and falls back gracefully on tenants on older versions." } },
+      { "@type": "Question", "name": "Can I run mutations from the Query Inspector?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Query Inspector executes any valid monday.com GraphQL operation — queries and mutations both. The complexity meter shows you the cost before each run so you don't blow your account's budget." } },
+      { "@type": "Question", "name": "How does the complexity budget work?", "acceptedAnswer": { "@type": "Answer", "text": "Monday.com gives every account a complexity budget that resets per minute. Each query consumes points based on the number of fields and items it touches. The Query Inspector shows your remaining budget in a pill next to every run, and templates are tagged 'heavy' when they're known to be expensive." } }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .article-hero { background: #fff; padding: 64px 0 48px; border-bottom: 1px solid #e4e4e7; }
+    .article-hero h1 { font-size: clamp(1.875rem, 3.5vw, 2.75rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin: 16px 0 18px; }
+    .article-hero .lead { font-size: 1.0625rem; color: #52525b; line-height: 1.75; max-width: 720px; }
+    .article-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #71717a; flex-wrap: wrap; margin-top: 20px; }
+    .article-meta span { display: flex; align-items: center; gap: 5px; }
+    .article-layout { display: grid; grid-template-columns: 1fr 280px; gap: 56px; align-items: flex-start; padding: 56px 0 96px; }
+    .article-toc { position: sticky; top: 88px; background: #fff; border: 1px solid #e4e4e7; border-radius: 14px; padding: 24px; }
+    .article-toc h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #52525b; margin-bottom: 16px; }
+    .article-toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 10px; }
+    .article-toc ol li { counter-increment: toc; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+    .article-toc ol li::before { content: counter(toc); width: 20px; height: 20px; border-radius: 50%; background: #ede9fe; color: #7c5cfc; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .article-toc ol li a { color: #52525b; text-decoration: none; line-height: 1.5; }
+    .article-toc ol li a:hover { color: #7c5cfc; }
+    .related-card { display: block; background: #f5f3ff; border: 1px solid #c4b5fd40; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.2s; margin-top: 12px; }
+    .related-card:hover { background: #ede9fe; border-color: #c4b5fd; }
+    .related-card h4 { font-size: 13px; font-weight: 600; color: #09090b; margin-bottom: 3px; }
+    .related-card p { font-size: 12px; color: #71717a; }
+    .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 24px; }
+    .template-card { background: #fafafa; border: 1px solid #e4e4e7; border-radius: 10px; padding: 14px; }
+    .template-card-title { font-size: 13px; font-weight: 700; color: #18181b; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .template-card-cat { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 999px; background: #ede9fe; color: #7c5cfc; }
+    .template-card p { font-size: 12.5px; color: #52525b; line-height: 1.55; margin: 0; }
+    @media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } .article-toc { display: none; } .template-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/"><img src="icon.png" class="nav-logo-img" alt="">monday<span style="color:#7c5cfc">.inspector</span></a>
+    <ul class="nav-links">
+      <li><a href="/#features">Features</a></li>
+      <li><a href="import-subitems-monday.html">Import Subitems</a></li>
+      <li><a href="monday-csv-import-guide.html">CSV Guide</a></li>
+      <li><a href="monday-bulk-update.html">Bulk Update</a></li>
+      <li><a href="monday-graphql-query-guide.html" class="active">GraphQL</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome</a>
+  </div>
+</nav>
+
+<div class="article-hero">
+  <div class="container-sm">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Monday.com GraphQL Guide</span>
+    </nav>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="badge badge-brand">Guide · 9 min read</span>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">v1.5.4 · API 2026-04</span>
+    </div>
+    <h1>Monday.com GraphQL API: Tutorial + 14 Query Templates</h1>
+    <p class="lead">Monday.com's REST-style v1 API is gone — every integration now talks to a single GraphQL endpoint at <code>https://api.monday.com/v2</code>. This guide walks you through the basics, shows the <strong>14 ready-to-run query templates</strong> bundled with Monday.com Inspector, and covers the new multi-level board support introduced in API version <strong>2026-04</strong>. No coding required.</p>
+    <div class="article-meta">
+      <span>📅 May 2026</span>
+      <span>✍️ Sam @ Fruition Services</span>
+      <span>🕐 9 min read</span>
+      <span>🛠️ Covers API 2026-04</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="article-layout">
+    <article class="prose">
+
+      <h2 id="why">Why use the GraphQL API at all?</h2>
+      <p>Most monday.com users never touch the API — and that's fine for day-to-day work. But there's a long list of tasks the UI either makes painful or doesn't expose at all:</p>
+      <ul>
+        <li><strong>Audit who changed what, when.</strong> The UI doesn't have a workspace-wide audit log; the API does.</li>
+        <li><strong>Find duplicates by name across an entire workspace.</strong> The UI search is per-board.</li>
+        <li><strong>Fetch every overdue item across 50 boards in one shot.</strong> Custom dashboards only get you part-way.</li>
+        <li><strong>Monitor your complexity budget.</strong> The UI hides this; rate-limit errors are how you usually find out you're over.</li>
+        <li><strong>Pull the full schema</strong> of every column on a board — useful when documenting a setup for a client or replicating it elsewhere.</li>
+      </ul>
+      <p>The Query Inspector exposes all of that as one-click templates so you can run them without writing a line of code.</p>
+
+      <div class="callout callout-success">
+        <div class="callout-title">✅ No setup, no coding</div>
+        <p>Monday.com Inspector's <strong>full-page Query Inspector</strong> opens in its own tab with a 3-pane layout: templates on the left, editor in the middle, results table on the right. Pick a template, plug in your board ID, and press <kbd>⌘ / Ctrl + Enter</kbd>.</p>
+      </div>
+
+      <h2 id="setup">First-run setup (60 seconds)</h2>
+      <ol>
+        <li><strong>Install the extension</strong> from the Chrome Web Store (free).</li>
+        <li><strong>Get your API token</strong>: in monday.com, click your avatar → Admin → API → "Generate" (or copy your existing personal token).</li>
+        <li><strong>Open the Query Inspector</strong>: click the extension icon → "Query Inspector" launcher card. The first-run card asks for your token; paste it and click "Save &amp; continue."</li>
+      </ol>
+      <p>The token is stored locally via <code>chrome.storage.local</code> and is never sent anywhere except <code>https://api.monday.com/v2</code> — the extension is open source and we run no servers. <a href="privacy.html">Privacy policy →</a></p>
+
+      <div style="margin:20px 0">
+        <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Install Monday.com Inspector — Free</a>
+      </div>
+
+      <h2 id="basics">GraphQL basics in 3 minutes</h2>
+      <p>If you've never used GraphQL before, here's everything you need to read the templates:</p>
+      <ul>
+        <li><strong>One endpoint, one request</strong> — instead of <code>/api/boards</code>, <code>/api/items</code>, etc., everything goes to <code>https://api.monday.com/v2</code> as a single POST.</li>
+        <li><strong>You ask for the fields you want.</strong> No more over-fetching. <code>boards { id name }</code> returns only id and name.</li>
+        <li><strong>Variables are typed.</strong> Declare them at the top of the query (<code>query ($boardId: ID!)</code>) and pass JSON values in the variables panel.</li>
+        <li><strong>Mutations look just like queries</strong>, prefixed with <code>mutation</code>. They create / update / delete data.</li>
+      </ul>
+
+      <p>Here's the simplest possible query — your account info:</p>
+      <pre>query Me {
+  me {
+    id
+    name
+    email
+    is_admin
+    account { id name slug tier }
+  }
+}</pre>
+      <p>Run that first to verify your token works. If it returns your name and email, you're good to go.</p>
+
+      <h2 id="templates">The 14 ready-made query templates</h2>
+      <p>Every template is one click away in the left pane of the Query Inspector. Each is a small, well-commented monday.com query you can run as-is or use as a starting point. They're grouped by category so you can scan vertically.</p>
+
+      <h3 id="cat-boards">📋 Boards</h3>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-card-title">List all my boards <span class="template-card-cat">low cost</span></div>
+          <p>Every board you have access to, with id, name, item count, and group count. Good first query to verify your token.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">Multi-level boards <span class="template-card-cat">api 2026-04</span></div>
+          <p>Filters to monday.com's new multi-level boards (up to 5 nested levels). Requires the <code>hierarchy_types</code> argument introduced in API 2026-04.</p>
+        </div>
+      </div>
+
+      <h3 id="cat-schema">🗂 Schema</h3>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-card-title">Get a board's full schema <span class="template-card-cat">low cost</span></div>
+          <p>Columns (with types and settings), groups, and item count for one board. Perfect for documenting a setup or migrating.</p>
+        </div>
+      </div>
+
+      <h3 id="cat-items">📦 Items</h3>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-card-title">All items on a board (first page) <span class="template-card-cat">medium</span></div>
+          <p>Up to 200 items with names, group, and column values. Returns a cursor for the next page.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">Items in a specific status <span class="template-card-cat">medium</span></div>
+          <p>Server-side filter using <code>items_page_by_column_values</code>. Replace the columnId and label.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">Find overdue items (date column) <span class="template-card-cat">medium</span></div>
+          <p>Uses the <code>lower_than</code> operator on a date column. Common request for status-report automation.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">Look up items by ID <span class="template-card-cat">low cost</span></div>
+          <p>Quick lookup for known IDs. Returns full column values, group, board, and the latest 5 update posts.</p>
+        </div>
+      </div>
+
+      <h3 id="cat-subitems">🌳 Subitems</h3>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-card-title">All subitems for a parent <span class="template-card-cat">low cost</span></div>
+          <p>Returns subitems and their column values for a single parent item. Use the <code>items</code> query, not <code>items_page</code>.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">Multi-level: leaves with rollup values <span class="template-card-cat">heavy</span></div>
+          <p>For multi-level boards: gets calculated rollup values along with raw cell values. Includes the <code>BatteryValue</code> fragment for status rollups.</p>
+        </div>
+      </div>
+
+      <h3 id="cat-users">👥 Users + Workspaces</h3>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-card-title">Current user (me) <span class="template-card-cat">low cost</span></div>
+          <p>Quick token sanity check + your account tier and team memberships.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">List all workspace users <span class="template-card-cat">medium</span></div>
+          <p>Paginated user list. Default 100 per page.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">List all workspaces <span class="template-card-cat">low cost</span></div>
+          <p>All workspaces visible to you — useful before navigating boards by workspace.</p>
+        </div>
+      </div>
+
+      <h3 id="cat-audit">📝 Audit</h3>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-card-title">Recent updates on a board <span class="template-card-cat">medium</span></div>
+          <p>Last 50 update posts (comments) across items on the board, with creator and timestamp.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-card-title">Check your complexity budget <span class="template-card-cat">low cost</span></div>
+          <p>Returns remaining points and the seconds-to-reset value. Run this if you're hitting 429 rate limits.</p>
+        </div>
+      </div>
+
+      <h2 id="multi-level">Multi-level boards (the new API in 2026-04)</h2>
+      <p>Monday.com's <a href="https://developer.monday.com/api-reference/docs/working-with-multi-level-boards" target="_blank" rel="noopener noreferrer">multi-level boards</a> are the biggest API change in the 2026-04 version. The key shifts:</p>
+      <ul>
+        <li><strong>One board for every depth.</strong> Multi-level boards support up to 5 nested levels on the same board id — no separate "subitem board" exists.</li>
+        <li><strong><code>hierarchy_types</code> filter required.</strong> By default the <code>boards</code> query EXCLUDES multi-level boards. Pass <code>hierarchy_types: [classic, multi_level]</code> (or <code>[multi_level]</code>) to include them.</li>
+        <li><strong>Rollup columns.</strong> Parent rows show calculated values from their children (status rollups, number sums, date ranges). Reading them requires <code>column_values(capabilities: [CALCULATED])</code> with <code>... on BatteryValue</code> fragments for status rollups.</li>
+        <li><strong>Writes to parents silently no-op.</strong> If you try to set a column value on a row that has children, monday accepts the mutation but keeps the rolled-up value. Update leaves instead.</li>
+        <li><strong>Use <code>items_page(hierarchy_scope_config: "allItems")</code></strong> to fetch every depth in one call.</li>
+      </ul>
+      <p>The Query Inspector includes a multi-level template with the right fragments pre-wired so you don't have to look up <code>BatteryValue</code>'s shape.</p>
+
+      <h2 id="complexity">Complexity budget &amp; rate limits</h2>
+      <p>Every monday.com query consumes "complexity points." Big queries (lots of items, many fields per item) cost more. Your account has a per-minute budget; exceeding it returns a <code>429</code>.</p>
+      <p>Practical rules of thumb:</p>
+      <ul>
+        <li><strong>Stick to small page sizes.</strong> 200 items per <code>items_page</code> is usually safe; 500 can blow the budget on heavy column setups.</li>
+        <li><strong>Don't over-fetch column values.</strong> If you only need names and IDs, omit <code>column_values</code> entirely.</li>
+        <li><strong>Watch the complexity pill.</strong> The Query Inspector shows you the exact cost of every run plus your remaining budget.</li>
+        <li><strong>Retry with backoff.</strong> If you do hit 429, the extension's import paths automatically retry with exponential backoff so your bulk operations recover gracefully.</li>
+      </ul>
+
+      <h2 id="saved">Saving + sharing your queries</h2>
+      <p>Built up a query you'll reuse? Hit <strong>💾 Save</strong> in the editor toolbar and name it. The Query Inspector keeps a saved-query library in <code>chrome.storage.local</code> with one-click load. Two extras:</p>
+      <ul>
+        <li><strong>JSON export</strong> — download your whole library as a single file. Hand it to a teammate to bootstrap their setup.</li>
+        <li><strong>JSON import</strong> — pull in someone else's library and merge it with yours.</li>
+      </ul>
+      <p>The library lives entirely on your device. Nothing syncs to a server.</p>
+
+      <h2 id="hand-off">From inline panel to full-page in one click</h2>
+      <p>The inline Inspector panel inside monday.com has a Query tab too — perfect for quick checks while you're on a board. When you need more room (big results, saved templates, etc.), hit the <strong>↗ Full Inspector</strong> button at the top of the inline Query tab. It opens the full page with your current draft already loaded via URL params.</p>
+
+      <h2 id="faq">FAQ</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+        <details class="faq" open>
+          <summary>Do I need to be a developer to use monday.com's GraphQL API?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">No. With the Query Inspector you pick a template, plug in your board ID, and run. No code, no setup. The 14 starter templates cover boards, items, subitems, users, workspaces, and audit queries.</div>
+        </details>
+        <details class="faq">
+          <summary>How do I get a monday.com API token?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">In monday.com, click your avatar (top right) → Admin → API. Generate a personal API v2 token and copy it. Paste it into Monday.com Inspector's first-run setup card. The token is stored locally via <code>chrome.storage.local</code> and is only ever sent to <code>https://api.monday.com/v2</code>.</div>
+        </details>
+        <details class="faq">
+          <summary>What's the difference between API version 2024-10 and 2026-04?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">API 2026-04 unlocks multi-level boards — up to 5 nested levels on the same board, with rolled-up parent values. The <code>hierarchy_types</code> argument and the <code>BatteryValue</code> rollup column type are 2026-04+ features. Monday.com Inspector ships with API-Version 2026-04 and falls back gracefully on tenants on older versions.</div>
+        </details>
+        <details class="faq">
+          <summary>Can I run mutations from the Query Inspector?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Yes. The Query Inspector executes any valid monday.com GraphQL operation — queries and mutations both. The complexity meter shows you the cost before each run so you don't blow your account's budget.</div>
+        </details>
+        <details class="faq">
+          <summary>How does the complexity budget work?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Monday.com gives every account a complexity budget that resets per minute. Each query consumes points based on the number of fields and items it touches. The Query Inspector shows your remaining budget in a pill next to every run, and templates are tagged 'heavy' when they're known to be expensive.</div>
+        </details>
+        <details class="faq">
+          <summary>Where can I read the official monday.com API docs?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Monday.com publishes its API reference at <a href="https://developer.monday.com/api-reference/" target="_blank" rel="noopener noreferrer">developer.monday.com</a>. The Query Inspector links straight to it from the top bar.</div>
+        </details>
+      </div>
+
+      <div class="callout callout-brand" style="margin-top:32px">
+        <div class="callout-title">🚀 Ready to run your first query?</div>
+        <p>Install Monday.com Inspector for free. The Query Inspector launcher is right inside the popup — no monday.com board required to open it.</p>
+        <div style="margin-top:14px">
+          <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — It's Free</a>
+        </div>
+      </div>
+
+      <h2 id="related">Related Guides</h2>
+      <p>More monday.com automation reading:</p>
+    </article>
+
+    <aside>
+      <div class="article-toc">
+        <h3>On this page</h3>
+        <ol>
+          <li><a href="#why">Why use the API</a></li>
+          <li><a href="#setup">First-run setup</a></li>
+          <li><a href="#basics">GraphQL basics</a></li>
+          <li><a href="#templates">14 templates</a></li>
+          <li><a href="#multi-level">Multi-level boards</a></li>
+          <li><a href="#complexity">Complexity budget</a></li>
+          <li><a href="#saved">Saved queries</a></li>
+          <li><a href="#hand-off">Inline → full page</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e4e4e7">
+          <p style="font-size:11.5px;font-weight:700;color:#52525b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Related guides</p>
+          <a class="related-card" href="import-subitems-monday.html"><h4>Import Subitems Guide</h4><p>CSV → monday.com subitems, all column types</p></a>
+          <a class="related-card" href="monday-csv-import-guide.html"><h4>CSV Import Complete Guide</h4><p>Formatting, column types, comparison table</p></a>
+          <a class="related-card" href="monday-bulk-update.html"><h4>Bulk Update Guide</h4><p>Update hundreds of items at once</p></a>
+        </div>
+        <div style="margin-top:20px">
+          <a class="btn btn-primary" style="width:100%;justify-content:center" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — Free</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<section style="background:#fff;padding:48px 0;border-top:1px solid #e4e4e7">
+  <div class="container-sm">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+      <a href="import-subitems-monday.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
+        <div style="font-size:20px;margin-bottom:8px">📥</div>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Import Subitems in Monday.com</h3>
+        <p style="font-size:12.5px;color:#71717a">Step-by-step CSV → subitem import</p>
+      </a>
+      <a href="monday-csv-import-guide.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
+        <div style="font-size:20px;margin-bottom:8px">📄</div>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">CSV Import Complete Guide</h3>
+        <p style="font-size:12.5px;color:#71717a">Format, column types, native vs Inspector</p>
+      </a>
+      <a href="monday-bulk-update.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
+        <div style="font-size:20px;margin-bottom:8px">⚡</div>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Bulk Update Items in Monday.com</h3>
+        <p style="font-size:12.5px;color:#71717a">Update hundreds of items at once</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fafafa;padding:64px 0">
+  <div class="container-sm">
+    <div class="cta-banner">
+      <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-.025em">Run your first GraphQL query in 60 seconds</h2>
+      <p style="color:rgba(255,255,255,.8);font-size:1rem;margin-bottom:28px">Free Chrome extension. No coding required. 14 starter templates ready to go.</p>
+      <a class="btn btn-xl" style="background:#fff;color:#7c5cfc;font-weight:700" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — It's Free</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="nav-logo" href="/" style="color:#f4f4f5;text-decoration:none"><img src="icon.png" class="nav-logo-img" alt=""><span style="color:#e8e4f5">monday</span><span style="color:#a78bfa">.inspector</span></a>
+        <p>The free Chrome extension that gives monday.com the power features it's missing.</p>
+      </div>
+      <div><p class="footer-col-title">Product</p><ul class="footer-links"><li><a href="/#features">Features</a></li><li><a href="/#comparison">vs. Native</a></li><li><a href="/#faq">FAQ</a></li></ul></div>
+      <div><p class="footer-col-title">Guides</p><ul class="footer-links"><li><a href="import-subitems-monday.html">Import Subitems</a></li><li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li><li><a href="monday-bulk-update.html">Bulk Update</a></li><li><a href="monday-graphql-query-guide.html">GraphQL Guide</a></li></ul></div>
+      <div><p class="footer-col-title">Company</p><ul class="footer-links"><li><a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer">Fruition Services</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="mailto:sam@fruitionservices.io">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 Fruition Services. All rights reserved.</span><span>Free &amp; Open Source</span></div>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}}),{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const nav=document.getElementById('site-nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
+</script>
+</body>
+</html>
