@@ -117,13 +117,17 @@
       <a href="/">Home</a><span class="breadcrumb-sep">›</span>
       <span>How to Import Subitems in Monday.com</span>
     </nav>
-    <div class="badge badge-brand" style="margin-bottom:16px">Guide · 5 min read</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="badge badge-brand">Guide · 7 min read</span>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Updated for v1.5.4 — May 2026</span>
+    </div>
     <h1>How to Import Subitems in Monday.com (2026 Step-by-Step Guide)</h1>
-    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong>. This guide shows you exactly how to import subitems from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension.</p>
+    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong>, no support for <strong>Connect Boards</strong> references, and no clean handling of multi-level boards. This guide shows you how to import all of those from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.5.4 with the new full-page Importer, board_relation name→ID resolution, and multi-level board awareness.</p>
     <div class="article-meta">
-      <span>📅 Updated April 2026</span>
+      <span>📅 Updated May 2026</span>
       <span>✍️ Sam @ Fruition Services</span>
-      <span>🕐 5 min read</span>
+      <span>🕐 7 min read</span>
+      <span>🛠️ Covers v1.5.4</span>
     </div>
   </div>
 </div>
@@ -196,17 +200,26 @@
       </div>
       <p>After installing, you'll be prompted to enter your monday.com API token. You can find this in monday.com → Profile (avatar) → Admin → API. The token is stored locally in your browser and never sent anywhere except the monday.com API.</p>
 
-      <h3 id="step-3">Step 3: Open your monday.com board and the Inspector panel</h3>
-      <p>Navigate to the monday.com board where you want to import subitems. Click the Monday.com Inspector icon in your Chrome toolbar (or press the extension shortcut). In the popup, click <strong>Open Inspector Panel</strong>. The panel slides in on the right side of your board.</p>
+      <h3 id="step-3">Step 3: Choose your importer — inline panel or full-page</h3>
+      <p>Monday.com Inspector ships with <strong>two import surfaces</strong>. Pick the one that fits the job:</p>
+      <ul>
+        <li><strong>Inline Inspector panel</strong> — slides in on the right side of your board. Best for quick imports while you're already inside monday.com.</li>
+        <li><strong>Full-page Importer</strong> (v1.4+) — opens in its own browser tab with a clear 4-step stepper (Connect → Upload → Map → Run), a sticky footer with import counts, and room for big mapping tables. Best for medium-to-large imports where you want all the room you need.</li>
+      </ul>
+      <p>Both routes share the same code path (parsers, column-type resolution, retry logic, Connect Boards name→ID lookups), so the result is identical. The full-page Importer just gives you more breathing room for spreadsheets with 30+ columns.</p>
+      <p><strong>To open the full Importer:</strong> click the extension icon → <em>Importer</em>. Or, if you've already started inside the inline panel, click <strong>↗ Open Importer</strong> at the top of the Import tab — it hands off your current board context via URL param.</p>
+      <p><strong>To open the inline panel:</strong> navigate to the monday.com board, click the extension icon, then <em>Open Inspector Panel</em>.</p>
 
       <h3 id="step-4">Step 4: Upload your file and map columns</h3>
-      <p>In the Inspector panel, click the <strong>Import</strong> tab. You'll see a drag-and-drop upload area. Drop your CSV or Excel file onto it, or click to browse.</p>
-      <p>Once the file is uploaded, the tool will display the <strong>Column Mapping</strong> interface:</p>
+      <p>Drop your CSV or XLSX onto the upload area, or click to browse. Once parsed, the column mapper appears.</p>
+      <p>What you'll see:</p>
       <ul>
-        <li>For <strong>flat CSV files</strong>: Select which column identifies the parent item and which column is the subitem name. Then map remaining columns to board columns.</li>
-        <li>For <strong>monday.com board exports (XLSX)</strong>: The format is auto-detected. Parent items and subitems are identified automatically. You just confirm/adjust the column mappings.</li>
+        <li>For <strong>flat CSV files</strong>: pick the column that identifies the parent item (by name or ID), pick the subitem-name column, then map the rest.</li>
+        <li>For <strong>monday.com classic XLSX exports</strong>: the layout is auto-detected. Groups, parent items, and subitem sections are parsed without any extra steps. The Name column is auto-mapped to the item name and shown as a green confirmation row at the top of the mapping table.</li>
       </ul>
-      <p>The tool auto-matches columns with the same name. For columns that don't auto-match, use the dropdown to select the correct board column.</p>
+      <p>Read-only board columns (mirror, formula, auto-number, lookup, last_updated, item_id, button, file, and Creation log) are <strong>silently filtered out</strong> from both the mapping table and the dropdown — they can't be written via the API, so showing them would just create dead rows. The skipped columns are listed under a disclosure so nothing disappears without notice.</p>
+      <p>Connect Boards (<code>board_relation</code>) and Dependency columns ARE writable — see the dedicated section below.</p>
+      <p><strong>Multi-level boards heads-up:</strong> on multi-level boards, parent items' column values are computed rollups from their children. If you map a column to a parent row that ends up with children, monday.com keeps its rolled-up value and the write silently no-ops. Map the leaf items instead.</p>
 
       <h3 id="step-5">Step 5: Start the import and track live progress</h3>
       <p>Click <strong>Start Import</strong>. You'll see a live progress view with:</p>
@@ -228,27 +241,66 @@
       </div>
 
       <h2 id="column-types">Supported Column Types for Subitem Import</h2>
-      <p>Monday.com Inspector supports all writable subitem column types. Here's how to format your CSV data for each type:</p>
+      <p>Monday.com Inspector covers <strong>every writable monday.com column type</strong>. The Importer formats your CSV value into the JSON shape that monday's API expects (so you don't have to). Here's the cheat sheet:</p>
 
       <table>
         <thead><tr><th>Column Type</th><th>CSV Format</th><th>Example</th></tr></thead>
         <tbody>
-          <tr><td><strong>Text</strong></td><td>Plain text string</td><td>Any text</td></tr>
-          <tr><td><strong>Numbers</strong></td><td>Numeric value</td><td>42 or 3.14</td></tr>
-          <tr><td><strong>Status</strong></td><td>Label name (as shown in monday.com)</td><td>Done, Working on it</td></tr>
-          <tr><td><strong>People</strong></td><td>Person's full name (as in monday.com)</td><td>Alex Johnson</td></tr>
-          <tr><td><strong>Date</strong></td><td>YYYY-MM-DD</td><td>2026-04-15</td></tr>
-          <tr><td><strong>Timeline</strong></td><td>YYYY-MM-DD to YYYY-MM-DD</td><td>2026-04-01 to 2026-04-15</td></tr>
-          <tr><td><strong>Dropdown</strong></td><td>Label name (as shown in monday.com)</td><td>High Priority</td></tr>
-          <tr><td><strong>Checkbox</strong></td><td>true or false</td><td>true</td></tr>
-          <tr><td><strong>Email</strong></td><td>Email address</td><td>user@example.com</td></tr>
-          <tr><td><strong>Phone</strong></td><td>Phone number string</td><td>+1-555-0100</td></tr>
-          <tr><td><strong>Link</strong></td><td>URL (https://...)</td><td>https://example.com</td></tr>
-          <tr><td><strong>Rating</strong></td><td>Number 1–5</td><td>4</td></tr>
+          <tr><td><strong>Text</strong></td><td>Plain text string</td><td><code>Any text</code></td></tr>
+          <tr><td><strong>Long Text</strong></td><td>Plain text, multi-line OK</td><td><code>Notes go here…</code></td></tr>
+          <tr><td><strong>Numbers</strong></td><td>Numeric value</td><td><code>42</code> or <code>3.14</code></td></tr>
+          <tr><td><strong>Status</strong></td><td>Label name (case-insensitive)</td><td><code>Done</code>, <code>Working on it</code></td></tr>
+          <tr><td><strong>Dropdown</strong></td><td>Single label, or comma-separated for multi-select</td><td><code>High Priority</code> or <code>Bug, Backend</code></td></tr>
+          <tr><td><strong>People</strong></td><td>Person's full name OR email (auto-resolved against your workspace)</td><td><code>Alex Johnson</code> or <code>alex@x.io</code></td></tr>
+          <tr><td><strong>Date</strong></td><td>YYYY-MM-DD (also accepts DD/MM/YYYY and MM/DD/YYYY)</td><td><code>2026-04-15</code></td></tr>
+          <tr><td><strong>Timeline</strong></td><td>Start–End date range</td><td><code>2026-04-01 - 2026-04-15</code></td></tr>
+          <tr><td><strong>Checkbox</strong></td><td><code>true</code>/<code>false</code>, <code>yes</code>/<code>no</code>, <code>1</code>/<code>0</code>, <code>x</code>, <code>✓</code></td><td><code>true</code></td></tr>
+          <tr><td><strong>Email</strong></td><td>Address, optional <code>|Display Name</code> suffix</td><td><code>user@example.com|Sam K</code></td></tr>
+          <tr><td><strong>Phone</strong></td><td>Number, optional <code>|XX</code> ISO-2 country suffix</td><td><code>+44 20 1234 | GB</code></td></tr>
+          <tr><td><strong>Link</strong></td><td>URL, optional <code>|Display Text</code> suffix</td><td><code>https://x.io|Our site</code></td></tr>
+          <tr><td><strong>Rating</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>Number 1–5 (or stars: <code>★★★★</code>)</td><td><code>4</code></td></tr>
+          <tr><td><strong>Country</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>ISO-2 code, or <code>CC:Country Name</code></td><td><code>US:United States</code></td></tr>
+          <tr><td><strong>Hour</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>24h or 12h time</td><td><code>14:30</code> or <code>2:30 PM</code></td></tr>
+          <tr><td><strong>Week</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>Week range as Start–End</td><td><code>2026-04-01 - 2026-04-07</code></td></tr>
+          <tr><td><strong>Location</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>Address, optional <code>|lat,lng</code></td><td><code>221B Baker St|51.5237,-0.1585</code></td></tr>
+          <tr><td><strong>World Clock</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>IANA timezone</td><td><code>America/New_York</code></td></tr>
+          <tr><td><strong>Connect Boards</strong> <span class="badge badge-green" style="font-size:9px">v1.5</span></td><td>Item names from the linked board, item IDs, or a mix (comma-separated)</td><td><code>Project Atlas, 1234567890</code></td></tr>
+          <tr><td><strong>Dependency</strong> <span class="badge badge-green" style="font-size:9px">v1.5</span></td><td>Item IDs (numeric, comma-separated)</td><td><code>1234567890, 1234567891</code></td></tr>
+          <tr><td><strong>Tags</strong></td><td>Tag IDs (numeric, comma-separated)</td><td><code>123, 456</code></td></tr>
         </tbody>
       </table>
 
-      <p>Read-only column types (formula, mirror, auto-number, dependency, board_relation, creation_log, last_updated) are automatically excluded from the mapping interface — you don't need to worry about them.</p>
+      <h3 id="connect-boards">Connect Boards (board_relation): match by name <em>or</em> ID</h3>
+      <p>Connect Boards columns reference items on a different board. monday.com's API needs the linked items' numeric IDs, but humans usually only have item <em>names</em> in their CSV. The Importer handles both:</p>
+      <ul>
+        <li><strong>If the cell contains numeric IDs</strong> (e.g. <code>1234567890,1234567891</code>) — they're sent as-is.</li>
+        <li><strong>If the cell contains item names</strong> (e.g. <code>Project Atlas, Project Beta</code>) — the Importer fetches items from the linked board(s), builds a name → id map, and resolves your names automatically. The lookup is cached per board for the lifetime of the import, so a 200-row CSV does ONE round-trip per linked board, not 200.</li>
+        <li><strong>Mixed values</strong> are fine — numeric tokens pass through, names are resolved.</li>
+      </ul>
+      <p>If a name doesn't match any item on the linked board, that token is silently skipped (rather than failing the row). The Importer's per-row error reporter will tell you which rows ended up empty.</p>
+
+      <h3 id="read-only">Read-only column types we filter out</h3>
+      <p>The following types are computed by monday.com and can't be written via the API. The Importer filters them out automatically — both the file headers (e.g. a "Creation log" column from a monday export) and the board-side dropdown options:</p>
+      <ul>
+        <li><strong>mirror</strong> — pulls values from a linked board's items</li>
+        <li><strong>formula</strong> — computed from other columns</li>
+        <li><strong>auto_number</strong> — monday-assigned sequence</li>
+        <li><strong>lookup</strong> — calculated rollup</li>
+        <li><strong>creation_log</strong> / <strong>last_updated</strong> — auto-stamped</li>
+        <li><strong>item_id</strong> — monday's internal id</li>
+        <li><strong>button</strong>, <strong>color_picker</strong> — UI-only</li>
+        <li><strong>file</strong> — needs a separate upload mutation; not handled by CSV import</li>
+        <li><strong>subtasks</strong> — metadata, not a real column</li>
+      </ul>
+      <p>Skipped columns are listed under a disclosure in the column-mapper UI so you can verify why something doesn't appear.</p>
+
+      <h3 id="multi-level">Multi-level boards: a separate beast</h3>
+      <p>monday.com's <a href="https://developer.monday.com/api-reference/docs/working-with-multi-level-boards" target="_blank" rel="noopener noreferrer">multi-level boards</a> support up to 5 nested levels on the same board (parents and children share one column schema). Two important things to know before importing:</p>
+      <ol>
+        <li><strong>Parent column values are computed rollups.</strong> On a multi-level board, only LEAF items (the rows with no children) accept column-value writes. monday silently keeps the rolled-up value on parents — your write looks like it succeeded but the display value doesn't change.</li>
+        <li><strong>monday's native multi-level XLSX exports lose hierarchy.</strong> The export flattens every level into a single list with only the root prefix preserved (intermediate parents disappear). Monday.com Inspector explicitly refuses these exports with a clear error so you don't end up with duplicated top-level items. To bulk-import into a multi-level board, use a <strong>flat CSV with a <code>Parent</code> column</strong> containing each leaf's parent name.</li>
+      </ol>
+      <p>The Importer auto-detects multi-level boards (via monday's <code>hierarchy_type</code> field on API version 2026-04+) and surfaces a <code>MULTI-LEVEL</code> badge so you always know which model you're working with.</p>
 
       <h2 id="tips">Tips for a Successful Import</h2>
       <ul>
@@ -285,7 +337,23 @@
         </details>
         <details class="faq">
           <summary>What happens if some rows fail during import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
-          <div class="faq-body">Failed rows are shown in the live progress view with the exact error message from the monday.com API. Common causes include invalid column values (e.g., a status label that doesn't exist) or a parent item name that doesn't match any board item. Fix the data and re-run.</div>
+          <div class="faq-body">Failed rows are shown in the live progress view with the exact error message from the monday.com API. Common causes include invalid column values (e.g., a status label that doesn't exist) or a parent item name that doesn't match any board item. Fix the data and re-run — only failed rows need to be re-imported.</div>
+        </details>
+        <details class="faq">
+          <summary>Can I import into a Connect Boards (board_relation) column?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Yes, since v1.5. Put item names, item IDs, or a comma-separated mix in the cell — the Importer fetches the linked board's items once per import and resolves names → IDs automatically. <a href="#connect-boards">See the Connect Boards section above.</a></div>
+        </details>
+        <details class="faq">
+          <summary>Can I import into a multi-level board?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Yes — but use a flat CSV, not monday's native multi-level XLSX export (those are missing hierarchy info on the way out). Parent column values are computed rollups on multi-level boards, so only leaf-item writes actually take effect. <a href="#multi-level">Multi-level details above.</a></div>
+        </details>
+        <details class="faq">
+          <summary>What's the difference between the inline panel and the full-page Importer?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Same engine underneath. The inline panel is faster to open while you're already on a board; the full-page Importer (added in v1.4) gives you a 4-step stepper, a sticky footer with import counts, and much more room for big mapping tables. Use the inline panel for quick imports and the full page for anything with 30+ columns or 1,000+ rows.</div>
+        </details>
+        <details class="faq">
+          <summary>Why doesn't my "Creation log" / mirror column show up in the mapping?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <div class="faq-body">Those column types are computed by monday.com and can't be written via the API. The Importer filters them out so the mapping table stays focused on what you can actually change. Look under the "X file columns hidden" disclosure to see exactly what was dropped and why.</div>
         </details>
       </div>
 
@@ -307,6 +375,9 @@
           <li><a href="#step-4">Step 4: Upload &amp; map columns</a></li>
           <li><a href="#step-5">Step 5: Start &amp; track progress</a></li>
           <li><a href="#column-types">Supported column types</a></li>
+          <li><a href="#connect-boards">Connect Boards (board_relation)</a></li>
+          <li><a href="#read-only">Read-only types we filter</a></li>
+          <li><a href="#multi-level">Multi-level boards</a></li>
           <li><a href="#tips">Tips for success</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ol>
