@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Monday.com Inspector",
+  "short_name": "monday.inspector",
+  "version": "1.5.4",
+  "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, import/export, and more.",
+  "author": "Fruition Services",
+  "homepage_url": "https://mondayinspector.eu",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "monday-inspector@fruitionservices.io",
+      "strict_min_version": "121.0"
+    }
+  },
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://*.monday.com/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.monday.com/*"],
+      "js": ["content/index.js"],
+      "css": ["content/inject.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["src/query/index.html", "src/import/index.html"],
+      "matches": ["https://*.monday.com/*"]
+    }
+  ]
+}

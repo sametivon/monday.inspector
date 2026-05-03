@@ -10,6 +10,8 @@
     "build": "tsc && vite build && vite build --config vite.config.inspector.ts",
     "build:main": "tsc && vite build",
     "build:inspector": "vite build --config vite.config.inspector.ts",
+    "build:firefox": "npm run build && node scripts/build-firefox.mjs",
+    "build:all": "npm run build && node scripts/build-firefox.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
