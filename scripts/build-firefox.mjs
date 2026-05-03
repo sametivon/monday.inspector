@@ -11,6 +11,7 @@
 // we copy + overwrite the manifest in a separate target directory.
 
 import { cpSync, existsSync, mkdirSync, rmSync, copyFileSync } from "node:fs";
+// (rmSync is also used for stray-file cleanup below)
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,6 +39,14 @@ mkdirSync(dest, { recursive: true });
 
 cpSync(src, dest, { recursive: true });
 copyFileSync(firefoxManifest, resolve(dest, "manifest.json"));
+
+// Vite's `public/` copy also drags manifest.firefox.json into dist/ as a
+// raw asset. Remove it from the Firefox build — Mozilla's validator
+// flags any unexpected manifest-shaped file inside the zip.
+const stray = resolve(dest, "manifest.firefox.json");
+if (existsSync(stray)) {
+  rmSync(stray, { force: true });
+}
 
 console.log("✓ Firefox build ready at dist-firefox/");
 console.log("  Manifest swapped from public/manifest.firefox.json");

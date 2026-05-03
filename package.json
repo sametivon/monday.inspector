@@ -12,6 +12,7 @@
     "build:inspector": "vite build --config vite.config.inspector.ts",
     "build:firefox": "npm run build && node scripts/build-firefox.mjs",
     "build:all": "npm run build && node scripts/build-firefox.mjs",
+    "package:firefox": "npm run build:firefox && node scripts/package-firefox.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
