@@ -42,6 +42,16 @@ export interface ParsedSheet {
   sheetName: string;
 }
 
+export interface ParseOptions {
+  /**
+   * Force a specific header row (0-based xlsx row index). Bypasses auto
+   * detection. Used when the user manually overrides the auto pick from
+   * the UI. Ignored for monday classic exports — those have a fixed
+   * structure and the override would just confuse things.
+   */
+  headerRowOverride?: number;
+}
+
 /**
  * Read the .xlsx, detect whether it's a monday classic export or a flat
  * sheet, and return rows with their xlsx row indices intact so the Image
@@ -51,7 +61,10 @@ export interface ParsedSheet {
  * lost in monday's export and we don't have a safe way to put the images
  * back on the right item.
  */
-export async function parseSheetForImageImport(file: File): Promise<ParsedSheet> {
+export async function parseSheetForImageImport(
+  file: File,
+  options: ParseOptions = {},
+): Promise<ParsedSheet> {
   const raw = new Uint8Array(await file.arrayBuffer());
 
   // monday's exports use ZIP64 envelopes that the xlsx library mis-reads.
@@ -74,11 +87,33 @@ export async function parseSheetForImageImport(file: File): Promise<ParsedSheet>
     );
   }
 
+  // monday classic export — fixed structure, no need to guess header row
   if (isMondayExport(rawRows)) {
     return parseMondayClassic(rawRows, sheetName);
   }
 
-  return parseFlat(rawRows, sheetName);
+  // Flat sheet — header could be on row 1 or buried under title/info rows.
+  // Detect heuristically, but let the caller override.
+  const headerRowIndex =
+    typeof options.headerRowOverride === "number"
+      ? options.headerRowOverride
+      : detectHeaderRowIndex(rawRows);
+
+  return parseFlat(rawRows, sheetName, headerRowIndex);
+}
+
+/**
+ * Preview a sheet's raw rows without classifying them. Used by the UI to
+ * surface a manual header-row picker — the user sees the first few rows
+ * exactly as they appear in the xlsx and chooses which one is the header.
+ */
+export async function previewRawRows(file: File, maxRows = 12): Promise<string[][]> {
+  const raw = new Uint8Array(await file.arrayBuffer());
+  const buffer = patchZip64Headers(raw);
+  const workbook = XLSX.read(buffer, { type: "array" });
+  const sheetName = workbook.SheetNames[0];
+  if (!sheetName) return [];
+  return sheetToArrayOfArrays(workbook.Sheets[sheetName]).slice(0, maxRows);
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -209,28 +244,44 @@ function parseMondayClassic(rows: string[][], sheetName: string): ParsedSheet {
 }
 
 /**
- * Parse a hand-built flat spreadsheet: row 0 is the header, every
- * subsequent non-empty row is an item.
+ * Parse a hand-built flat spreadsheet given an explicit header row index.
+ * Data rows are every non-empty row after the header. The header row index
+ * is the *xlsx row* it lives at, so subsequent data rows keep their xlsx
+ * row indices intact (no off-by-one with image anchors below).
  */
-function parseFlat(rows: string[][], sheetName: string): ParsedSheet {
-  if (rows.length < 2) {
-    throw new Error("Excel file must have a header row and at least one data row");
+function parseFlat(
+  rows: string[][],
+  sheetName: string,
+  headerRowIndex: number,
+): ParsedSheet {
+  if (headerRowIndex < 0 || headerRowIndex >= rows.length) {
+    throw new Error(
+      `Header row ${headerRowIndex} is out of range — file has ${rows.length} rows`,
+    );
   }
 
-  const headers = rows[0].map((c) => c.trim()).filter((c) => c !== "");
+  const headerRow = rows[headerRowIndex];
+  // We trim() but preserve original casing — column names like "SKU" and
+  // "Name" round-trip into monday matching exactly. Duplicate headers are
+  // dropped silently (last value wins via Object.fromEntries semantics).
+  const headers = headerRow
+    .map((c) => c.trim())
+    .filter((c) => c !== "");
   if (headers.length === 0) {
-    throw new Error("Excel file has no headers in the first row");
+    throw new Error(`Row ${headerRowIndex + 1} has no header cells`);
   }
 
   const out: ParsedSheetRow[] = [];
-  for (let i = 1; i < rows.length; i++) {
+  for (let i = headerRowIndex + 1; i < rows.length; i++) {
     const row = rows[i];
     const nonEmpty = row.filter((c) => c.trim() !== "").length;
     if (nonEmpty === 0) continue;
 
     const values: Record<string, string> = {};
-    for (let c = 0; c < headers.length; c++) {
-      values[headers[c]] = row[c]?.trim() ?? "";
+    for (let c = 0; c < headerRow.length; c++) {
+      const header = headerRow[c]?.trim();
+      if (!header) continue;
+      values[header] = row[c]?.trim() ?? "";
     }
     out.push({ xlsxRowIndex: i, values });
   }
@@ -241,4 +292,59 @@ function parseFlat(rows: string[][], sheetName: string): ParsedSheet {
     rows: out,
     sheetName,
   };
+}
+
+/**
+ * Heuristic to find the header row in a hand-built sheet.
+ *
+ * Real-world sheets often have a title row, a description, blank rows, or
+ * filter widgets above the actual data. We pick the FIRST row in the
+ * first 20 rows that:
+ *
+ *   1. Has at least 2 non-empty cells.
+ *   2. Has more non-empty cells than any of the (up to 3) rows above it.
+ *   3. Is followed by at least one row with similar (≥75%) cell density.
+ *
+ * If nothing matches (e.g. tiny sheets), fall back to row 0. Users can
+ * always override via the UI when this gets it wrong.
+ */
+function detectHeaderRowIndex(rows: string[][]): number {
+  if (rows.length === 0) return 0;
+
+  const counts = rows.map(
+    (row) => row.filter((c) => c.trim() !== "").length,
+  );
+  const scanLimit = Math.min(20, rows.length);
+
+  for (let i = 0; i < scanLimit; i++) {
+    const here = counts[i];
+    if (here < 2) continue;
+
+    // Look upward up to 3 rows — header should be a non-empty row that
+    // breaks the previous "small / empty" pattern.
+    let denserThanAbove = true;
+    for (let j = Math.max(0, i - 3); j < i; j++) {
+      if (counts[j] >= here) {
+        denserThanAbove = false;
+        break;
+      }
+    }
+    if (!denserThanAbove) continue;
+
+    // Look downward up to 5 rows — at least one data row should have a
+    // similar cell density (75%+ of the header's).
+    const minDataDensity = Math.max(2, Math.floor(here * 0.75));
+    let hasDataBelow = false;
+    for (let k = i + 1; k < Math.min(rows.length, i + 6); k++) {
+      if (counts[k] >= minDataDensity) {
+        hasDataBelow = true;
+        break;
+      }
+    }
+    if (!hasDataBelow) continue;
+
+    return i;
+  }
+
+  return 0;
 }

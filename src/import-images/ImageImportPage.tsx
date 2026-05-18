@@ -9,6 +9,7 @@ import {
 } from "../services/excelImageExtractor";
 import {
   parseSheetForImageImport,
+  previewRawRows,
   type ParsedSheet,
 } from "../services/imageImportSheetParser";
 import {
@@ -44,6 +45,10 @@ interface UploadState {
   /** Images extracted from the xlsx, keyed by xlsx row index (0-based) */
   images: ImageExtractionResult;
   fileName: string;
+  /** Original File handle — kept so we can re-parse with a header override */
+  file: File;
+  /** First ~12 raw rows of the sheet — surfaced when the auto pick looks wrong */
+  preview: string[][];
 }
 
 export function ImageImportPage() {
@@ -205,8 +210,8 @@ export function ImageImportPage() {
 
       // Format-aware parser: auto-detects monday.com classic export
       // (3-row preamble: board name, group name, parent headers) vs a
-      // hand-built flat sheet (header on row 0). Returns rows with their
-      // xlsx row indices preserved so we can join to image anchors below.
+      // hand-built flat sheet. For flat sheets the parser also auto-finds
+      // the header row even when there are title/info rows above it.
       const sheet = await parseSheetForImageImport(incoming);
 
       if (sheet.rows.length === 0) {
@@ -214,6 +219,10 @@ export function ImageImportPage() {
           "No data rows found in the spreadsheet. Make sure your items are listed under a header row.",
         );
       }
+
+      // Pull the first few raw rows for the manual-override UI in case
+      // auto detection landed on the wrong row.
+      const preview = await previewRawRows(incoming, 12);
 
       // Image extraction reads the raw buffer via JSZip — independent of
       // the cell parser, since JSZip handles ZIP64 natively. We still need
@@ -226,7 +235,13 @@ export function ImageImportPage() {
         );
       }
 
-      setUpload({ sheet, images, fileName: incoming.name });
+      setUpload({
+        sheet,
+        images,
+        fileName: incoming.name,
+        file: incoming,
+        preview,
+      });
     } catch (err) {
       setFileError((err as Error).message);
     }
@@ -330,6 +345,28 @@ export function ImageImportPage() {
     setMatchColumn("");
   };
 
+  /**
+   * Re-parse the same .xlsx with a user-picked header row. Only relevant
+   * for flat sheets — monday classic exports have a fixed structure and
+   * the override would be confusing. We preserve the already-extracted
+   * images so we don't pay the JSZip cost again.
+   */
+  const handleHeaderOverride = useCallback(
+    async (newHeaderRowIndex: number) => {
+      if (!upload || upload.sheet.format !== "flat") return;
+      try {
+        const sheet = await parseSheetForImageImport(upload.file, {
+          headerRowOverride: newHeaderRowIndex,
+        });
+        setUpload({ ...upload, sheet });
+        setMatchColumn("");
+      } catch (err) {
+        setFileError((err as Error).message);
+      }
+    },
+    [upload],
+  );
+
   // ── Render ──────────────────────────────────────────────────────────────
   return (
     <div className="imp-shell">
@@ -413,29 +450,42 @@ export function ImageImportPage() {
                 onReset={handleReset}
               />
               {upload && (
-                <div className="imp-file-meta-row">
-                  <span>
-                    <strong>{upload.sheet.rows.length}</strong> item row
-                    {upload.sheet.rows.length !== 1 ? "s" : ""}
-                  </span>
-                  <span>·</span>
-                  <span>
-                    <strong>{upload.images.images.length}</strong> image
-                    {upload.images.images.length !== 1 ? "s" : ""} found
-                  </span>
-                  <span>·</span>
-                  <span>
-                    {(upload.images.totalBytes / 1024).toFixed(0)}&nbsp;KB
-                  </span>
-                  <span>·</span>
-                  <span title={upload.sheet.format === "monday_classic" ? "Detected monday.com classic board export — board name, group name, and parent headers are skipped automatically" : "Hand-built flat sheet — header on row 1, items from row 2"}>
-                    {upload.sheet.format === "monday_classic" ? (
-                      <span style={{ color: "#7c5cfc", fontWeight: 600 }}>monday export</span>
-                    ) : (
-                      <span style={{ color: "#52525b" }}>flat sheet</span>
-                    )}
-                  </span>
-                </div>
+                <>
+                  <div className="imp-file-meta-row">
+                    <span>
+                      <strong>{upload.sheet.rows.length}</strong> item row
+                      {upload.sheet.rows.length !== 1 ? "s" : ""}
+                    </span>
+                    <span>·</span>
+                    <span>
+                      <strong>{upload.images.images.length}</strong> image
+                      {upload.images.images.length !== 1 ? "s" : ""} found
+                    </span>
+                    <span>·</span>
+                    <span>
+                      {(upload.images.totalBytes / 1024).toFixed(0)}&nbsp;KB
+                    </span>
+                    <span>·</span>
+                    <span title={upload.sheet.format === "monday_classic" ? "Detected monday.com classic board export — board name, group name, and parent headers are skipped automatically" : "Hand-built flat sheet — header row detected automatically"}>
+                      {upload.sheet.format === "monday_classic" ? (
+                        <span style={{ color: "#7c5cfc", fontWeight: 600 }}>monday export</span>
+                      ) : (
+                        <span style={{ color: "#52525b" }}>flat sheet</span>
+                      )}
+                    </span>
+                  </div>
+
+                  {/* Manual header-row override — only meaningful for
+                      flat sheets. For monday exports the structure is
+                      fixed, so we hide the picker entirely. */}
+                  {upload.sheet.format === "flat" && upload.preview.length > 1 && (
+                    <HeaderRowPicker
+                      preview={upload.preview}
+                      currentHeaders={upload.sheet.headers}
+                      onPick={handleHeaderOverride}
+                    />
+                  )}
+                </>
               )}
             </section>
           )}
@@ -738,6 +788,71 @@ function StatusPill({ status }: { status: string }) {
           ? "imp-pill-pending"
           : "imp-pill-pending";
   return <span className={`imp-pill ${cls}`}>{status}</span>;
+}
+
+/**
+ * Manual header-row picker. Shows the first few rows of the spreadsheet
+ * as the user would see them in Excel; clicking a row promotes it to be
+ * the header and re-parses the sheet. Hidden behind a "Wrong header?"
+ * toggle so it doesn't add clutter when the auto pick is right.
+ */
+function HeaderRowPicker(props: {
+  preview: string[][];
+  currentHeaders: string[];
+  onPick: (rowIndex: number) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  // Heuristic: the detected header row is the first preview row whose
+  // trimmed cells match the parsed headers list. Used purely for display
+  // so the user knows what was picked.
+  const detectedRow = props.preview.findIndex((row) => {
+    const trimmed = row.map((c) => c.trim()).filter(Boolean);
+    return (
+      trimmed.length === props.currentHeaders.length &&
+      trimmed.every((c, i) => c === props.currentHeaders[i])
+    );
+  });
+
+  return (
+    <div className="imp-header-picker">
+      <button
+        type="button"
+        className="imp-header-picker-toggle"
+        onClick={() => setOpen((o) => !o)}
+      >
+        {open ? "Hide header picker ↑" : "Wrong header row? Pick another →"}
+      </button>
+      {open && (
+        <div className="imp-header-picker-list">
+          <p className="imp-header-picker-hint">
+            Click the row that contains your column titles. Detected:
+            row&nbsp;{detectedRow >= 0 ? detectedRow + 1 : "?"}.
+          </p>
+          {props.preview.map((row, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`imp-header-picker-row ${i === detectedRow ? "is-active" : ""}`}
+              onClick={() => {
+                props.onPick(i);
+                setOpen(false);
+              }}
+            >
+              <span className="imp-header-picker-num">{i + 1}</span>
+              <span className="imp-header-picker-cells">
+                {row
+                  .map((c) => c.trim())
+                  .filter(Boolean)
+                  .slice(0, 6)
+                  .join(" · ") || <em>(empty row)</em>}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function BrandMark() {

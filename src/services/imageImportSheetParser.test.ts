@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import JSZip from "jszip";
 import * as XLSX from "xlsx";
-import { parseSheetForImageImport } from "./imageImportSheetParser";
+import { parseSheetForImageImport, previewRawRows } from "./imageImportSheetParser";
 import { extractImagesFromXlsx } from "./excelImageExtractor";
 
 // Small helper — wraps a 2-D array into a real .xlsx Blob via the xlsx
@@ -38,6 +38,51 @@ describe("parseSheetForImageImport — flat sheet", () => {
     expect(parsed.rows[2].xlsxRowIndex).toBe(3);
     expect(parsed.rows[0].values["Item Name"]).toBe("Widget A");
     expect(parsed.rows[1].values.SKU).toBe("W-002");
+  });
+
+  it("auto-detects header on row 3 when there's a title + blank above it", async () => {
+    // Common real-world pattern: title cell, description, blank, then the
+    // real header. We expect the parser to pick row 3 as the header
+    // without any manual hint.
+    const file = buildXlsxFromRows([
+      ["My Product Catalogue 2026"], // row 0 — title (single cell)
+      ["Updated by Sam on 5/15"], // row 1 — description (single cell)
+      [], // row 2 — blank
+      ["Item Name", "SKU", "Notes"], // row 3 — REAL header
+      ["Widget A", "W-001", "First"],
+      ["Widget B", "W-002", "Second"],
+    ]);
+    const parsed = await parseSheetForImageImport(file);
+    expect(parsed.format).toBe("flat");
+    expect(parsed.headers).toEqual(["Item Name", "SKU", "Notes"]);
+    expect(parsed.rows).toHaveLength(2);
+    expect(parsed.rows[0].xlsxRowIndex).toBe(4);
+    expect(parsed.rows[1].xlsxRowIndex).toBe(5);
+  });
+
+  it("respects headerRowOverride when the auto pick is wrong", async () => {
+    const file = buildXlsxFromRows([
+      ["A", "B", "C"], // looks like a header but the user knows it isn't
+      ["Header1", "Header2", "Header3"],
+      ["data1", "data2", "data3"],
+    ]);
+    const parsed = await parseSheetForImageImport(file, { headerRowOverride: 1 });
+    expect(parsed.headers).toEqual(["Header1", "Header2", "Header3"]);
+    expect(parsed.rows).toHaveLength(1);
+    expect(parsed.rows[0].xlsxRowIndex).toBe(2);
+    expect(parsed.rows[0].values.Header1).toBe("data1");
+  });
+
+  it("previewRawRows exposes the first N rows for a manual picker UI", async () => {
+    const file = buildXlsxFromRows([
+      ["title"],
+      ["one", "two"],
+      ["a", "b"],
+    ]);
+    const preview = await previewRawRows(file, 10);
+    expect(preview.length).toBe(3);
+    expect(preview[0][0]).toBe("title");
+    expect(preview[1]).toEqual(["one", "two"]);
   });
 
   it("skips fully empty rows but preserves xlsx row numbering", async () => {

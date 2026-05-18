@@ -189,3 +189,70 @@
   color: hsl(0 70% 45%);
   font-size: 11px;
 }
+
+/* Header-row picker — surfaces when auto detection might be wrong */
+.imp-header-picker {
+  margin-top: 12px;
+}
+.imp-header-picker-toggle {
+  background: transparent;
+  border: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--qi-primary));
+  cursor: pointer;
+  padding: 4px 0;
+}
+.imp-header-picker-toggle:hover {
+  text-decoration: underline;
+}
+.imp-header-picker-list {
+  margin-top: 8px;
+  border: 1px solid hsl(var(--qi-border));
+  border-radius: var(--qi-radius-sm);
+  background: hsl(var(--qi-surface));
+  overflow: hidden;
+}
+.imp-header-picker-hint {
+  font-size: 11.5px;
+  color: hsl(var(--qi-muted-foreground));
+  padding: 10px 12px;
+  border-bottom: 1px solid hsl(var(--qi-border));
+  background: hsl(var(--qi-bg));
+}
+.imp-header-picker-row {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 12.5px;
+  font-family: var(--qi-font-mono);
+  color: hsl(var(--qi-foreground));
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  border-bottom: 1px solid hsl(var(--qi-border));
+}
+.imp-header-picker-row:last-child {
+  border-bottom: 0;
+}
+.imp-header-picker-row:hover {
+  background: hsl(var(--qi-bg));
+}
+.imp-header-picker-row.is-active {
+  background: hsl(263 80% 96%);
+  font-weight: 600;
+}
+.imp-header-picker-num {
+  font-weight: 700;
+  color: hsl(var(--qi-muted-foreground));
+  min-width: 18px;
+}
+.imp-header-picker-cells {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
