@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Monday.com Inspector",
   "short_name": "monday.inspector",
-  "version": "1.5.4",
-  "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, import/export, and more.",
+  "version": "1.6.0",
+  "description": "Inspect, query, edit, and bulk manage Monday.com boards. GraphQL editor, schema viewer, CSV import, bulk update, and Excel image upload to File columns.",
   "author": "Fruition Services",
   "homepage_url": "https://mondayinspector.eu",
   "permissions": ["storage", "activeTab"],
@@ -38,7 +38,11 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["src/query/index.html", "src/import/index.html"],
+      "resources": [
+        "src/query/index.html",
+        "src/import/index.html",
+        "src/import-images/index.html"
+      ],
       "matches": ["https://*.monday.com/*"]
     }
   ]

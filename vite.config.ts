@@ -29,6 +29,7 @@ export default defineConfig({
         panel: resolve(__dirname, "src/panel/index.html"),
         query: resolve(__dirname, "src/query/index.html"),
         importer: resolve(__dirname, "src/import/index.html"),
+        "image-importer": resolve(__dirname, "src/import-images/index.html"),
         background: resolve(__dirname, "src/background/index.ts"),
       },
       output: {

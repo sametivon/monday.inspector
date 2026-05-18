@@ -350,6 +350,15 @@ export function ImportPage() {
         <div className="qi-topbar-spacer" />
         <a
           className="qi-btn qi-btn-sm qi-btn-ghost"
+          href={chromeUrl("src/import-images/index.html")}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Bulk upload images from Excel to a monday.com File column"
+        >
+          Image Importer ↗
+        </a>
+        <a
+          className="qi-btn qi-btn-sm qi-btn-ghost"
           href={chromeUrl("src/query/index.html")}
           target="_blank"
           rel="noopener noreferrer"
