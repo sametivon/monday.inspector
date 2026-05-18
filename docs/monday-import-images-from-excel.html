@@ -53,6 +53,7 @@
     "mainEntity": [
       { "@type": "Question", "name": "Can monday.com import images from Excel natively?", "acceptedAnswer": { "@type": "Answer", "text": "No. Monday.com's Excel exports strip embedded images entirely, and the native CSV/Excel importer has no way to populate File columns with images. The only built-in path is dragging each file into each item manually. The Monday.com Inspector Image Importer fills this gap — it extracts images from .xlsx and uploads them to the File column for matching items." } },
       { "@type": "Question", "name": "Does it work with images pasted into Excel cells?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. As long as the image is anchored to a row — which happens automatically when you paste, drop, or use Insert → Picture — Monday.com Inspector can read it. The xlsx file format stores anchored images in xl/media inside the package, and the tool reads them directly." } },
+      { "@type": "Question", "name": "Does it work directly on monday.com's Export to Excel output?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Image Importer auto-detects monday.com's classic board export format (board name on row 1, group name on row 2, headers on row 3, items from row 4). It skips the preamble and interleaved subitem rows automatically and only matches images to parent items. Export your board, paste images into the rows, upload back." } },
       { "@type": "Question", "name": "Does it work with the new Excel image-in-cell IMAGE() function?", "acceptedAnswer": { "@type": "Answer", "text": "The current version targets pasted/inserted anchored images (the universal Excel image format). IMAGE() function cells reference external URLs and are out of scope for the first release. If your Excel cells contain plain URLs, the importer can be extended to fetch them — open an issue if this is your case." } },
       { "@type": "Question", "name": "How does it match images to monday.com items?", "acceptedAnswer": { "@type": "Answer", "text": "You pick a spreadsheet column that identifies each item. You can match by item name (case-sensitive, the most natural choice) or item ID (the most reliable for items with duplicate names). The tool resolves names by paginating through every item on the board, so it scales to thousands of items." } },
       { "@type": "Question", "name": "What file formats are supported for the images themselves?", "acceptedAnswer": { "@type": "Answer", "text": "Any image format Excel supports embedding — PNG, JPG/JPEG, GIF, BMP, and WebP. The original file extension and MIME type are preserved when uploading to monday.com." } },
@@ -244,6 +245,14 @@
       </ul>
       <p>The image-in-cell IMAGE() formula (newer Excel) stores a URL reference instead of the binary image, so it isn't supported in this first version. If your spreadsheet uses IMAGE(), convert by right-clicking each image and choosing "Place in Cell → Picture" or open the IMAGE() URL in a browser, save the file locally, then paste it back as a regular embedded picture.</p>
 
+      <h3 id="format-support">Works on both monday.com exports and hand-built sheets</h3>
+      <p>The Image Importer auto-detects which format your file is in:</p>
+      <ul>
+        <li><strong>monday.com classic board exports</strong> — these put the board name on row 1, the group name on row 2, the column headers on row 3, and items from row 4 onwards. The importer skips the preamble automatically, ignores subitem rows, and reads parent items only. Re-export a board, drop images into the rows you want, and re-upload — the original "Files" / "Files 1" columns remain valid targets.</li>
+        <li><strong>Hand-built flat spreadsheets</strong> — header on row 1, items from row 2. Same flow.</li>
+      </ul>
+      <p>The detected format is shown in the upload card after parsing so you can tell at a glance which path the tool took.</p>
+
       <h3 id="match-column">Step 2: Add a match column</h3>
       <p>The Image Importer needs to know which monday.com item each image belongs to. Add a column with either:</p>
       <ul>
@@ -318,6 +327,9 @@
 
       <h3>Can monday.com import images from Excel natively?</h3>
       <p>No. Monday.com's CSV import ignores embedded images, and Excel exports from monday.com strip File-column attachments. The Image Importer in Monday.com Inspector is the only zero-cost way to round-trip images between Excel and a monday.com File column.</p>
+
+      <h3>Does it work directly on monday.com's "Export to Excel" output?</h3>
+      <p>Yes. Export your board → Board menu → Export to Excel. Open the file, paste images into the rows you want (the "Files" / "Files 1" columns are natural targets), save, then upload back via the Image Importer. The tool detects the monday-export format automatically — it skips the board name on row 1, the group name on row 2, the header row, and any interleaved subitem rows, then matches images to parent items only.</p>
 
       <h3>Does this work for monday.com WorkForms / monday.com CRM?</h3>
       <p>Yes — File columns work identically across monday.com Work Management, CRM, Sales, Dev, Marketer, and Service. The Image Importer talks to the API directly, so any board with a File column works.</p>

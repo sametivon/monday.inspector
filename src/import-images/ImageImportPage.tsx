@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import * as XLSX from "xlsx";
 import {
   fetchBoardSchema,
   type BoardSchema,
 } from "../services/mondayApi";
-import { patchZip64Headers } from "../services/zip64Patcher";
 import {
   extractImagesFromXlsx,
   type ImageExtractionResult,
 } from "../services/excelImageExtractor";
+import {
+  parseSheetForImageImport,
+  type ParsedSheet,
+} from "../services/imageImportSheetParser";
 import {
   runImageImport,
   type ImageImportProgress,
@@ -36,15 +38,10 @@ import { TokenSetupCard } from "../query/components/TokenSetupCard";
 
 type Step = 1 | 2 | 3 | 4;
 
-interface ParsedRows {
-  headers: string[];
-  rows: Record<string, string>[];
-}
-
 interface UploadState {
-  /** Raw row data parsed from the spreadsheet (data rows only, no header) */
-  rows: ParsedRows;
-  /** Images extracted from the xlsx, keyed by data-row index */
+  /** Parsed sheet — format-aware, with xlsx row indices preserved */
+  sheet: ParsedSheet;
+  /** Images extracted from the xlsx, keyed by xlsx row index (0-based) */
   images: ImageExtractionResult;
   fileName: string;
 }
@@ -143,10 +140,16 @@ export function ImageImportPage() {
 
   // The user picks ONE column to match items by. We default to the first
   // header that looks like a name/id field, but always let the user override.
+  // monday's exports name the item-title column "Name" — that's our best
+  // first guess for those files.
   useEffect(() => {
     if (!upload || matchColumn) return;
-    const headers = upload.rows.headers;
-    const guess = headers.find((h) => /name|item/i.test(h)) ?? headers[0] ?? "";
+    const headers = upload.sheet.headers;
+    const guess =
+      headers.find((h) => h === "Name") ??
+      headers.find((h) => /name|item/i.test(h)) ??
+      headers[0] ??
+      "";
     setMatchColumn(guess);
     if (/id/i.test(guess)) setMatchMode("item_id");
   }, [upload, matchColumn]);
@@ -155,11 +158,15 @@ export function ImageImportPage() {
     if (!upload || !matchColumn) return { matched: 0, total: 0 };
     let total = 0;
     let matched = 0;
-    for (let i = 0; i < upload.rows.rows.length; i++) {
-      const imgs = upload.images.byRow.get(i + 1) ?? [];
+    // Walk every parsed data row and use its OWN xlsxRowIndex to look up
+    // the images Excel anchored there. The parser preserves row indices
+    // across both flat and monday-classic formats, so this single code
+    // path handles both shapes correctly.
+    for (const row of upload.sheet.rows) {
+      const imgs = upload.images.byRow.get(row.xlsxRowIndex) ?? [];
       if (imgs.length === 0) continue;
       total += imgs.length;
-      const key = upload.rows.rows[i][matchColumn]?.trim();
+      const key = row.values[matchColumn]?.trim();
       if (key) matched += imgs.length;
     }
     return { matched, total };
@@ -195,22 +202,23 @@ export function ImageImportPage() {
           "Image import requires an .xlsx file (embedded images live in xlsx's package). Save your spreadsheet as .xlsx and try again.",
         );
       }
-      const raw = new Uint8Array(await incoming.arrayBuffer());
-      // monday.com's XLSX exports use ZIP64 envelopes — patch them so xlsx
-      // can read row data. Image extraction goes through JSZip which handles
-      // ZIP64 natively, so it sees the un-patched buffer cleanly.
-      const buffer = patchZip64Headers(raw);
-      const workbook = XLSX.read(buffer, { type: "array" });
-      const sheetName = workbook.SheetNames[0];
-      if (!sheetName) throw new Error("Excel file contains no sheets");
-      const sheet = workbook.Sheets[sheetName];
-      const sheetJson = XLSX.utils.sheet_to_json<Record<string, string>>(sheet, {
-        defval: "",
-        raw: false,
-      });
-      const headers = Object.keys(sheetJson[0] ?? {});
-      const rows = sheetJson;
 
+      // Format-aware parser: auto-detects monday.com classic export
+      // (3-row preamble: board name, group name, parent headers) vs a
+      // hand-built flat sheet (header on row 0). Returns rows with their
+      // xlsx row indices preserved so we can join to image anchors below.
+      const sheet = await parseSheetForImageImport(incoming);
+
+      if (sheet.rows.length === 0) {
+        throw new Error(
+          "No data rows found in the spreadsheet. Make sure your items are listed under a header row.",
+        );
+      }
+
+      // Image extraction reads the raw buffer via JSZip — independent of
+      // the cell parser, since JSZip handles ZIP64 natively. We still need
+      // the original bytes here, not the patched ones the parser used.
+      const raw = new Uint8Array(await incoming.arrayBuffer());
       const images = await extractImagesFromXlsx(raw);
       if (images.images.length === 0) {
         throw new Error(
@@ -218,11 +226,7 @@ export function ImageImportPage() {
         );
       }
 
-      setUpload({
-        rows: { headers, rows },
-        images,
-        fileName: incoming.name,
-      });
+      setUpload({ sheet, images, fileName: incoming.name });
     } catch (err) {
       setFileError((err as Error).message);
     }
@@ -235,18 +239,19 @@ export function ImageImportPage() {
     setRunError(null);
 
     // Flatten the xlsx into one orchestrator input per (row, image) pair.
-    // Image anchor rows are 0-based AT THE SPREADSHEET LEVEL, where row 0 is
-    // the header row → data row N lives at spreadsheet row N+1.
+    // We use each data row's own xlsxRowIndex — preserved by the format-
+    // aware parser — to look up images. For monday classic exports that
+    // means row 3 (first parent under "board name + group name + headers"),
+    // for hand-built flat sheets it means row 1 (first row under headers).
     const inputs: ImageMatchInput[] = [];
-    for (let i = 0; i < upload.rows.rows.length; i++) {
-      const spreadsheetRow = i + 1; // skip header
-      const imgs = upload.images.byRow.get(spreadsheetRow);
+    for (const row of upload.sheet.rows) {
+      const imgs = upload.images.byRow.get(row.xlsxRowIndex);
       if (!imgs?.length) continue;
-      const matchKey = upload.rows.rows[i][matchColumn]?.trim();
+      const matchKey = row.values[matchColumn]?.trim();
       if (!matchKey) continue;
       for (const img of imgs) {
         inputs.push({
-          rowIndex: spreadsheetRow,
+          rowIndex: row.xlsxRowIndex,
           matchKey,
           fileName: img.fileName,
           data: img.data,
@@ -410,8 +415,8 @@ export function ImageImportPage() {
               {upload && (
                 <div className="imp-file-meta-row">
                   <span>
-                    <strong>{upload.rows.rows.length}</strong> data row
-                    {upload.rows.rows.length !== 1 ? "s" : ""}
+                    <strong>{upload.sheet.rows.length}</strong> item row
+                    {upload.sheet.rows.length !== 1 ? "s" : ""}
                   </span>
                   <span>·</span>
                   <span>
@@ -421,6 +426,14 @@ export function ImageImportPage() {
                   <span>·</span>
                   <span>
                     {(upload.images.totalBytes / 1024).toFixed(0)}&nbsp;KB
+                  </span>
+                  <span>·</span>
+                  <span title={upload.sheet.format === "monday_classic" ? "Detected monday.com classic board export — board name, group name, and parent headers are skipped automatically" : "Hand-built flat sheet — header on row 1, items from row 2"}>
+                    {upload.sheet.format === "monday_classic" ? (
+                      <span style={{ color: "#7c5cfc", fontWeight: 600 }}>monday export</span>
+                    ) : (
+                      <span style={{ color: "#52525b" }}>flat sheet</span>
+                    )}
                   </span>
                 </div>
               )}
@@ -468,7 +481,7 @@ export function ImageImportPage() {
                   onChange={(e) => setMatchColumn(e.target.value)}
                 >
                   <option value="">— Select —</option>
-                  {upload.rows.headers.map((h) => (
+                  {upload.sheet.headers.map((h) => (
                     <option key={h} value={h}>
                       {h}
                     </option>
@@ -591,8 +604,11 @@ function RawFileDrop(props: {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="imp-file-name">{props.upload.fileName}</div>
             <div className="imp-file-meta">
-              {props.upload.rows.rows.length} rows ·{" "}
-              {props.upload.images.images.length} images
+              {props.upload.sheet.rows.length} rows ·{" "}
+              {props.upload.images.images.length} images ·{" "}
+              {props.upload.sheet.format === "monday_classic"
+                ? "monday export"
+                : "flat sheet"}
             </div>
           </div>
           <button className="qi-btn qi-btn-sm" onClick={props.onReset}>
