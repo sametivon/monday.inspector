@@ -158,16 +158,30 @@
       </div>
 
       <h2 id="solution">The Solution: Monday.com Inspector Image Importer</h2>
-      <p><a href="/">Monday.com Inspector</a> is a free Chrome extension. Its new <strong>Image Importer</strong> (shipped in v1.6) reads your Excel file the way it's actually structured: it unzips the .xlsx package, pulls every embedded image out of the <code>xl/media</code> folder, looks at each image's anchor cell to find the row it belongs to, then uploads each image to the matching item's File column on monday.com.</p>
+      <p><a href="/">Monday.com Inspector</a> is a free Chrome extension. Its new <strong>Image Importer</strong> (shipped in v1.6) reads your Excel file the way it's actually structured: it unzips the .xlsx package, pulls every embedded image out of the <code>xl/media</code> folder, anchors each image to its row, and either attaches images to existing items or creates new monday items from each row with images attached.</p>
 
-      <p>What it gives you:</p>
+      <p>Two modes — pick the one that matches your workflow:</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0">
+        <div class="card" style="padding:16px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:6px">🔗 Attach to existing items</div>
+          <p style="font-size:13px;color:#52525b;line-height:1.6">Items already live on monday. Match each row by name or ID, upload images to a File column. Use when you've already created your items and need to backfill photos.</p>
+        </div>
+        <div class="card" style="padding:16px">
+          <div style="font-weight:700;font-size:14px;margin-bottom:6px">✨ Create new items with images</div>
+          <p style="font-size:13px;color:#52525b;line-height:1.6">Each row becomes a brand-new monday item. Map columns, pick a group, the image is attached as part of creation. Use when you're loading a fresh catalogue or dataset.</p>
+        </div>
+      </div>
+
+      <p>What both modes give you:</p>
       <ul>
-        <li><strong>True bulk upload</strong> — drop one .xlsx, get all images attached in one pass.</li>
-        <li><strong>Match by name or ID</strong> — works whether your spreadsheet has item names or item IDs.</li>
-        <li><strong>No row limit</strong> — handles thousands of images with automatic batching and rate-limit-aware retries.</li>
-        <li><strong>Per-image progress</strong> — see exactly which uploads succeeded, which failed, and why.</li>
+        <li><strong>True bulk upload</strong> — drop one .xlsx, all rows processed in one pass.</li>
+        <li><strong>Full column mapping</strong> in create mode — text, status, dates, dropdowns, people, and 14 other column types are mapped from sheet → monday automatically.</li>
+        <li><strong>Match by name or ID</strong> in update mode.</li>
+        <li><strong>No row limit</strong> — handles thousands of items with batching and rate-limit-aware retries.</li>
+        <li><strong>Per-row progress</strong> — see exactly which rows succeeded, which failed, and why.</li>
         <li><strong>Original filenames preserved</strong> — the names that show up in monday's File column match the names in your Excel.</li>
-        <li><strong>Zero server hops</strong> — images go directly from your browser to api.monday.com over HTTPS. Nothing transits a third-party server.</li>
+        <li><strong>Zero server hops</strong> — everything goes directly from your browser to api.monday.com over HTTPS. Nothing transits a third-party server.</li>
       </ul>
 
       <div class="callout callout-success">

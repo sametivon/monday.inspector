@@ -256,3 +256,103 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Mode picker — Update vs Create */
+.imp-mode-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (max-width: 720px) {
+  .imp-mode-picker {
+    grid-template-columns: 1fr;
+  }
+}
+.imp-mode-option {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  text-align: left;
+  background: hsl(var(--qi-surface));
+  border: 2px solid hsl(var(--qi-border));
+  border-radius: var(--qi-radius);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.imp-mode-option:hover {
+  border-color: hsl(var(--qi-primary) / 0.5);
+}
+.imp-mode-option.is-active {
+  border-color: hsl(var(--qi-primary));
+  background: hsl(263 80% 98%);
+}
+.imp-mode-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.imp-mode-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--qi-foreground));
+  margin-bottom: 4px;
+}
+.imp-mode-sub {
+  font-size: 12.5px;
+  color: hsl(var(--qi-muted-foreground));
+  line-height: 1.55;
+}
+
+/* Column mapper (create mode) */
+.imp-mapper {
+  border: 1px solid hsl(var(--qi-border));
+  border-radius: var(--qi-radius-sm);
+  background: hsl(var(--qi-bg));
+  overflow: hidden;
+  margin-top: 6px;
+}
+.imp-mapper-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 14px;
+  padding: 10px 14px;
+  align-items: center;
+  border-bottom: 1px solid hsl(var(--qi-border));
+}
+.imp-mapper-row:last-child {
+  border-bottom: 0;
+}
+.imp-mapper-head {
+  background: hsl(var(--qi-surface));
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: hsl(var(--qi-fg-soft));
+}
+.imp-mapper-source {
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(var(--qi-foreground));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.imp-mapper-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: hsl(263 80% 92%);
+  color: hsl(263 80% 35%);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.imp-mapper-fixed {
+  font-size: 12.5px;
+  color: hsl(var(--qi-muted-foreground));
+  font-style: italic;
+}

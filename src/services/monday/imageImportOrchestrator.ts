@@ -1,6 +1,7 @@
 import { BATCH_DELAY_MS } from "../../utils/constants";
+import type { ColumnMapping, MondayColumn } from "../../utils/types";
 import { addFileToColumn, uploadWithRetry } from "./fileUpload";
-import { fetchBoardItems } from "./queries";
+import { buildColumnValues, createItem, fetchBoardItems } from "./queries";
 import { sleep } from "./graphqlClient";
 
 // Orchestrate bulk image upload to a monday.com File column.
@@ -165,6 +166,208 @@ export async function runImageImport(
     callbacks.onBatchComplete({ ...progress });
     if (i + IMAGE_BATCH_SIZE < uploadable.length) {
       await sleep(IMAGE_BATCH_DELAY_MS);
+    }
+  }
+
+  return progress;
+}
+
+// ── Create-mode orchestrator ──────────────────────────────────────────
+//
+// "Create new items AND attach the image" pipeline. Used when the sheet
+// contains rows that don't exist on monday yet — the operator wants the
+// import to produce both the item and the attached photo in one pass.
+//
+// For each input row:
+//   1. Resolve column values from the user's column mappings via the
+//      shared buildColumnValues() helper (same one the CSV importer uses).
+//   2. Create the item with create_item, optionally pinning to a group.
+//   3. Upload every image anchored to that row to the chosen File column
+//      on the newly created item.
+//
+// A failure in step 2 marks the row as error and skips the image — we
+// don't want orphan images on items that don't exist. A failure in step 3
+// marks the row as error too, but the item is left in place because the
+// row data is still usable.
+
+export interface ImageCreateInput {
+  /** xlsx 0-based row index — used for ordering + progress display */
+  rowIndex: number;
+  /** Item title for the created item (required) */
+  itemName: string;
+  /** Full sheet row → cell values map. Pulled through buildColumnValues
+   *  with the user's column mappings to build the monday column-values JSON. */
+  rowValues: Record<string, string>;
+  /** Every image anchored to this row in the xlsx. Empty array is allowed
+   *  — the row will still be created, just without an attached image. */
+  images: { fileName: string; data: Uint8Array; mimeType: string }[];
+}
+
+export interface ImageCreateRow {
+  rowIndex: number;
+  itemName: string;
+  status: ImageUploadStatus;
+  error?: string;
+  /** monday item id once create_item succeeds */
+  createdItemId?: string;
+  /** Total bytes the row will upload — useful for the progress hover */
+  totalBytes: number;
+  /** How many images the orchestrator tried to upload for this row */
+  imagesTotal: number;
+  /** How many of those landed successfully */
+  imagesSucceeded: number;
+}
+
+export interface ImageCreateProgress {
+  total: number;
+  completed: number;
+  succeeded: number;
+  failed: number;
+  rows: ImageCreateRow[];
+}
+
+export interface ImageCreateCallbacks {
+  onRowUpdate: (rowIndex: number, update: Partial<ImageCreateRow>) => void;
+  onBatchComplete: (progress: ImageCreateProgress) => void;
+}
+
+// Item creation hits the GraphQL endpoint with full column-values
+// payloads — heavier than a file upload — so we keep concurrency low and
+// pause between batches to stay clear of monday's complexity budget.
+const CREATE_BATCH_SIZE = 3;
+const CREATE_BATCH_DELAY_MS = BATCH_DELAY_MS;
+
+/**
+ * Run a bulk create-with-images import. Each input row produces one item
+ * on monday plus zero-or-more images attached to a File column on that
+ * new item.
+ *
+ * `boardColumns` MUST be the parent-board columns (not subitem columns) —
+ * we only create top-level items here. Subitem image support is a
+ * separate orchestrator we haven't shipped yet.
+ */
+export async function runImageImportWithCreate(
+  token: string,
+  boardId: string,
+  groupId: string | undefined,
+  columnMappings: ColumnMapping[],
+  fileColumnId: string,
+  boardColumns: MondayColumn[],
+  inputs: ImageCreateInput[],
+  callbacks: ImageCreateCallbacks,
+): Promise<ImageCreateProgress> {
+  const progress: ImageCreateProgress = {
+    total: inputs.length,
+    completed: 0,
+    succeeded: 0,
+    failed: 0,
+    rows: inputs.map((inp) => ({
+      rowIndex: inp.rowIndex,
+      itemName: inp.itemName,
+      status: "pending",
+      totalBytes: inp.images.reduce((s, im) => s + im.data.byteLength, 0),
+      imagesTotal: inp.images.length,
+      imagesSucceeded: 0,
+    })),
+  };
+  callbacks.onBatchComplete({ ...progress });
+
+  for (let i = 0; i < inputs.length; i += CREATE_BATCH_SIZE) {
+    const batch = inputs.slice(i, i + CREATE_BATCH_SIZE);
+    await Promise.all(
+      batch.map(async (inp, batchIdx) => {
+        const rowIdx = i + batchIdx;
+        const row = progress.rows[rowIdx];
+
+        // Empty item name is a hard fail — monday rejects create_item
+        // without a name and the resulting error message is unhelpful.
+        if (!inp.itemName.trim()) {
+          row.status = "error";
+          row.error = "Item name is empty";
+          progress.failed++;
+          progress.completed++;
+          callbacks.onRowUpdate(rowIdx, row);
+          return;
+        }
+
+        row.status = "uploading";
+        callbacks.onRowUpdate(rowIdx, row);
+
+        // ── Phase 1: create the monday item ──────────────────────────
+        let createdItemId: string;
+        try {
+          const colVals = await buildColumnValues(
+            token,
+            columnMappings,
+            inp.rowValues,
+            boardColumns,
+          );
+          const result = await createItem(
+            token,
+            boardId,
+            groupId,
+            inp.itemName,
+            colVals,
+          );
+          createdItemId = result.id;
+          row.createdItemId = createdItemId;
+        } catch (err) {
+          row.status = "error";
+          row.error = `create_item failed: ${(err as Error).message}`;
+          progress.failed++;
+          progress.completed++;
+          callbacks.onRowUpdate(rowIdx, row);
+          return;
+        }
+
+        // ── Phase 2: attach images (if any) ──────────────────────────
+        // If there are no images for this row, the item is created
+        // successfully and the row is marked success — the user can
+        // intentionally have rows without images (data-only rows mixed
+        // with image rows).
+        if (inp.images.length === 0) {
+          row.status = "success";
+          progress.succeeded++;
+          progress.completed++;
+          callbacks.onRowUpdate(rowIdx, row);
+          return;
+        }
+
+        let allUploaded = true;
+        for (const img of inp.images) {
+          try {
+            await uploadWithRetry(() =>
+              addFileToColumn(
+                token,
+                createdItemId,
+                fileColumnId,
+                img.fileName,
+                img.data,
+                img.mimeType,
+              ),
+            );
+            row.imagesSucceeded++;
+          } catch (err) {
+            allUploaded = false;
+            row.error = `image upload failed: ${(err as Error).message}`;
+          }
+          callbacks.onRowUpdate(rowIdx, row);
+        }
+
+        if (allUploaded) {
+          row.status = "success";
+          progress.succeeded++;
+        } else {
+          row.status = "error";
+          progress.failed++;
+        }
+        progress.completed++;
+        callbacks.onRowUpdate(rowIdx, row);
+      }),
+    );
+    callbacks.onBatchComplete({ ...progress });
+    if (i + CREATE_BATCH_SIZE < inputs.length) {
+      await sleep(CREATE_BATCH_DELAY_MS);
     }
   }
 
