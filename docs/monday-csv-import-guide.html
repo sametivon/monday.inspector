@@ -222,8 +222,20 @@
             <tr><td>Phone</td><td>Phone number string</td><td><code>+1 555 123 4567</code></td></tr>
             <tr><td>Link / URL</td><td>Full URL (optionally: URL,Label)</td><td><code>https://example.com,Visit</code></td></tr>
             <tr><td>Rating</td><td>Integer 1–5</td><td><code>4</code></td></tr>
+            <tr><td>Connect Boards (board_relation)</td><td>Item name(s) on the linked board, numeric item ID(s), or a mix — comma or semicolon separated</td><td><code>Project Atlas, 1234567890</code></td></tr>
+            <tr><td>Dependency</td><td>Same as Connect Boards — item names or numeric IDs</td><td><code>1234567890; 1234567891</code></td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="callout callout-warning" style="margin-top: 18px">
+        <div class="callout-title">⚠ Connect Boards troubleshooting (v1.6.1+)</div>
+        <p>If your Connect Boards / Dependency import fails on every row, the Importer now shows a specific per-row error:</p>
+        <ul>
+          <li><strong>"Connect Boards column X has no linked board configured..."</strong> — the column's settings don't point at a target board. Use numeric monday item IDs in this column, or unmap it.</li>
+          <li><strong>"Connect Boards: cannot read the linked board(s) [N]..."</strong> — your API token doesn't have access to the linked board. Either grant access, switch to numeric IDs (which don't require board access), or unmap.</li>
+        </ul>
+        <p>Quick escape hatch: tick <strong>"Skip Connect Boards / Dependency columns on this import"</strong> at the top of step 3. Items still get created with every other mapped column — just without the link, which you can add manually later.</p>
       </div>
 
       <h3 id="subitem-format">Subitem CSV Format</h3>
