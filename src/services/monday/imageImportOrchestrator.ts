@@ -293,15 +293,30 @@ export async function runImageImportWithCreate(
         row.status = "uploading";
         callbacks.onRowUpdate(rowIdx, row);
 
-        // ── Phase 1: create the monday item ──────────────────────────
-        let createdItemId: string;
+        // ── Phase 1a: resolve column values (may throw a
+        //              BoardRelationResolveError that we want to label
+        //              distinctly from a create_item failure so the user
+        //              knows whether to fix data or fix monday permissions) ─
+        let colVals: Record<string, unknown>;
         try {
-          const colVals = await buildColumnValues(
+          colVals = await buildColumnValues(
             token,
             columnMappings,
             inp.rowValues,
             boardColumns,
           );
+        } catch (err) {
+          row.status = "error";
+          row.error = `Column resolution failed: ${(err as Error).message}`;
+          progress.failed++;
+          progress.completed++;
+          callbacks.onRowUpdate(rowIdx, row);
+          return;
+        }
+
+        // ── Phase 1b: create the monday item ──────────────────────────
+        let createdItemId: string;
+        try {
           const result = await createItem(
             token,
             boardId,

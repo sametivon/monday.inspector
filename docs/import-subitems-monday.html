@@ -280,6 +280,12 @@
         <li><strong>Mixed values</strong> are fine — numeric tokens pass through, names are resolved.</li>
       </ul>
       <p>If a name doesn't match any item on the linked board, that token is silently skipped (rather than failing the row). The Importer's per-row error reporter will tell you which rows ended up empty.</p>
+      <p><strong>Two things that DO fail loudly:</strong></p>
+      <ul>
+        <li><strong>Linked board is unreadable</strong> — if your API token doesn't have access to the linked board, the row's per-row error says: <em>"Connect Boards: cannot read the linked board(s) [9999] — your API token may not have access. Map this column with numeric monday item IDs, give your token access to the linked board, or unmap the column."</em></li>
+        <li><strong>Column has no linked board configured</strong> — the per-row error says: <em>"Connect Boards column ... has no linked board configured in its settings — name lookup is impossible. Use numeric monday item IDs in this cell, or unmap the column from your import."</em></li>
+      </ul>
+      <p><strong>Escape hatch:</strong> if the Connect Boards columns on your board cause every row to fail, tick the <strong>"Skip Connect Boards / Dependency columns on this import"</strong> checkbox at the top of step 3. Items still get created with all OTHER mapped columns — just without the linking. Use this when you don't have access to the linked board(s) or the link can be added later by hand.</p>
 
       <h3 id="read-only">Read-only column types we filter out</h3>
       <p>The following types are computed by monday.com and can't be written via the API. The Importer filters them out automatically — both the file headers (e.g. a "Creation log" column from a monday export) and the board-side dropdown options:</p>

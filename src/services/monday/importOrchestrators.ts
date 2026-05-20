@@ -129,7 +129,21 @@ export async function runImport(
     rowResult.status = "importing";
     callbacks.onRowUpdate(rowIndex, rowResult);
 
-    const colVals = await buildColumnValues(token, mappings, row, subitemColumns);
+    // Column-value resolution can throw a BoardRelationResolveError when a
+    // Connect Boards column has missing linked-board settings or the token
+    // can't read the linked board. Catch that separately from createSubitem
+    // so the per-row error message tells the user which column is to blame.
+    let colVals: Record<string, unknown>;
+    try {
+      colVals = await buildColumnValues(token, mappings, row, subitemColumns);
+    } catch (err) {
+      rowResult.status = "error";
+      rowResult.error = `Column resolution failed: ${(err as Error).message}`;
+      progress.failed++;
+      progress.completed++;
+      callbacks.onRowUpdate(rowIndex, rowResult);
+      return;
+    }
 
     try {
       const result = await createSubitem(token, resolvedParentId, name, colVals);
@@ -195,7 +209,17 @@ export async function runMondayExportImport(
     rowResult.status = "importing";
     callbacks.onRowUpdate(rowIndex, rowResult);
 
-    const colVals = await buildColumnValues(token, mappings, sub.values, subitemColumns);
+    let colVals: Record<string, unknown>;
+    try {
+      colVals = await buildColumnValues(token, mappings, sub.values, subitemColumns);
+    } catch (err) {
+      rowResult.status = "error";
+      rowResult.error = `Column resolution failed: ${(err as Error).message}`;
+      progress.failed++;
+      progress.completed++;
+      callbacks.onRowUpdate(rowIndex, rowResult);
+      return;
+    }
 
     try {
       const result = await createSubitem(
@@ -284,12 +308,22 @@ export async function runFullMondayExportImport(
     rowResult.status = "importing";
     callbacks.onRowUpdate(rowIndex, rowResult);
 
-    const colVals = await buildColumnValues(
-      token,
-      parentMappings,
-      parent.values,
-      boardColumns,
-    );
+    let colVals: Record<string, unknown>;
+    try {
+      colVals = await buildColumnValues(
+        token,
+        parentMappings,
+        parent.values,
+        boardColumns,
+      );
+    } catch (err) {
+      rowResult.status = "error";
+      rowResult.error = `Column resolution failed: ${(err as Error).message}`;
+      progress.failed++;
+      progress.completed++;
+      callbacks.onRowUpdate(rowIndex, rowResult);
+      return;
+    }
 
     const groupId = groupMap.get(parent.groupName) ?? undefined;
 
@@ -339,12 +373,22 @@ export async function runFullMondayExportImport(
       rowResult.status = "importing";
       callbacks.onRowUpdate(rowIndex, rowResult);
 
-      const colVals = await buildColumnValues(
-        token,
-        subitemMappings,
-        sub.values,
-        subitemColumns,
-      );
+      let colVals: Record<string, unknown>;
+      try {
+        colVals = await buildColumnValues(
+          token,
+          subitemMappings,
+          sub.values,
+          subitemColumns,
+        );
+      } catch (err) {
+        rowResult.status = "error";
+        rowResult.error = `Column resolution failed: ${(err as Error).message}`;
+        progress.failed++;
+        progress.completed++;
+        callbacks.onRowUpdate(rowIndex, rowResult);
+        return;
+      }
 
       try {
         const result = await createSubitem(

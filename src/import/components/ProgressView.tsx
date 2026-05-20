@@ -77,7 +77,7 @@ export function ProgressView({ progress, running, error }: Props) {
       )}
 
       {failed.length > 0 && !running && (
-        <details style={{ marginTop: 12 }}>
+        <details style={{ marginTop: 12 }} open>
           <summary
             style={{
               cursor: "pointer",
@@ -89,9 +89,29 @@ export function ProgressView({ progress, running, error }: Props) {
               fontSize: 12.5,
               fontWeight: 600,
               userSelect: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 10,
             }}
           >
-            {failed.length} row{failed.length !== 1 ? "s" : ""} failed — click to expand
+            <span>
+              {failed.length} row{failed.length !== 1 ? "s" : ""} failed — click to expand
+            </span>
+            <button
+              type="button"
+              className="qi-btn qi-btn-sm"
+              onClick={(e) => {
+                // Don't toggle the <details> when clicking copy.
+                e.preventDefault();
+                e.stopPropagation();
+                copyFailuresToClipboard(failed);
+              }}
+              title="Copy a summary of every failure (row, item, error) to the clipboard"
+              style={{ marginLeft: "auto" }}
+            >
+              📋 Copy all errors
+            </button>
           </summary>
           <div className="imp-preview-wrap" style={{ marginTop: 6 }}>
             <table className="imp-preview-table">
@@ -107,7 +127,20 @@ export function ProgressView({ progress, running, error }: Props) {
                   <tr key={r.rowIndex}>
                     <td>{r.rowIndex + 1}</td>
                     <td>{r.itemName || r.subitemName || "—"}</td>
-                    <td>{r.error}</td>
+                    <td>
+                      <code
+                        style={{
+                          display: "block",
+                          fontFamily: "var(--qi-font-mono)",
+                          fontSize: 11.5,
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                          color: "hsl(0 70% 35%)",
+                        }}
+                      >
+                        {r.error}
+                      </code>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -128,4 +161,47 @@ export function ProgressView({ progress, running, error }: Props) {
       )}
     </div>
   );
+}
+
+/**
+ * Build a plain-text summary of every failed row and copy it to the
+ * clipboard. The user can paste this back into a bug report / chat for
+ * diagnosis — much faster than screenshotting each row individually.
+ */
+function copyFailuresToClipboard(
+  failed: ImportProgress["rows"],
+): void {
+  const lines = [
+    `Monday.com Inspector — ${failed.length} import failure${failed.length !== 1 ? "s" : ""}`,
+    "",
+    "Row\tItem\tError",
+    ...failed.map(
+      (r) =>
+        `${r.rowIndex + 1}\t${r.itemName || r.subitemName || "—"}\t${(r.error ?? "").replace(/\s+/g, " ").trim()}`,
+    ),
+  ];
+  const text = lines.join("\n");
+  // navigator.clipboard isn't available in some contexts; fall back to a
+  // textarea+execCommand path so we work inside any Chrome extension page.
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text: string): void {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand("copy");
+  } catch {
+    /* clipboard unavailable — caller already attempted the modern path */
+  }
+  document.body.removeChild(ta);
 }

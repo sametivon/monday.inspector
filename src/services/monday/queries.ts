@@ -189,6 +189,28 @@ export async function formatColumnValueForApi(
 const linkedBoardItemsCache = new Map<string, Map<string, string>>();
 
 /**
+ * Flush the linked-board items cache. Called by the importer at the start
+ * of every run so we never use stale name→id maps if the linked board has
+ * changed since the previous import in the same tab session.
+ */
+export function clearLinkedBoardItemsCache(): void {
+  linkedBoardItemsCache.clear();
+}
+
+/**
+ * Marker error class so the orchestrator can distinguish "the board_relation
+ * resolver decided we couldn't write this column" from "monday's API
+ * rejected the create_item mutation". Keeps the per-row error message
+ * actionable (the user knows whether to unmap the column or fix the data).
+ */
+export class BoardRelationResolveError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BoardRelationResolveError";
+  }
+}
+
+/**
  * Pull the list of linked board IDs out of a board_relation column's
  * settings_str. Both `boardIds` (newer) and `linkedPulseId` (older) are
  * tolerated.
@@ -213,10 +235,15 @@ function extractLinkedBoardIds(col: MondayColumn): string[] {
  *   • "Item A, Item B; 789" — mixed; numeric tokens pass through, names
  *                              are resolved against the linked board(s)
  *
- * Returns null when nothing resolves so the cell is silently skipped
- * rather than poisoning the row.
+ * Returns null when there's nothing to write (empty cell, or all names
+ * unresolved but the resolver had a fair shot at them — i.e. the linked
+ * board was readable and just didn't contain the items). Throws a
+ * `BoardRelationResolveError` only when something the user can FIX is
+ * wrong: column has names but no linked board configured, or the token
+ * can't read the linked board. Those are diagnosed loudly so the per-row
+ * error column tells the user exactly what to do next.
  */
-async function resolveBoardRelationValue(
+export async function resolveBoardRelationValue(
   token: string,
   raw: string,
   col: MondayColumn,
@@ -230,12 +257,37 @@ async function resolveBoardRelationValue(
   const numericIds: number[] = [];
   const nameTokens: string[] = [];
   for (const t of tokens) {
-    if (/^\d+$/.test(t)) numericIds.push(parseInt(t, 10));
-    else nameTokens.push(t);
+    if (/^\d+$/.test(t)) {
+      const asNum = Number(t);
+      // monday item IDs are 64-bit but currently 10 digits so this is
+      // mostly defensive. JS Number loses integer precision past 2^53.
+      if (!Number.isSafeInteger(asNum)) {
+        throw new BoardRelationResolveError(
+          `Connect Boards: item id ${t} is too large for safe integer math. Map this column with a different identifier.`,
+        );
+      }
+      numericIds.push(asNum);
+    } else {
+      nameTokens.push(t);
+    }
   }
 
   if (nameTokens.length > 0) {
     const linkedBoards = extractLinkedBoardIds(col);
+
+    // The user put item NAMES in the cell, but this Connect Boards column
+    // has no linked-board pointer in its settings. We can't resolve names
+    // without knowing which board to look in. Tell them, don't silently drop.
+    if (linkedBoards.length === 0) {
+      throw new BoardRelationResolveError(
+        `Connect Boards column "${col.title}" has no linked board configured in its settings — name lookup is impossible. Use numeric monday item IDs in this cell, or unmap the column from your import.`,
+      );
+    }
+
+    // Track linked boards we couldn't fetch so we can surface a permission
+    // error if EVERY linked board failed (vs. just one of N being inaccessible).
+    const fetchFailures: string[] = [];
+
     for (const linkedBoardId of linkedBoards) {
       const cacheKey = `${token}:${linkedBoardId}`;
       let nameMap = linkedBoardItemsCache.get(cacheKey);
@@ -244,20 +296,36 @@ async function resolveBoardRelationValue(
           const items = await fetchBoardItems(token, linkedBoardId);
           nameMap = new Map(items.map((i) => [i.name.trim().toLowerCase(), i.id]));
           linkedBoardItemsCache.set(cacheKey, nameMap);
-        } catch {
-          continue; // skip this linked board if it can't be read
+        } catch (err) {
+          fetchFailures.push(
+            `${linkedBoardId} (${err instanceof Error ? err.message : "unknown"})`,
+          );
+          continue;
         }
       }
       for (const name of [...nameTokens]) {
         const hit = nameMap.get(name.toLowerCase());
         if (hit) {
-          const asNum = parseInt(hit, 10);
-          if (!Number.isNaN(asNum)) numericIds.push(asNum);
+          const asNum = Number(hit);
+          if (Number.isSafeInteger(asNum)) numericIds.push(asNum);
           // Remove this token so we don't double-resolve across linked boards
           nameTokens.splice(nameTokens.indexOf(name), 1);
         }
       }
       if (nameTokens.length === 0) break;
+    }
+
+    // If we never managed to read ANY linked board (and we had names to
+    // resolve), surface a permission error. This is the most common cause
+    // of silent import failures: the API token is scoped to the current
+    // board but not to the boards it links to.
+    if (
+      fetchFailures.length === linkedBoards.length &&
+      numericIds.length === 0
+    ) {
+      throw new BoardRelationResolveError(
+        `Connect Boards: cannot read the linked board(s) [${fetchFailures.join("; ")}] — your API token may not have access. Map this column with numeric monday item IDs, give your token access to the linked board, or unmap the column.`,
+      );
     }
   }
 

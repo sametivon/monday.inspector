@@ -7,6 +7,7 @@ import {
   runImport,
   type BoardSchema,
 } from "../services/mondayApi";
+import { clearLinkedBoardItemsCache } from "../services/monday/queries";
 import { parseFile } from "../services/fileParser";
 import { SUBITEM_NAME_SENTINEL } from "../utils/constants";
 import type {
@@ -65,6 +66,11 @@ export function ImportPage() {
   const [subitemNameColumn, setSubitemNameColumn] = useState("");
   const [mappings, setMappings] = useState<ColumnMapping[]>([]);
   const [parentMappings, setParentMappings] = useState<ColumnMapping[]>([]);
+  // Escape hatch — when true, Connect Boards / Dependency mappings are
+  // filtered out before the orchestrator runs. Items get all OTHER mapped
+  // columns but skip the link. Default off (we want to attempt the link
+  // by default; the user opts in to skipping after seeing a failure).
+  const [skipConnectBoards, setSkipConnectBoards] = useState(false);
 
   // ── Run state ──────────────────────────────────────────────────────
   const [progress, setProgress] = useState<ImportProgress | null>(null);
@@ -219,10 +225,35 @@ export function ImportPage() {
     setRunning(true);
     setRunError(null);
 
-    const activeSubitemMappings = mappings.filter(
-      (m) => m.mondayColumnId && m.mondayColumnId !== SUBITEM_NAME_SENTINEL,
+    // Flush the per-token-per-linked-board name cache before every run.
+    // Otherwise stale name → id maps leak across imports if the linked
+    // board changed between runs in the same tab session.
+    clearLinkedBoardItemsCache();
+
+    // Lookup tables for filtering out Connect Boards / Dependency
+    // mappings when the user toggled the skip-Connect-Boards escape hatch.
+    const parentConnectIds = new Set(
+      schema.columns
+        .filter((c) => c.type === "board_relation" || c.type === "dependency")
+        .map((c) => c.id),
     );
-    const activeParentMappings = parentMappings.filter((m) => m.mondayColumnId);
+    const subitemConnectIds = new Set(
+      subitemColumns
+        .filter((c) => c.type === "board_relation" || c.type === "dependency")
+        .map((c) => c.id),
+    );
+
+    const activeSubitemMappings = mappings.filter(
+      (m) =>
+        m.mondayColumnId &&
+        m.mondayColumnId !== SUBITEM_NAME_SENTINEL &&
+        !(skipConnectBoards && subitemConnectIds.has(m.mondayColumnId)),
+    );
+    const activeParentMappings = parentMappings.filter(
+      (m) =>
+        m.mondayColumnId &&
+        !(skipConnectBoards && parentConnectIds.has(m.mondayColumnId)),
+    );
 
     // Live progress mirror so the React state and persisted snapshot match
     const totalRows =
@@ -327,6 +358,7 @@ export function ImportPage() {
     parentMappings,
     includeParents,
     subitemColumns,
+    skipConnectBoards,
   ]);
 
   const handleReset = () => {
@@ -454,6 +486,8 @@ export function ImportPage() {
                 onParentMappingsChange={setParentMappings}
                 includeParents={includeParents}
                 onIncludeParentsChange={setIncludeParents}
+                skipConnectBoards={skipConnectBoards}
+                onSkipConnectBoardsChange={setSkipConnectBoards}
               />
             </section>
           )}
