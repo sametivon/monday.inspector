@@ -22,7 +22,19 @@ interface Props {
   onParentMappingsChange: (m: ColumnMapping[]) => void;
   includeParents: boolean;
   onIncludeParentsChange: (v: boolean) => void;
+  /**
+   * When true, any active mapping whose monday target column is
+   * board_relation or dependency is stripped before the import runs.
+   * Escape hatch when the linked board isn't accessible to the user's
+   * token or the data has names we can't resolve.
+   */
+  skipConnectBoards: boolean;
+  onSkipConnectBoardsChange: (v: boolean) => void;
 }
+
+/** Types whose target column requires name → id resolution against a
+ *  separate board. We surface a hint + the "skip" toggle for these. */
+const CONNECT_LIKE_TYPES = new Set(["board_relation", "dependency"]);
 
 // Centralised — same set used by formatColumnValueForApi so the mapper UI
 // matches what the import orchestrator will actually try to write. Note
@@ -55,6 +67,8 @@ export function ColumnMapper(props: Props) {
     onParentMappingsChange,
     includeParents,
     onIncludeParentsChange,
+    skipConnectBoards,
+    onSkipConnectBoardsChange,
   } = props;
 
   const writableSubitemCols = subitemColumns.filter(
@@ -157,8 +171,51 @@ export function ColumnMapper(props: Props) {
     ...droppedSubitemTimelineAux,
   ];
 
+  // Detect whether any board column on either side is a Connect Boards /
+  // Dependency type. The toggle is only meaningful when those types exist;
+  // hide it otherwise to avoid cluttering boards that don't have them.
+  const hasConnectBoardCols =
+    writableBoardCols.some((c) => CONNECT_LIKE_TYPES.has(c.type)) ||
+    writableSubitemCols.some((c) => CONNECT_LIKE_TYPES.has(c.type));
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      {hasConnectBoardCols && (
+        <label
+          style={{
+            display: "flex",
+            gap: 10,
+            alignItems: "flex-start",
+            padding: "10px 12px",
+            background: skipConnectBoards
+              ? "hsl(38 92% 96%)"
+              : "hsl(var(--qi-bg))",
+            border: `1px solid hsl(${skipConnectBoards ? "38 92% 80%" : "var(--qi-border)"})`,
+            borderRadius: "var(--qi-radius-sm)",
+            cursor: "pointer",
+            userSelect: "none",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={skipConnectBoards}
+            onChange={(e) => onSkipConnectBoardsChange(e.target.checked)}
+            style={{ marginTop: 3 }}
+          />
+          <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "hsl(var(--qi-fg-soft))" }}>
+            <div style={{ fontWeight: 600, marginBottom: 2 }}>
+              Skip Connect Boards / Dependency columns on this import
+            </div>
+            <div style={{ color: "hsl(var(--qi-muted-foreground))" }}>
+              Use this as an escape hatch if Connect Boards mappings cause every row to fail
+              — items will still be created with all OTHER mapped columns, just without the
+              linking. monday item IDs in those cells need numeric format; names need the
+              linked board to be readable by your API token.
+            </div>
+          </div>
+        </label>
+      )}
+
       {schema.hierarchyType === "multi_level" && (
         <div
           style={{
@@ -443,6 +500,7 @@ export function ColumnMapper(props: Props) {
           onMappingsChange={onParentMappingsChange}
           targetCols={writableBoardCols}
           autoMappedNote="Name → item name (auto)"
+          skipConnectBoards={skipConnectBoards}
         />
       )}
 
@@ -459,6 +517,7 @@ export function ColumnMapper(props: Props) {
           onMappingsChange={onMappingsChange}
           targetCols={writableSubitemCols}
           autoMappedNote="Name → subitem name (auto)"
+          skipConnectBoards={skipConnectBoards}
         />
       ) : (
         <MappingTable
@@ -467,6 +526,7 @@ export function ColumnMapper(props: Props) {
           mappings={mappings}
           onMappingsChange={onMappingsChange}
           targetCols={writableSubitemCols}
+          skipConnectBoards={skipConnectBoards}
         />
       )}
     </div>
@@ -487,6 +547,10 @@ interface MappingTableProps {
   targetCols: MondayColumn[];
   /** Optional info row pinned at the top — e.g. "Name → item name (auto)". */
   autoMappedNote?: string;
+  /** When true, Connect Boards / Dependency columns in the dropdown are
+   *  rendered as disabled options with a "(skipped)" suffix so the user can
+   *  see they exist but won't write. */
+  skipConnectBoards?: boolean;
 }
 
 function MappingTable({
@@ -496,6 +560,7 @@ function MappingTable({
   onMappingsChange,
   targetCols,
   autoMappedNote,
+  skipConnectBoards = false,
 }: MappingTableProps) {
   // Keep a stable mapping order matching fileHeaders so the UI doesn't reshuffle
   const byHeader = new Map(mappings.map((m) => [m.fileColumn, m]));
@@ -573,27 +638,71 @@ function MappingTable({
             non-writable board column. See the disclosure above.
           </div>
         )}
-        {ordered.map((m) => (
-          <div className="imp-mapping-row" key={m.fileColumn}>
-            <div className="imp-mapping-source" title={m.fileColumn}>
-              {m.fileColumn}
+        {ordered.map((m) => {
+          const selectedCol = targetCols.find((c) => c.id === m.mondayColumnId);
+          const isConnectLike =
+            selectedCol != null && CONNECT_LIKE_TYPES.has(selectedCol.type);
+          return (
+            <div key={m.fileColumn}>
+              <div className="imp-mapping-row">
+                <div className="imp-mapping-source" title={m.fileColumn}>
+                  {m.fileColumn}
+                </div>
+                <div className="imp-mapping-arrow">→</div>
+                <select
+                  className="qi-select"
+                  value={m.mondayColumnId}
+                  onChange={(e) => setOne(m.fileColumn, e.target.value)}
+                >
+                  <option value="">— skip —</option>
+                  <option value={SUBITEM_NAME_SENTINEL}>(use as item name)</option>
+                  {targetCols.map((c) => {
+                    const conn = CONNECT_LIKE_TYPES.has(c.type);
+                    return (
+                      <option key={c.id} value={c.id}>
+                        {conn ? "📎 " : ""}
+                        {c.title}{" "}
+                        <span style={{ opacity: 0.6 }}>
+                          ({c.type}
+                          {conn && skipConnectBoards ? " · skipped" : ""})
+                        </span>
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              {isConnectLike && (
+                <div
+                  style={{
+                    padding: "6px 14px 10px 14px",
+                    background: skipConnectBoards
+                      ? "hsl(38 92% 97%)"
+                      : "hsl(263 80% 98%)",
+                    borderBottom: "1px solid hsl(var(--qi-border))",
+                    fontSize: 11.5,
+                    lineHeight: 1.55,
+                    color: "hsl(var(--qi-fg-soft))",
+                  }}
+                >
+                  {skipConnectBoards ? (
+                    <>
+                      <strong>Skipped:</strong> Connect Boards / Dependency
+                      writes are disabled for this import.
+                    </>
+                  ) : (
+                    <>
+                      📎 <strong>Connect Boards:</strong> put the linked-board
+                      item&apos;s name or numeric monday item ID in this cell.
+                      Multiple values: separate with commas or semicolons. The
+                      Importer fetches the linked board once per run to
+                      resolve names → IDs.
+                    </>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="imp-mapping-arrow">→</div>
-            <select
-              className="qi-select"
-              value={m.mondayColumnId}
-              onChange={(e) => setOne(m.fileColumn, e.target.value)}
-            >
-              <option value="">— skip —</option>
-              <option value={SUBITEM_NAME_SENTINEL}>(use as item name)</option>
-              {targetCols.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.title} <span style={{ opacity: 0.6 }}>({c.type})</span>
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
