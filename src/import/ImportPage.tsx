@@ -23,6 +23,10 @@ import { FileDrop } from "./components/FileDrop";
 import { ColumnMapper } from "./components/ColumnMapper";
 import { ProgressView } from "./components/ProgressView";
 import { TokenSetupCard } from "../query/components/TokenSetupCard";
+import {
+  analyzeImportErrors,
+  type ImportErrorAnalysis,
+} from "./importErrorAnalysis";
 
 // Full-page Importer.
 //
@@ -71,11 +75,22 @@ export function ImportPage() {
   // columns but skip the link. Default off (we want to attempt the link
   // by default; the user opts in to skipping after seeing a failure).
   const [skipConnectBoards, setSkipConnectBoards] = useState(false);
+  // Individual monday column ids the user (or the 1-click recovery action)
+  // chose to drop from this import. Generalises skipConnectBoards to any
+  // column that's causing failures.
+  const [manuallySkippedColumnIds, setManuallySkippedColumnIds] = useState<
+    string[]
+  >([]);
 
   // ── Run state ──────────────────────────────────────────────────────
   const [progress, setProgress] = useState<ImportProgress | null>(null);
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
+  // Populated after a run finishes with failures — drives the smart
+  // recovery banner in ProgressView.
+  const [errorAnalysis, setErrorAnalysis] = useState<ImportErrorAnalysis | null>(
+    null,
+  );
 
   // Read token + boardId from URL/storage on mount
   useEffect(() => {
@@ -200,6 +215,12 @@ export function ImportPage() {
           (h) => h !== "Name" && h !== "Subitems",
         );
         setParentMappings(pHeaders.map((h) => ({ fileColumn: h, mondayColumnId: "" })));
+        // "__auto__" is a placeholder, NOT the SUBITEM_NAME_SENTINEL. monday
+        // export runs (runFullMondayExportImport / runMondayExportImport)
+        // take parent + subitem names straight from the parsed export, so
+        // these two values are never read on that path — they only matter
+        // for the flat-CSV path via runImport. We set them so the canRun
+        // gate (which checks them) passes for monday exports.
         setParentIdentifier({ type: "item_name", fileColumn: "__auto__" });
         setSubitemNameColumn("__auto__");
       } else {
@@ -220,153 +241,217 @@ export function ImportPage() {
     }
   }, []);
 
-  const handleStart = useCallback(async () => {
-    if (!file || !token || !schema) return;
-    setRunning(true);
-    setRunError(null);
+  /**
+   * Core run routine. Accepts an optional `extraSkipIds` so the 1-click
+   * recovery action can drop columns AND re-run in the same tick without
+   * waiting for a setState round-trip (avoids the stale-closure race).
+   */
+  const runImportWith = useCallback(
+    async (extraSkipIds: string[] = []) => {
+      if (!file || !token || !schema) return;
+      setRunning(true);
+      setRunError(null);
+      setErrorAnalysis(null);
 
-    // Flush the per-token-per-linked-board name cache before every run.
-    // Otherwise stale name → id maps leak across imports if the linked
-    // board changed between runs in the same tab session.
-    clearLinkedBoardItemsCache();
+      // Flush the per-token-per-linked-board name cache before every run.
+      // Otherwise stale name → id maps leak across imports if the linked
+      // board changed between runs in the same tab session.
+      clearLinkedBoardItemsCache();
 
-    // Lookup tables for filtering out Connect Boards / Dependency
-    // mappings when the user toggled the skip-Connect-Boards escape hatch.
-    const parentConnectIds = new Set(
-      schema.columns
-        .filter((c) => c.type === "board_relation" || c.type === "dependency")
-        .map((c) => c.id),
-    );
-    const subitemConnectIds = new Set(
-      subitemColumns
-        .filter((c) => c.type === "board_relation" || c.type === "dependency")
-        .map((c) => c.id),
-    );
+      // Columns dropped from this run: the Connect Boards toggle, plus any
+      // individually-skipped columns (manual or 1-click recovery).
+      const connectIds = new Set(
+        [...schema.columns, ...subitemColumns]
+          .filter((c) => c.type === "board_relation" || c.type === "dependency")
+          .map((c) => c.id),
+      );
+      const skipIds = new Set([...manuallySkippedColumnIds, ...extraSkipIds]);
+      const isSkipped = (id: string) =>
+        skipIds.has(id) || (skipConnectBoards && connectIds.has(id));
 
-    const activeSubitemMappings = mappings.filter(
-      (m) =>
-        m.mondayColumnId &&
-        m.mondayColumnId !== SUBITEM_NAME_SENTINEL &&
-        !(skipConnectBoards && subitemConnectIds.has(m.mondayColumnId)),
-    );
-    const activeParentMappings = parentMappings.filter(
-      (m) =>
-        m.mondayColumnId &&
-        !(skipConnectBoards && parentConnectIds.has(m.mondayColumnId)),
-    );
+      const activeSubitemMappings = mappings.filter(
+        (m) =>
+          m.mondayColumnId &&
+          m.mondayColumnId !== SUBITEM_NAME_SENTINEL &&
+          !isSkipped(m.mondayColumnId),
+      );
+      const activeParentMappings = parentMappings.filter(
+        (m) => m.mondayColumnId && !isSkipped(m.mondayColumnId),
+      );
 
-    // Live progress mirror so the React state and persisted snapshot match
-    const totalRows =
-      file.kind === "monday_export"
-        ? (includeParents
-            ? file.groups.reduce((s, g) => s + g.items.length, 0)
-            : 0) + file.flatSubitems.length
-        : file.rows.length;
-    const initial: ImportProgress = {
-      total: totalRows,
-      completed: 0,
-      succeeded: 0,
-      failed: 0,
-      rows: Array.from({ length: totalRows }, (_, i) => ({
-        rowIndex: i,
-        kind: "subitem" as const,
-        itemName: "",
-        parentItemId: "",
-        subitemName: "",
-        status: "pending" as const,
-      })),
-    };
-    setProgress(initial);
+      // Live progress mirror so the React state and persisted snapshot match
+      const totalRows =
+        file.kind === "monday_export"
+          ? (includeParents
+              ? file.groups.reduce((s, g) => s + g.items.length, 0)
+              : 0) + file.flatSubitems.length
+          : file.rows.length;
+      const initial: ImportProgress = {
+        total: totalRows,
+        completed: 0,
+        succeeded: 0,
+        failed: 0,
+        rows: Array.from({ length: totalRows }, (_, i) => ({
+          rowIndex: i,
+          kind: "subitem" as const,
+          itemName: "",
+          parentItemId: "",
+          subitemName: "",
+          status: "pending" as const,
+        })),
+      };
+      setProgress(initial);
 
-    const live: ImportProgress = {
-      ...initial,
-      rows: initial.rows.map((r) => ({ ...r })),
-    };
+      const live: ImportProgress = {
+        ...initial,
+        rows: initial.rows.map((r) => ({ ...r })),
+      };
 
-    const callbacks = {
-      onRowUpdate: (rowIndex: number, update: Partial<ImportProgress["rows"][0]>) => {
-        if (rowIndex >= 0 && rowIndex < live.rows.length) {
-          live.rows[rowIndex] = { ...live.rows[rowIndex], ...update };
+      const callbacks = {
+        onRowUpdate: (
+          rowIndex: number,
+          update: Partial<ImportProgress["rows"][0]>,
+        ) => {
+          if (rowIndex >= 0 && rowIndex < live.rows.length) {
+            live.rows[rowIndex] = { ...live.rows[rowIndex], ...update };
+          }
+          setProgress((prev) => {
+            if (!prev) return prev;
+            const rows = [...prev.rows];
+            if (rowIndex < 0 || rowIndex >= rows.length) return prev;
+            rows[rowIndex] = { ...rows[rowIndex], ...update };
+            const succeeded = rows.filter((r) => r.status === "success").length;
+            const failed = rows.filter((r) => r.status === "error").length;
+            return { ...prev, rows, completed: succeeded + failed, succeeded, failed };
+          });
+        },
+        onBatchComplete: () => {
+          const succeeded = live.rows.filter((r) => r.status === "success").length;
+          const failed = live.rows.filter((r) => r.status === "error").length;
+          live.completed = succeeded + failed;
+          live.succeeded = succeeded;
+          live.failed = failed;
+        },
+      };
+
+      try {
+        let result: ImportProgress;
+        if (file.kind === "monday_export" && includeParents) {
+          result = await runFullMondayExportImport(
+            token,
+            file,
+            activeParentMappings,
+            activeSubitemMappings,
+            boardId,
+            schema.columns,
+            subitemColumns,
+            callbacks,
+          );
+        } else if (file.kind === "monday_export") {
+          result = await runMondayExportImport(
+            token,
+            file,
+            activeSubitemMappings,
+            boardId,
+            subitemColumns,
+            callbacks,
+          );
+        } else {
+          result = await runImport(
+            token,
+            file,
+            parentIdentifier,
+            subitemNameColumn,
+            activeSubitemMappings,
+            boardId,
+            subitemColumns,
+            callbacks,
+          );
         }
-        setProgress((prev) => {
-          if (!prev) return prev;
-          const rows = [...prev.rows];
-          if (rowIndex < 0 || rowIndex >= rows.length) return prev;
-          rows[rowIndex] = { ...rows[rowIndex], ...update };
-          const succeeded = rows.filter((r) => r.status === "success").length;
-          const failed = rows.filter((r) => r.status === "error").length;
-          return { ...prev, rows, completed: succeeded + failed, succeeded, failed };
-        });
-      },
-      onBatchComplete: () => {
-        const succeeded = live.rows.filter((r) => r.status === "success").length;
-        const failed = live.rows.filter((r) => r.status === "error").length;
-        live.completed = succeeded + failed;
-        live.succeeded = succeeded;
-        live.failed = failed;
-      },
-    };
+        setProgress(result);
 
-    try {
-      let result: ImportProgress;
-      if (file.kind === "monday_export" && includeParents) {
-        result = await runFullMondayExportImport(
-          token,
-          file,
-          activeParentMappings,
-          activeSubitemMappings,
-          boardId,
-          schema.columns,
-          subitemColumns,
-          callbacks,
-        );
-      } else if (file.kind === "monday_export") {
-        result = await runMondayExportImport(
-          token,
-          file,
-          activeSubitemMappings,
-          boardId,
-          subitemColumns,
-          callbacks,
-        );
-      } else {
-        result = await runImport(
-          token,
-          file,
-          parentIdentifier,
-          subitemNameColumn,
-          activeSubitemMappings,
-          boardId,
-          subitemColumns,
-          callbacks,
-        );
+        // Build the recovery analysis from the failed rows so ProgressView
+        // can name the likely-culprit columns and offer "skip & re-run".
+        const failedRows = result.rows.filter((r) => r.status === "error");
+        if (failedRows.length > 0) {
+          setErrorAnalysis(
+            analyzeImportErrors(
+              failedRows,
+              activeParentMappings,
+              activeSubitemMappings,
+              schema.columns,
+              subitemColumns,
+            ),
+          );
+        } else {
+          setErrorAnalysis(null);
+        }
+      } catch (err) {
+        setRunError((err as Error).message);
+      } finally {
+        setRunning(false);
       }
-      setProgress(result);
-    } catch (err) {
-      setRunError((err as Error).message);
-    } finally {
-      setRunning(false);
-    }
-  }, [
-    file,
-    token,
-    schema,
-    boardId,
-    parentIdentifier,
-    subitemNameColumn,
-    mappings,
-    parentMappings,
-    includeParents,
-    subitemColumns,
-    skipConnectBoards,
-  ]);
+    },
+    [
+      file,
+      token,
+      schema,
+      boardId,
+      parentIdentifier,
+      subitemNameColumn,
+      mappings,
+      parentMappings,
+      includeParents,
+      subitemColumns,
+      skipConnectBoards,
+      manuallySkippedColumnIds,
+    ],
+  );
+
+  const handleStart = useCallback(() => {
+    void runImportWith();
+  }, [runImportWith]);
+
+  /** Scroll the user back to the column-mapping card. */
+  const handleJumpToMapping = useCallback(() => {
+    document.getElementById("step-3")?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  /**
+   * 1-click recovery: drop the suspect columns from the mapping AND
+   * immediately re-run. We pass the ids straight into runImportWith so the
+   * re-run doesn't depend on the (async) state update landing first; the
+   * state update is for the UI (the mapper dropdowns reflect the skip).
+   */
+  const handleSkipColumnsAndRetry = useCallback(
+    (ids: string[]) => {
+      if (ids.length === 0) return;
+      const idSet = new Set(ids);
+      setManuallySkippedColumnIds((prev) => [...new Set([...prev, ...ids])]);
+      // Visually un-map the skipped columns so Step 3 reflects the change.
+      setMappings((prev) =>
+        prev.map((m) =>
+          idSet.has(m.mondayColumnId) ? { ...m, mondayColumnId: "" } : m,
+        ),
+      );
+      setParentMappings((prev) =>
+        prev.map((m) =>
+          idSet.has(m.mondayColumnId) ? { ...m, mondayColumnId: "" } : m,
+        ),
+      );
+      void runImportWith(ids);
+    },
+    [runImportWith],
+  );
 
   const handleReset = () => {
     setFile(null);
     setProgress(null);
     setRunError(null);
+    setErrorAnalysis(null);
     setMappings([]);
     setParentMappings([]);
+    setManuallySkippedColumnIds([]);
   };
 
   // ── Render ──────────────────────────────────────────────────────────
@@ -511,7 +596,14 @@ export function ImportPage() {
                   </p>
                 </div>
               </header>
-              <ProgressView progress={progress} running={running} error={runError} />
+              <ProgressView
+                progress={progress}
+                running={running}
+                error={runError}
+                errorAnalysis={errorAnalysis}
+                onSkipColumnsAndRetry={handleSkipColumnsAndRetry}
+                onJumpToMapping={handleJumpToMapping}
+              />
             </section>
           )}
         </div>

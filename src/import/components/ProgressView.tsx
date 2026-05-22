@@ -1,9 +1,16 @@
 import type { ImportProgress } from "../../utils/types";
+import type { ImportErrorAnalysis } from "../importErrorAnalysis";
 
 interface Props {
   progress: ImportProgress | null;
   running: boolean;
   error: string | null;
+  /** Populated after a run with failures — drives the recovery banner. */
+  errorAnalysis?: ImportErrorAnalysis | null;
+  /** Drop the given monday column ids from the mapping and re-run. */
+  onSkipColumnsAndRetry?: (columnIds: string[]) => void;
+  /** Scroll the user back to the column-mapping step. */
+  onJumpToMapping?: () => void;
 }
 
 /**
@@ -11,7 +18,14 @@ interface Props {
  * bottom so the user knows exactly what failed and can fix the source data
  * for a re-run.
  */
-export function ProgressView({ progress, running, error }: Props) {
+export function ProgressView({
+  progress,
+  running,
+  error,
+  errorAnalysis,
+  onSkipColumnsAndRetry,
+  onJumpToMapping,
+}: Props) {
   if (!progress) {
     return (
       <div style={{ color: "hsl(var(--qi-muted-foreground))", fontSize: 13 }}>
@@ -73,6 +87,76 @@ export function ProgressView({ progress, running, error }: Props) {
           }}
         >
           ⚠ {error}
+        </div>
+      )}
+
+      {/* Smart recovery banner — names the likely-culprit columns and
+          offers a one-click "skip & re-run". Only when the run is done. */}
+      {failed.length > 0 && !running && (
+        <div
+          style={{
+            marginTop: 12,
+            padding: "14px 16px",
+            background: "hsl(38 92% 96%)",
+            border: "1px solid hsl(38 92% 78%)",
+            borderRadius: "var(--qi-radius)",
+            fontSize: 13,
+            color: "hsl(28 80% 26%)",
+            lineHeight: 1.6,
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 6 }}>
+            ⚠ {failed.length} of {progress.total} row
+            {progress.total !== 1 ? "s" : ""} failed to import
+          </div>
+
+          {errorAnalysis && errorAnalysis.suspectColumns.length > 0 ? (
+            <>
+              <p style={{ margin: "0 0 10px" }}>
+                These column{errorAnalysis.suspectColumns.length !== 1 ? "s" : ""}{" "}
+                look like the cause —{" "}
+                <strong>
+                  {errorAnalysis.suspectColumns.map((c) => c.title).join(", ")}
+                </strong>
+                . monday.com rejected their values. You can drop{" "}
+                {errorAnalysis.suspectColumns.length !== 1 ? "them" : "it"} and
+                import everything else.
+              </p>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  className="qi-btn qi-btn-primary qi-btn-sm"
+                  onClick={() =>
+                    onSkipColumnsAndRetry?.(
+                      errorAnalysis.suspectColumns.map((c) => c.id),
+                    )
+                  }
+                >
+                  Skip {errorAnalysis.suspectColumns.length} column
+                  {errorAnalysis.suspectColumns.length !== 1 ? "s" : ""} &amp; re-run
+                </button>
+                {onJumpToMapping && (
+                  <button className="qi-btn qi-btn-sm" onClick={onJumpToMapping}>
+                    ↑ Back to column mapping
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <p style={{ margin: "0 0 10px" }}>
+                If the same error repeats across rows, a single column&apos;s
+                values are probably being rejected by monday.com. You don&apos;t
+                have to map every column — go back to step 3, set the problem
+                column to <strong>&ldquo;— skip —&rdquo;</strong>, and run the
+                import again.
+              </p>
+              {onJumpToMapping && (
+                <button className="qi-btn qi-btn-sm" onClick={onJumpToMapping}>
+                  ↑ Back to column mapping
+                </button>
+              )}
+            </>
+          )}
         </div>
       )}
 

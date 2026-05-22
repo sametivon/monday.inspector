@@ -121,15 +121,15 @@
     </nav>
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <span class="badge badge-brand">Guide · 7 min read</span>
-      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Updated for v1.5.4 — May 2026</span>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Updated for v1.6.2 — May 2026</span>
     </div>
     <h1>How to Import Subitems in Monday.com (2026 Step-by-Step Guide)</h1>
-    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong>, no support for <strong>Connect Boards</strong> references, and no clean handling of multi-level boards. This guide shows you how to import all of those from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.5.4 with the new full-page Importer, board_relation name→ID resolution, and multi-level board awareness.</p>
+    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong>, no support for <strong>Connect Boards</strong> references, and no clean handling of multi-level boards. This guide shows you how to import all of those from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.6.2 with the full-page Importer, board_relation name→ID resolution, multi-level board awareness, and smart error recovery.</p>
     <div class="article-meta">
       <span>📅 Updated May 2026</span>
       <span>✍️ Sam @ Fruition Services</span>
       <span>🕐 7 min read</span>
-      <span>🛠️ Covers v1.5.4</span>
+      <span>🛠️ Covers v1.6.2</span>
     </div>
   </div>
 </div>
@@ -287,6 +287,16 @@
       </ul>
       <p><strong>Escape hatch:</strong> if the Connect Boards columns on your board cause every row to fail, tick the <strong>"Skip Connect Boards / Dependency columns on this import"</strong> checkbox at the top of step 3. Items still get created with all OTHER mapped columns — just without the linking. Use this when you don't have access to the linked board(s) or the link can be added later by hand.</p>
 
+      <h3 id="error-recovery">If your import shows errors — smart recovery (v1.6.2+)</h3>
+      <p>You don't have to get every column mapping perfect on the first try. When an import finishes with failures, Monday.com Inspector shows a <strong>recovery banner</strong> at the top of the progress panel that:</p>
+      <ul>
+        <li><strong>Names the column(s) most likely causing the failures</strong> — parsed from the actual per-row error messages monday.com returned.</li>
+        <li>Offers a one-click <strong>"Skip these column(s) &amp; re-run"</strong> button — it un-maps the flagged columns and re-imports everything else immediately. The rows that failed only because of those columns now succeed.</li>
+        <li>Gives a <strong>"Back to column mapping"</strong> shortcut that scrolls you to step 3 so you can adjust mappings by hand.</li>
+        <li>Keeps the full per-row error table + a <strong>"Copy all errors"</strong> button so you can diagnose anything that's still failing.</li>
+      </ul>
+      <p>The simple rule: <strong>if you see errors during import, unmatch the flagged columns and run again.</strong> A column that monday.com rejects (a value format it doesn't like, a Connect Boards column you can't resolve, a status label that doesn't exist on the board) never has to block the rest of your data.</p>
+
       <h3 id="read-only">Read-only column types we filter out</h3>
       <p>The following types are computed by monday.com and can't be written via the API. The Importer filters them out automatically — both the file headers (e.g. a "Creation log" column from a monday export) and the board-side dropdown options:</p>
       <ul>
@@ -384,6 +394,7 @@
           <li><a href="#step-5">Step 5: Start &amp; track progress</a></li>
           <li><a href="#column-types">Supported column types</a></li>
           <li><a href="#connect-boards">Connect Boards (board_relation)</a></li>
+          <li><a href="#error-recovery">If your import shows errors</a></li>
           <li><a href="#read-only">Read-only types we filter</a></li>
           <li><a href="#multi-level">Multi-level boards</a></li>
           <li><a href="#tips">Tips for success</a></li>
