@@ -121,15 +121,15 @@
     </nav>
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <span class="badge badge-brand">Guide · 7 min read</span>
-      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Updated for v1.6.2 — May 2026</span>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Updated for v1.6.3 — June 2026</span>
     </div>
     <h1>How to Import Subitems in Monday.com (2026 Step-by-Step Guide)</h1>
-    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong>, no support for <strong>Connect Boards</strong> references, and no clean handling of multi-level boards. This guide shows you how to import all of those from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.6.2 with the full-page Importer, board_relation name→ID resolution, multi-level board awareness, and smart error recovery.</p>
+    <p class="lead">Monday.com's native import only creates top-level items — it has <strong>no built-in support for importing subitems</strong> and no clean handling of multi-level boards. This guide shows you how to import both from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.6.3 with the full-page Importer, multi-level board awareness, and smart error recovery.</p>
     <div class="article-meta">
-      <span>📅 Updated May 2026</span>
+      <span>📅 Updated June 2026</span>
       <span>✍️ Sam @ Fruition Services</span>
       <span>🕐 7 min read</span>
-      <span>🛠️ Covers v1.6.2</span>
+      <span>🛠️ Covers v1.6.3</span>
     </div>
   </div>
 </div>
@@ -208,7 +208,7 @@
         <li><strong>Inline Inspector panel</strong> — slides in on the right side of your board. Best for quick imports while you're already inside monday.com.</li>
         <li><strong>Full-page Importer</strong> (v1.4+) — opens in its own browser tab with a clear 4-step stepper (Connect → Upload → Map → Run), a sticky footer with import counts, and room for big mapping tables. Best for medium-to-large imports where you want all the room you need.</li>
       </ul>
-      <p>Both routes share the same code path (parsers, column-type resolution, retry logic, Connect Boards name→ID lookups), so the result is identical. The full-page Importer just gives you more breathing room for spreadsheets with 30+ columns.</p>
+      <p>Both routes share the same code path (parsers, column-type resolution, retry logic), so the result is identical. The full-page Importer just gives you more breathing room for spreadsheets with 30+ columns.</p>
       <p><strong>To open the full Importer:</strong> click the extension icon → <em>Importer</em>. Or, if you've already started inside the inline panel, click <strong>↗ Open Importer</strong> at the top of the Import tab — it hands off your current board context via URL param.</p>
       <p><strong>To open the inline panel:</strong> navigate to the monday.com board, click the extension icon, then <em>Open Inspector Panel</em>.</p>
 
@@ -220,7 +220,7 @@
         <li>For <strong>monday.com classic XLSX exports</strong>: the layout is auto-detected. Groups, parent items, and subitem sections are parsed without any extra steps. The Name column is auto-mapped to the item name and shown as a green confirmation row at the top of the mapping table.</li>
       </ul>
       <p>Read-only board columns (mirror, formula, auto-number, lookup, last_updated, item_id, button, file, and Creation log) are <strong>silently filtered out</strong> from both the mapping table and the dropdown — they can't be written via the API, so showing them would just create dead rows. The skipped columns are listed under a disclosure so nothing disappears without notice.</p>
-      <p>Connect Boards (<code>board_relation</code>) and Dependency columns ARE writable — see the dedicated section below.</p>
+      <p>Connection columns (Connect Boards / <code>board_relation</code> and Dependency) are filtered out for the same reason — see the dedicated section below.</p>
       <p><strong>Multi-level boards heads-up:</strong> on multi-level boards, parent items' column values are computed rollups from their children. If you map a column to a parent row that ends up with children, monday.com keeps its rolled-up value and the write silently no-ops. Map the leaf items instead.</p>
 
       <h3 id="step-5">Step 5: Start the import and track live progress</h3>
@@ -266,26 +266,18 @@
           <tr><td><strong>Week</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>Week range as Start–End</td><td><code>2026-04-01 - 2026-04-07</code></td></tr>
           <tr><td><strong>Location</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>Address, optional <code>|lat,lng</code></td><td><code>221B Baker St|51.5237,-0.1585</code></td></tr>
           <tr><td><strong>World Clock</strong> <span class="badge badge-brand" style="font-size:9px">v1.5</span></td><td>IANA timezone</td><td><code>America/New_York</code></td></tr>
-          <tr><td><strong>Connect Boards</strong> <span class="badge badge-green" style="font-size:9px">v1.5</span></td><td>Item names from the linked board, item IDs, or a mix (comma-separated)</td><td><code>Project Atlas, 1234567890</code></td></tr>
-          <tr><td><strong>Dependency</strong> <span class="badge badge-green" style="font-size:9px">v1.5</span></td><td>Item IDs (numeric, comma-separated)</td><td><code>1234567890, 1234567891</code></td></tr>
           <tr><td><strong>Tags</strong></td><td>Tag IDs (numeric, comma-separated)</td><td><code>123, 456</code></td></tr>
         </tbody>
       </table>
 
-      <h3 id="connect-boards">Connect Boards (board_relation): match by name <em>or</em> ID</h3>
-      <p>Connect Boards columns reference items on a different board. monday.com's API needs the linked items' numeric IDs, but humans usually only have item <em>names</em> in their CSV. The Importer handles both:</p>
+      <h3 id="connect-boards">Connect Boards &amp; Dependency: why they're not imported</h3>
+      <p>Connection columns — <strong>Connect Boards</strong> (<code>board_relation</code>) and <strong>Dependency</strong> — are <strong>filtered out of the importer</strong> as of v1.6.3. Here's why, so you know it's deliberate and not a bug:</p>
       <ul>
-        <li><strong>If the cell contains numeric IDs</strong> (e.g. <code>1234567890,1234567891</code>) — they're sent as-is.</li>
-        <li><strong>If the cell contains item names</strong> (e.g. <code>Project Atlas, Project Beta</code>) — the Importer fetches items from the linked board(s), builds a name → id map, and resolves your names automatically. The lookup is cached per board for the lifetime of the import, so a 200-row CSV does ONE round-trip per linked board, not 200.</li>
-        <li><strong>Mixed values</strong> are fine — numeric tokens pass through, names are resolved.</li>
+        <li>A connection column's value isn't data — it's a set of <strong>references to item IDs that live on a different board</strong> (or on the separate subitem board).</li>
+        <li>When you import into a <em>fresh</em> or <em>different</em> board, those source IDs don't exist in the destination, and there's no reliable way to remap them. Resolving by item name is brittle — it breaks on duplicate names, renamed items, or a linked board your token can't read — and produced confusing per-row failures.</li>
+        <li>Mirror, formula and lookup columns are excluded for a related reason: their values are <em>computed</em> by monday.com from connected/other columns, so there's nothing to write.</li>
       </ul>
-      <p>If a name doesn't match any item on the linked board, that token is silently skipped (rather than failing the row). The Importer's per-row error reporter will tell you which rows ended up empty.</p>
-      <p><strong>Two things that DO fail loudly:</strong></p>
-      <ul>
-        <li><strong>Linked board is unreadable</strong> — if your API token doesn't have access to the linked board, the row's per-row error says: <em>"Connect Boards: cannot read the linked board(s) [9999] — your API token may not have access. Map this column with numeric monday item IDs, give your token access to the linked board, or unmap the column."</em></li>
-        <li><strong>Column has no linked board configured</strong> — the per-row error says: <em>"Connect Boards column ... has no linked board configured in its settings — name lookup is impossible. Use numeric monday item IDs in this cell, or unmap the column from your import."</em></li>
-      </ul>
-      <p><strong>Escape hatch:</strong> if the Connect Boards columns on your board cause every row to fail, tick the <strong>"Skip Connect Boards / Dependency columns on this import"</strong> checkbox at the top of step 3. Items still get created with all OTHER mapped columns — just without the linking. Use this when you don't have access to the linked board(s) or the link can be added later by hand.</p>
+      <p><strong>What to do instead:</strong> import all your native column data (status, people, dates, text, numbers, …) with Inspector, then recreate the board connections inside monday.com once the items exist. Because the importer no longer offers these columns as mapping targets, you'll never see "every row failed on the Connect Boards column" again.</p>
 
       <h3 id="error-recovery">If your import shows errors — smart recovery (v1.6.2+)</h3>
       <p>You don't have to get every column mapping perfect on the first try. When an import finishes with failures, Monday.com Inspector shows a <strong>recovery banner</strong> at the top of the progress panel that:</p>
@@ -295,15 +287,17 @@
         <li>Gives a <strong>"Back to column mapping"</strong> shortcut that scrolls you to step 3 so you can adjust mappings by hand.</li>
         <li>Keeps the full per-row error table + a <strong>"Copy all errors"</strong> button so you can diagnose anything that's still failing.</li>
       </ul>
-      <p>The simple rule: <strong>if you see errors during import, unmatch the flagged columns and run again.</strong> A column that monday.com rejects (a value format it doesn't like, a Connect Boards column you can't resolve, a status label that doesn't exist on the board) never has to block the rest of your data.</p>
+      <p>The simple rule: <strong>if you see errors during import, unmatch the flagged columns and run again.</strong> A column that monday.com rejects (a value format it doesn't like, or a status label that doesn't exist on the board) never has to block the rest of your data.</p>
 
       <h3 id="read-only">Read-only column types we filter out</h3>
-      <p>The following types are computed by monday.com and can't be written via the API. The Importer filters them out automatically — both the file headers (e.g. a "Creation log" column from a monday export) and the board-side dropdown options:</p>
+      <p>The following types are either computed by monday.com or reference items on other boards, so they can't be reliably written on import. The Importer filters them out automatically — both the file headers (e.g. a "Creation log" column from a monday export) and the board-side dropdown options:</p>
       <ul>
         <li><strong>mirror</strong> — pulls values from a linked board's items</li>
         <li><strong>formula</strong> — computed from other columns</li>
-        <li><strong>auto_number</strong> — monday-assigned sequence</li>
         <li><strong>lookup</strong> — calculated rollup</li>
+        <li><strong>board_relation</strong> (Connect Boards) — references item IDs on another board that can't be remapped on import</li>
+        <li><strong>dependency</strong> — same as Connect Boards: cross-board item references</li>
+        <li><strong>auto_number</strong> — monday-assigned sequence</li>
         <li><strong>creation_log</strong> / <strong>last_updated</strong> — auto-stamped</li>
         <li><strong>item_id</strong> — monday's internal id</li>
         <li><strong>button</strong>, <strong>color_picker</strong> — UI-only</li>
@@ -359,7 +353,7 @@
         </details>
         <details class="faq">
           <summary>Can I import into a Connect Boards (board_relation) column?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
-          <div class="faq-body">Yes, since v1.5. Put item names, item IDs, or a comma-separated mix in the cell — the Importer fetches the linked board's items once per import and resolves names → IDs automatically. <a href="#connect-boards">See the Connect Boards section above.</a></div>
+          <div class="faq-body">No — connection columns (Connect Boards / board_relation and Dependency) are excluded from import as of v1.6.3, along with computed columns (mirror, formula, lookup). Their values reference items on other boards or are computed by monday.com, so they can't be reliably recreated on a fresh or different board. Import your native column data, then add the links inside monday.com. <a href="#connect-boards">Full explanation above.</a></div>
         </details>
         <details class="faq">
           <summary>Can I import into a multi-level board?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
@@ -393,7 +387,7 @@
           <li><a href="#step-4">Step 4: Upload &amp; map columns</a></li>
           <li><a href="#step-5">Step 5: Start &amp; track progress</a></li>
           <li><a href="#column-types">Supported column types</a></li>
-          <li><a href="#connect-boards">Connect Boards (board_relation)</a></li>
+          <li><a href="#connect-boards">Connect Boards &amp; Dependency (excluded)</a></li>
           <li><a href="#error-recovery">If your import shows errors</a></li>
           <li><a href="#read-only">Read-only types we filter</a></li>
           <li><a href="#multi-level">Multi-level boards</a></li>
