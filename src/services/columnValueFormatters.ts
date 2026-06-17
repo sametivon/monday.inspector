@@ -286,11 +286,29 @@ export function parseItemIdsValue(raw: string): { item_ids: number[] } | null {
 }
 
 /**
- * Single source of truth for which monday.com column types CANNOT be set
- * via the API at all (mirror columns are computed; formulas are computed;
- * file requires a separate upload mutation; etc.). Used by the importer to
- * filter out non-mappable columns from both parent and subitem mapping
- * tables, plus to grey them out in the schema viewer.
+ * Single source of truth for which monday.com column types we DON'T let the
+ * importer write. Used to filter out non-mappable columns from both parent
+ * and subitem mapping tables, plus to grey them out in the schema viewer.
+ *
+ * Two reasons a type lands here:
+ *
+ *  1. Computed / metadata / UI-only columns that the API literally cannot
+ *     set (mirror, formula, lookup, creation_log, …). Mirror columns in
+ *     particular are reflections of data on a CONNECTED board — there is no
+ *     value to write; the platform recomputes them.
+ *
+ *  2. Connection columns (board_relation / dependency). These ARE writable
+ *     via the API, but their value is a list of item IDs that live on OTHER
+ *     boards. When importing into a fresh / different board (or across the
+ *     separate subitem board) those source IDs don't exist in the
+ *     destination and there's no reliable way to remap them — name → id
+ *     resolution is brittle and broke real imports. Per product decision we
+ *     exclude them so users import native, column-level data only. The link
+ *     itself has to be recreated in monday after the import.
+ *
+ * NOTE: the value-formatting code below (and the GraphQL layer) still knows
+ * how to format a board_relation value if handed one — that path is just no
+ * longer reachable from the importer's mapping UI. Kept as defensive depth.
  */
 export const READ_ONLY_COLUMN_TYPES: ReadonlySet<string> = new Set([
   // Computed columns — values come from other cells / boards
@@ -301,6 +319,10 @@ export const READ_ONLY_COLUMN_TYPES: ReadonlySet<string> = new Set([
   "creation_log",
   "last_updated",
   "item_id",
+  // Connection columns — values are item IDs from other boards that can't be
+  // remapped on import. Excluded so people import native column data only.
+  "board_relation",
+  "dependency",
   // UI-only
   "button",
   "color_picker",
@@ -335,7 +357,8 @@ export const SUPPORTED_COLUMN_TYPES: ReadonlySet<string> = new Set([
   "location",
   "world_clock",
   "tags", // accepts a comma-separated list of tag IDs (best-effort)
-  "board_relation", // connect boards — accepts item ids
-  "dependency", // accepts item ids
   "name", // handled separately as the row name
+  // NOTE: board_relation / dependency are intentionally NOT here — they're
+  // connection columns whose item-ID values can't be remapped on import, so
+  // they're excluded via READ_ONLY_COLUMN_TYPES above.
 ]);

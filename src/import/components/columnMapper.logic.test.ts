@@ -54,7 +54,9 @@ describe("ColumnMapper file-header filtering (sam_test scenario)", () => {
   // Plausible reproduction of what the API would return for the same
   // board's columns: the three "computed" columns are typed as mirror /
   // creation_log on the board side, and the "link to sam test" is a
-  // writable Connect Boards column.
+  // Connect Boards column. Connection columns are excluded from import too
+  // (their item-ID values can't be remapped onto a different board), so it
+  // should be dropped alongside the computed ones.
   const boardColumns: MondayColumn[] = [
     { id: "people0", title: "People", type: "people" },
     { id: "dropdown0", title: "Test Stage Type", type: "dropdown" },
@@ -70,7 +72,7 @@ describe("ColumnMapper file-header filtering (sam_test scenario)", () => {
     { id: "relation0", title: "link to sam test", type: "board_relation" },
   ];
 
-  it("drops mirror + creation_log file headers from the parent mapping", () => {
+  it("drops mirror + creation_log + connection file headers from the parent mapping", () => {
     const { visible, dropped } = pickVisibleHeaders(
       parentFileHeaders,
       boardColumns,
@@ -79,6 +81,7 @@ describe("ColumnMapper file-header filtering (sam_test scenario)", () => {
       "Timeline - Start",
       "Timeline - End",
       "Creation log",
+      "link to sam test", // Connect Boards dropped — can't remap cross-board IDs
     ]);
     expect(visible).toEqual([
       "People",
@@ -89,16 +92,19 @@ describe("ColumnMapper file-header filtering (sam_test scenario)", () => {
       "Priority",
       "Status",
       "Blocker / Comment",
-      "link to sam test", // Connect Boards stays — board_relation is writable
     ]);
   });
 
-  it("keeps Connect Boards columns in the visible mapping list", () => {
-    const { visible } = pickVisibleHeaders(
-      ["link to sam test"],
-      [{ id: "rel", title: "link to sam test", type: "board_relation" }],
+  it("drops Connect Boards / Dependency columns from the visible mapping list", () => {
+    const { visible, dropped } = pickVisibleHeaders(
+      ["link to sam test", "Blocked By"],
+      [
+        { id: "rel", title: "link to sam test", type: "board_relation" },
+        { id: "dep", title: "Blocked By", type: "dependency" },
+      ],
     );
-    expect(visible).toEqual(["link to sam test"]);
+    expect(visible).toEqual([]);
+    expect(dropped).toEqual(["link to sam test", "Blocked By"]);
   });
 
   it("is case-insensitive when matching file headers to board columns", () => {

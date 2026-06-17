@@ -70,14 +70,9 @@ export function ImportPage() {
   const [subitemNameColumn, setSubitemNameColumn] = useState("");
   const [mappings, setMappings] = useState<ColumnMapping[]>([]);
   const [parentMappings, setParentMappings] = useState<ColumnMapping[]>([]);
-  // Escape hatch — when true, Connect Boards / Dependency mappings are
-  // filtered out before the orchestrator runs. Items get all OTHER mapped
-  // columns but skip the link. Default off (we want to attempt the link
-  // by default; the user opts in to skipping after seeing a failure).
-  const [skipConnectBoards, setSkipConnectBoards] = useState(false);
   // Individual monday column ids the user (or the 1-click recovery action)
-  // chose to drop from this import. Generalises skipConnectBoards to any
-  // column that's causing failures.
+  // chose to drop from this import — lets a single failing column be skipped
+  // and the run retried without re-mapping everything.
   const [manuallySkippedColumnIds, setManuallySkippedColumnIds] = useState<
     string[]
   >([]);
@@ -258,16 +253,11 @@ export function ImportPage() {
       // board changed between runs in the same tab session.
       clearLinkedBoardItemsCache();
 
-      // Columns dropped from this run: the Connect Boards toggle, plus any
-      // individually-skipped columns (manual or 1-click recovery).
-      const connectIds = new Set(
-        [...schema.columns, ...subitemColumns]
-          .filter((c) => c.type === "board_relation" || c.type === "dependency")
-          .map((c) => c.id),
-      );
+      // Columns dropped from this run: any individually-skipped columns
+      // (manual or 1-click recovery). Connection / mirror / computed columns
+      // never reach here — they're filtered out of the mapping UI upstream.
       const skipIds = new Set([...manuallySkippedColumnIds, ...extraSkipIds]);
-      const isSkipped = (id: string) =>
-        skipIds.has(id) || (skipConnectBoards && connectIds.has(id));
+      const isSkipped = (id: string) => skipIds.has(id);
 
       const activeSubitemMappings = mappings.filter(
         (m) =>
@@ -403,7 +393,6 @@ export function ImportPage() {
       parentMappings,
       includeParents,
       subitemColumns,
-      skipConnectBoards,
       manuallySkippedColumnIds,
     ],
   );
@@ -571,8 +560,6 @@ export function ImportPage() {
                 onParentMappingsChange={setParentMappings}
                 includeParents={includeParents}
                 onIncludeParentsChange={setIncludeParents}
-                skipConnectBoards={skipConnectBoards}
-                onSkipConnectBoardsChange={setSkipConnectBoards}
               />
             </section>
           )}

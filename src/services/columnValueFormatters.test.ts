@@ -373,7 +373,7 @@ describe("parseItemIdsValue (board_relation / dependency)", () => {
 });
 
 describe("READ_ONLY_COLUMN_TYPES", () => {
-  it("flags computed columns as read-only", () => {
+  it("flags computed / non-importable columns as read-only", () => {
     for (const t of [
       "mirror",
       "formula",
@@ -382,6 +382,10 @@ describe("READ_ONLY_COLUMN_TYPES", () => {
       "creation_log",
       "last_updated",
       "item_id",
+      // Connection columns — values are item IDs from other boards that
+      // can't be remapped on import, so the importer excludes them too.
+      "board_relation",
+      "dependency",
       "button",
       "color_picker",
       "file",
@@ -391,23 +395,17 @@ describe("READ_ONLY_COLUMN_TYPES", () => {
     }
   });
 
-  it("does not flag writable types as read-only", () => {
-    for (const t of [
-      "text",
-      "status",
-      "date",
-      "people",
-      "board_relation",
-      "dependency",
-      "rating",
-    ]) {
+  it("does not flag native writable types as read-only", () => {
+    for (const t of ["text", "status", "date", "people", "rating"]) {
       expect(READ_ONLY_COLUMN_TYPES.has(t)).toBe(false);
     }
   });
 
-  it("supported set covers everything that's writable in the importer", () => {
-    expect(SUPPORTED_COLUMN_TYPES.has("board_relation")).toBe(true);
-    expect(SUPPORTED_COLUMN_TYPES.has("dependency")).toBe(true);
+  it("excludes connection columns from the supported (importable) set", () => {
+    // board_relation / dependency are deliberately NOT importable — their
+    // links point at items on other boards we can't recreate on import.
+    expect(SUPPORTED_COLUMN_TYPES.has("board_relation")).toBe(false);
+    expect(SUPPORTED_COLUMN_TYPES.has("dependency")).toBe(false);
     expect(SUPPORTED_COLUMN_TYPES.has("rating")).toBe(true);
   });
 });
