@@ -607,6 +607,38 @@ export async function fetchBoardGroups(
 }
 
 /**
+ * Create a new group on a board. Used by the importer when the source
+ * monday export has a group that doesn't yet exist on the target board:
+ * we recreate it so the items land in the right group instead of being
+ * silently dropped into the board's default group.
+ *
+ * monday's `create_group` mutation auto-generates the group id (a slug
+ * derived from the title). Returns the new id so the orchestrator can
+ * push it into its groupMap and reuse it for every parent in that group.
+ */
+export async function createGroup(
+  token: string,
+  boardId: string,
+  groupName: string,
+): Promise<MondayGroup> {
+  const mutation = `
+    mutation ($boardId: ID!, $groupName: String!) {
+      create_group(board_id: $boardId, group_name: $groupName) {
+        id
+        title
+      }
+    }
+  `;
+  const data = await withRetry(() =>
+    gql<{ create_group: MondayGroup }>(token, mutation, {
+      boardId,
+      groupName,
+    }),
+  );
+  return data.create_group;
+}
+
+/**
  * Fetch all items on a board (for matching parent by name).
  * Paginates via cursor.
  */

@@ -1,7 +1,7 @@
 # Chrome Web Store listing — Monday.com Inspector
 
 Ready-to-paste content for the Chrome Web Store Developer Dashboard.
-Keep this in sync with each release. Current version: **v1.6.2**.
+Keep this in sync with each release. Current version: **v1.6.3**.
 
 Dashboard: https://chrome.google.com/webstore/devconsole
 Listing: https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg
@@ -38,7 +38,6 @@ WHAT YOU CAN DO
 • Import items AND subitems from a single CSV or Excel file — something monday's native import can't do.
 • Re-import a monday.com board export (.xlsx) and keep the full hierarchy: groups, parents, subitems, and all column values.
 • Map your sheet columns to any of 18+ writable column types — status, people, date, timeline, dropdown, numbers, link, email, phone, rating, country, and more.
-• Connect Boards (board_relation) by item name OR id — names are resolved against the linked board automatically.
 • No row limit. Automatic batching and rate-limit handling for thousands of rows.
 
 🖼️ BULK IMAGE UPLOAD FROM EXCEL  (the feature monday.com never built)
@@ -78,12 +77,12 @@ Website: https://mondayinspector.eu
 
 ---
 
-## What's new (version notes for v1.6.2)
+## What's new (version notes for v1.6.3)
 ```
-v1.6.2 — Smart import error recovery
-• When an import has errors, Inspector now names the column(s) causing them and offers a one-click "Skip these columns & re-run" — so a single bad column never blocks the rest of your data.
-• "Back to column mapping" shortcut + clearer per-row error messages.
-• Builds on v1.6.0 (bulk Excel image upload to File columns) and v1.6.1 (Connect Boards diagnostics).
+v1.6.3 — More reliable imports
+• The Importer now focuses on native, column-level data. Connection columns (Connect Boards / Dependency) and computed columns (mirror, formula, lookup, …) are excluded from import: their values point at items on other boards or are computed by monday, so they can't be reliably re-created on a fresh or different board. Recreate those links in monday after the import.
+• Result: cleaner mapping, no more "every row fails on the Connect Boards column" errors.
+• Builds on v1.6.2 (smart import error recovery), v1.6.0 (bulk Excel image upload to File columns).
 ```
 
 ---
@@ -147,7 +146,7 @@ https://mondayinspector.eu/privacy.html
 ---
 
 ## Pre-submit checklist
-- [ ] Upload `monday-inspector-v1.6.2.zip` (manifest at root, description ≤132 chars)
+- [ ] Upload `monday-inspector-v1.6.3.zip` (manifest at root, description ≤132 chars)
 - [ ] Paste Summary + Detailed description
 - [ ] Set category = Workflow & Planning
 - [ ] Add 1–5 screenshots (1280×800)

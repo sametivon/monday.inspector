@@ -222,20 +222,18 @@
             <tr><td>Phone</td><td>Phone number string</td><td><code>+1 555 123 4567</code></td></tr>
             <tr><td>Link / URL</td><td>Full URL (optionally: URL,Label)</td><td><code>https://example.com,Visit</code></td></tr>
             <tr><td>Rating</td><td>Integer 1–5</td><td><code>4</code></td></tr>
-            <tr><td>Connect Boards (board_relation)</td><td>Item name(s) on the linked board, numeric item ID(s), or a mix — comma or semicolon separated</td><td><code>Project Atlas, 1234567890</code></td></tr>
-            <tr><td>Dependency</td><td>Same as Connect Boards — item names or numeric IDs</td><td><code>1234567890; 1234567891</code></td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="callout callout-warning" style="margin-top: 18px">
-        <div class="callout-title">⚠ Connect Boards troubleshooting (v1.6.1+)</div>
-        <p>If your Connect Boards / Dependency import fails on every row, the Importer now shows a specific per-row error:</p>
+      <div class="callout callout-info" style="margin-top: 18px">
+        <div class="callout-title">ℹ Connection &amp; computed columns are excluded</div>
+        <p>The Importer writes <strong>native column data only</strong>. These column types are filtered out automatically and won't appear as mapping targets:</p>
         <ul>
-          <li><strong>"Connect Boards column X has no linked board configured..."</strong> — the column's settings don't point at a target board. Use numeric monday item IDs in this column, or unmap it.</li>
-          <li><strong>"Connect Boards: cannot read the linked board(s) [N]..."</strong> — your API token doesn't have access to the linked board. Either grant access, switch to numeric IDs (which don't require board access), or unmap.</li>
+          <li><strong>Connect Boards (board_relation)</strong> and <strong>Dependency</strong> — their values are references to item IDs on <em>other</em> boards. When you import into a fresh or different board those IDs don't exist in the destination and can't be remapped reliably, so the link can't be recreated from a spreadsheet.</li>
+          <li><strong>Mirror, formula, lookup, auto-number, creation log, item_id, button, file</strong> — computed or read-only; monday.com doesn't accept writes to them.</li>
         </ul>
-        <p>Quick escape hatch: tick <strong>"Skip Connect Boards / Dependency columns on this import"</strong> at the top of step 3. Items still get created with every other mapped column — just without the link, which you can add manually later.</p>
+        <p>Import everything else, then recreate any board connections inside monday.com once the items exist.</p>
       </div>
 
       <h3 id="subitem-format">Subitem CSV Format</h3>
@@ -417,7 +415,7 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <div class="dot-grid"></div>
       <div style="position:relative;z-index:1;text-align:center">
         <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;letter-spacing:-0.03em;color:#fff;margin-bottom:16px">Upgrade your monday.com CSV imports</h2>
-        <p style="color:rgba(255,255,255,0.75);margin-bottom:32px;font-size:1.0625rem">Subitems, all column types, unlimited rows. Free Chrome extension.</p>
+        <p style="color:rgba(255,255,255,0.75);margin-bottom:32px;font-size:1.0625rem">Subitems, all native column types, unlimited rows. Free Chrome extension.</p>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
           <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" class="btn btn-lg btn-on-dark" target="_blank" rel="noopener noreferrer">Add to Chrome — Free</a>
           <a href="import-subitems-monday.html" class="btn btn-lg btn-secondary" style="border-color:rgba(255,255,255,0.3);color:#fff">Subitem Import Guide →</a>
