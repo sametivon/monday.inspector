@@ -130,6 +130,87 @@ describe("runFullMondayExportImport — monday classic export path", () => {
     expect(subRows.every((r) => r.parentItemId === "555")).toBe(true);
   });
 
+  it("auto-creates a missing group on the target board and uses its new id", async () => {
+    // The source export's group is "New Request". The target board returns
+    // NO groups with that title — so the orchestrator must call create_group
+    // before phase 1, then pass that new id into create_item.
+    const fetchMock = makeFetchResponses([
+      // fetchBoardGroups — empty groups list on the target board
+      { ok: true, body: { data: { boards: [{ groups: [] }] } } },
+      // create_group — returns the new group with id "grp-NEW"
+      {
+        ok: true,
+        body: { data: { create_group: { id: "grp-NEW", title: "New Request" } } },
+      },
+      // create_item (parent) — assert below that group_id was set to grp-NEW
+      { ok: true, body: { data: { create_item: { id: "555", name: "Mollu (Test 3)" } } } },
+      // create_subitem ×2
+      { ok: true, body: { data: { create_subitem: { id: "556", name: "Supplier Search" } } } },
+      { ok: true, body: { data: { create_subitem: { id: "557", name: "Quote Review" } } } },
+    ]);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await runFullMondayExportImport(
+      "tok",
+      fixture(),
+      PARENT_MAPPINGS,
+      SUBITEM_MAPPINGS,
+      "board-1",
+      BOARD_COLUMNS,
+      SUBITEM_COLUMNS,
+      { onRowUpdate: () => {}, onBatchComplete: () => {} },
+    );
+
+    expect(result.succeeded).toBe(3);
+    expect(result.failed).toBe(0);
+
+    // The 2nd fetch call must be the create_group mutation with the
+    // source group's name — proves the auto-create fired before phase 1.
+    const createGroupBody = JSON.parse(
+      (fetchMock.mock.calls[1]?.[1] as { body: string }).body,
+    );
+    expect(createGroupBody.query).toContain("create_group");
+    expect(createGroupBody.variables.groupName).toBe("New Request");
+
+    // The 3rd fetch call (create_item) must pass groupId = "grp-NEW".
+    const createItemBody = JSON.parse(
+      (fetchMock.mock.calls[2]?.[1] as { body: string }).body,
+    );
+    expect(createItemBody.variables.groupId).toBe("grp-NEW");
+  });
+
+  it("skips the create_group call when the target board already has the group", async () => {
+    // Sanity guard: don't burn a create_group call when the group is
+    // already there. Only fetchBoardGroups → create_item × 1 → create_subitem × 2.
+    const fetchMock = makeFetchResponses([
+      {
+        ok: true,
+        body: { data: { boards: [{ groups: [{ id: "grp1", title: "New Request" }] }] } },
+      },
+      { ok: true, body: { data: { create_item: { id: "555", name: "Mollu (Test 3)" } } } },
+      { ok: true, body: { data: { create_subitem: { id: "556", name: "Supplier Search" } } } },
+      { ok: true, body: { data: { create_subitem: { id: "557", name: "Quote Review" } } } },
+    ]);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await runFullMondayExportImport(
+      "tok",
+      fixture(),
+      PARENT_MAPPINGS,
+      SUBITEM_MAPPINGS,
+      "board-1",
+      BOARD_COLUMNS,
+      SUBITEM_COLUMNS,
+      { onRowUpdate: () => {}, onBatchComplete: () => {} },
+    );
+
+    expect(result.succeeded).toBe(3);
+    // 4 fetches total: groups + create_item + 2 × create_subitem. No
+    // create_group call. (We sized makeFetchResponses to exactly 4; any
+    // surprise extra call would throw "Unexpected extra fetch() call".)
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+  });
+
   it("propagates a parent creation failure to its subitems (no orphan subitem calls)", async () => {
     // fetchBoardGroups OK, then create_item FAILS. create_item goes
     // through withRetry (4 attempts), so queue 4 error responses. The two

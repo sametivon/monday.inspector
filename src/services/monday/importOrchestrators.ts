@@ -11,6 +11,7 @@ import type {
 import { sleep } from "./graphqlClient";
 import {
   buildColumnValues,
+  createGroup,
   createItem,
   createSubitem,
   fetchBoardGroups,
@@ -291,9 +292,31 @@ export async function runFullMondayExportImport(
     ],
   };
 
-  // ── Phase 0: Resolve group name → group ID ─────────────────────────
+  // ── Phase 0: Resolve group name → group ID (auto-create if missing) ──
+  // monday.com classic exports preserve the source board's group names
+  // (e.g. project names). When the user imports onto a fresh / different
+  // target board, those groups won't exist there yet — without this step
+  // every item silently lands in the default group. Pre-create each
+  // distinct missing group once so the per-row create_item calls below
+  // can pin to the right group id.
   const boardGroups = await fetchBoardGroups(token, boardId);
   const groupMap = new Map(boardGroups.map((g) => [g.title.trim(), g.id]));
+
+  const distinctGroupNames = Array.from(
+    new Set(allParents.map((p) => p.groupName.trim()).filter(Boolean)),
+  );
+  for (const name of distinctGroupNames) {
+    if (groupMap.has(name)) continue;
+    try {
+      const created = await createGroup(token, boardId, name);
+      groupMap.set(name, created.id);
+    } catch {
+      // If group creation fails (e.g. permission or duplicate-name race),
+      // leave the group unmapped — items will fall into the default group
+      // rather than failing the whole import. The per-row error column
+      // still surfaces any downstream create_item failures.
+    }
+  }
 
   // ── Phase 1: Create parent items ──────────────────────────────────
   // Composite key (group + name) → new item id, so we can disambiguate
