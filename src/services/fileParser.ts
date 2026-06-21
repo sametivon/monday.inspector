@@ -229,6 +229,32 @@ export function isMondayMultiLevelExport(rows: RawRow[]): boolean {
   return hasParentHeaderRow && !hasSubitemHeaderRow;
 }
 
+// ── Promo-cell detection ──────────────────────────────────────────────
+//
+// monday.com classic exports embed a small marketing CTA into the
+// board-name and group-name rows (the same rows the parser previously
+// expected to contain a single cell). These are the strings we've seen
+// in real exports as of 2026; match conservatively (substring,
+// case-insensitive) so future tweaks of the wording keep working.
+
+const MONDAY_PROMO_FRAGMENTS = [
+  "created using monday.com",
+  "try it free",
+  "made with monday.com",
+];
+
+/**
+ * True when a cell looks like one of monday's auto-injected promo cells
+ * that share the board-name / group-name row. Used by the export parser
+ * to treat those cells as if they were empty during row classification —
+ * see the comment in classifyRow() for why.
+ */
+function isMondayPromoCell(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!v) return false;
+  return MONDAY_PROMO_FRAGMENTS.some((frag) => v.includes(frag));
+}
+
 // ── Monday.com export parser ──────────────────────────────────────────
 
 /**
@@ -259,8 +285,6 @@ export function parseMondayExport(
   let currentGroup: MondayExportGroup | null = null;
   let currentParentItem: MondayExportItem | null = null;
   let currentSubitemHeaders: string[] = [];
-  /** True after we see a parent-header row; reset when a new group starts */
-  let insideParentSection = false;
 
   // Detect board name from first row (single non-empty cell)
   const detectedBoardName = rows[0]?.[0]?.trim() || boardName;
@@ -288,7 +312,19 @@ export function parseMondayExport(
     | "empty" {
     const colA = row[0]?.trim() ?? "";
     const colB = row[1]?.trim() ?? "";
-    const nonEmpty = row.filter((c) => c.trim() !== "").length;
+    // monday.com classic exports (2026+) inject a marketing CTA into the
+    // board-name and group-name rows — e.g. cell C1 = "This spreadsheet
+    // was created using monday.com" alongside the actual board name in
+    // A1; cell C2 = "Try it free →" alongside the group name in A2. Those
+    // cells aren't real data and they break our nonEmpty-based classifier
+    // (a 2-cell board/group row was mis-classified as a parent item,
+    // dumping every subsequent item into "(No Group)"). Treat them as
+    // empty for classification purposes so the shape we see matches the
+    // pre-2026 single-cell board/group rows the rest of this code was
+    // written against.
+    const nonEmpty = row.filter(
+      (c) => c.trim() !== "" && !isMondayPromoCell(c),
+    ).length;
 
     if (nonEmpty === 0) return "empty";
     if (rowIndex === 0 && nonEmpty === 1) return "board_name";
@@ -316,11 +352,23 @@ export function parseMondayExport(
       return "subitem_row";
     }
 
-    // Single non-empty cell disambiguation:
-    // If we're inside a parent section (after header row), it's a parent item.
-    // If we're NOT inside a parent section, it's a group name.
+    // Single non-empty cell disambiguation.
+    // The robust signal — independent of where in the export we are — is:
+    // a single-cell row introduces a new group iff the next non-empty row
+    // is the parent-headers row that opens that group's section. Anything
+    // else with a single populated col A is a parent item that happens to
+    // only have its name filled in (monday lets you create parents with no
+    // other column values; common in fresh boards).
+    //
+    // Why not key off `insideParentSection`? In real monday exports the
+    // groups follow each other without a blank-row separator: ...subitem
+    // rows → next group name → parent headers → next group's items. Since
+    // subitem rows don't reset insideParentSection, the prior approach
+    // mis-classified every subsequent group as a parent_item and collapsed
+    // 60+ groups into the first one. Looking ahead at the next non-empty
+    // row makes that state-tracking unnecessary.
     if (nonEmpty === 1 && colA !== "" && colA !== "Name" && colA !== "Subitems") {
-      return insideParentSection ? "parent_item" : "group_name";
+      return nextNonEmptyIsParentHeader(rowIndex) ? "group_name" : "parent_item";
     }
 
     // Parent item: col A has data, not a keyword
@@ -365,13 +413,11 @@ export function parseMondayExport(
         if (currentGroup) groups.push(currentGroup);
         currentGroup = { groupName: row[0].trim(), items: [] };
         currentSubitemHeaders = [];
-        insideParentSection = false;
         break;
       }
 
       case "parent_headers": {
         parentHeaders = row.map((c) => c.trim()).filter((c) => c !== "");
-        insideParentSection = true;
         seenAnyParentHeader = true;
         break;
       }
@@ -438,7 +484,6 @@ export function parseMondayExport(
           currentParentItem = null;
         }
         currentSubitemHeaders = [];
-        insideParentSection = false;
         break;
       }
     }
