@@ -302,10 +302,20 @@ export async function runFullMondayExportImport(
   const boardGroups = await fetchBoardGroups(token, boardId);
   const groupMap = new Map(boardGroups.map((g) => [g.title.trim(), g.id]));
 
+  // Distinct group names in source order — used twice below: once for
+  // create_group iteration (REVERSED so the resulting board order matches
+  // the source), and again unmodified to keep semantics obvious.
   const distinctGroupNames = Array.from(
     new Set(allParents.map((p) => p.groupName.trim()).filter(Boolean)),
   );
-  for (const name of distinctGroupNames) {
+  // monday's create_group mutation inserts the new group at the TOP of
+  // the board (no position argument exists in the public API). Creating
+  // groups in source order would put the first source group at the
+  // bottom and the last on top — exactly backwards. Reverse the iteration
+  // so the LAST source group is created first (lands at top) and the
+  // FIRST source group is created last (lands at the very top, above the
+  // rest), reproducing the source's visual order on the new board.
+  for (const name of [...distinctGroupNames].reverse()) {
     if (groupMap.has(name)) continue;
     try {
       const created = await createGroup(token, boardId, name);
@@ -348,7 +358,12 @@ export async function runFullMondayExportImport(
       return;
     }
 
-    const groupId = groupMap.get(parent.groupName) ?? undefined;
+    // groupMap keys are trimmed on both sides (board fetch + create); the
+    // raw parent.groupName might carry trailing whitespace from the parser
+    // (rare but possible on round-tripped exports). Trim at the lookup so
+    // it always matches even when the export round-tripped through a
+    // copy-paste workflow.
+    const groupId = groupMap.get(parent.groupName.trim()) ?? undefined;
 
     try {
       const result = await createItem(token, boardId, groupId, parent.name, colVals);
