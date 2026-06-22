@@ -218,29 +218,66 @@ if (newSsEntries.length > 0) {
   console.log(`✓ Appended ${newSsEntries.length} <si> entries to sharedStrings.xml`);
 }
 
-// ── Phase 5: Patch sheet1.xml — for each marked row, insert or replace H ─
-for (const { row, ssIndex } of replacements) {
-  const newCell = `<c r="H${row}" s="10" t="s"><v>${ssIndex}</v></c>`;
-
-  // Case A: an H cell already exists at this row — replace it.
-  const existingHRe = new RegExp(
-    `<c\\s+r="H${row}"[^/>]*(?:\\/>|>(?:[^<]*<\\/[^>]+>)*<\\/c>)`,
+// ── Phase 5a: Patch sheet1.xml — for each marked row, insert or replace H ─
+//
+// Robust regex: matches <c r="H<row>" …> followed by EITHER `/>` (self-
+// closing empty cell) OR `>…</c>` (cell with any kid content). Earlier
+// version's character class missed cells with `<v>…</v>` children, which
+// left the original H cell AND appended a new one → invalid duplicate
+// (`<c r="H35">` × 2 in row 35). This regex catches both shapes; the
+// `[\s\S]*?` is non-greedy so it won't slurp across multiple cells.
+const buildExistingHRe = (row) =>
+  new RegExp(
+    `<c\\s+r="H${row}"[^>]*?(?:\\/>|>[\\s\\S]*?</c>)`,
     "g",
   );
-  if (existingHRe.test(sheetXml)) {
-    sheetXml = sheetXml.replace(existingHRe, newCell);
+
+let cellsReplaced = 0;
+let cellsInserted = 0;
+for (const { row, ssIndex } of replacements) {
+  const newCell = `<c r="H${row}" s="10" t="s"><v>${ssIndex}</v></c>`;
+  const existingHRe = buildExistingHRe(row);
+  const beforeLen = sheetXml.length;
+  sheetXml = sheetXml.replace(existingHRe, newCell);
+  if (sheetXml.length !== beforeLen) {
+    cellsReplaced++;
     continue;
   }
-
-  // Case B: no H cell — insert before </row> of this specific row.
+  // No existing H<row> — insert before </row> of this specific row.
   const rowCloseRe = new RegExp(
     `(<row[^>]*\\sr="${row}"[^>]*>[\\s\\S]*?)</row>`,
   );
   sheetXml = sheetXml.replace(rowCloseRe, `$1${newCell}</row>`);
+  cellsInserted++;
 }
+console.log(`✓ Patched sheet1.xml Notes: ${cellsReplaced} replaced, ${cellsInserted} inserted`);
+
+// ── Phase 5b: Reformat subitem Timeline-Start/End cells (and stray Q) ─
+//
+// monday's export inconsistently applies date formatting: parent
+// Planned-Timeline cells use s="9" (cellXf 9 → numFmtId 164 → D/M/YYYY),
+// but the same date values on SUBITEM Timeline-Start/End columns (F, G)
+// use s="10" (General). Excel renders them as raw serial numbers (45813,
+// 46195, …). The user's Project Tracker delivery would show those as
+// raw numbers and look broken. Fix: switch the style from 10 → 9 on
+// cells in cols F/G/Q whose value is in the 40000-60000 Excel serial
+// date band. Safe because s="10" is also used for text cells, and our
+// numeric-value test filters those out.
+const dateCellRe = /<c r="([A-Z]+)([0-9]+)" s="10"><v>([45][0-9]{4}(?:\.[0-9]+)?)<\/v><\/c>/g;
+let reformattedDates = 0;
+sheetXml = sheetXml.replace(dateCellRe, (_match, colLetter, rowNum, value) => {
+  // Only touch cols where this is a real Timeline mistake (per our
+  // earlier inspection: 347 in F, 413 in G, 3 in Q). Skip H to avoid
+  // smacking any text cell that happens to hold a numeric-looking value.
+  if (colLetter !== "F" && colLetter !== "G" && colLetter !== "Q") {
+    return _match;
+  }
+  reformattedDates++;
+  return `<c r="${colLetter}${rowNum}" s="9"><v>${value}</v></c>`;
+});
+console.log(`✓ Reformatted ${reformattedDates} subitem Timeline cells from raw numbers to dates (style 10 → 9)`);
 
 writeFileSync(sheetPath, sheetXml, "utf8");
-console.log(`✓ Patched sheet1.xml with ${replacements.length} Notes cells`);
 
 // ── Phase 6: Re-zip with explicit top-level entries (root-relative) ──
 if (existsSync(OUTPUT)) rmSync(OUTPUT, { force: true });
