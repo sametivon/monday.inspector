@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Changelog &amp; Release Notes — Monday.com Inspector</title>
+  <meta name="description" content="What's new in Monday.com Inspector. v1.6.3 makes imports more reliable by focusing on native column data — learn why Connect Boards and mirror columns are excluded from import, plus the full version history." />
+  <meta name="keywords" content="monday.com inspector changelog, monday.com inspector release notes, monday.com importer update, monday.com import connect boards, monday.com import mirror column, monday.com importer v1.6.3, monday.com extension version history" />
+  <link rel="canonical" href="https://mondayinspector.eu/changelog.html" />
+  <meta property="og:title" content="Changelog &amp; Release Notes — Monday.com Inspector" />
+  <meta property="og:description" content="What's new in Monday.com Inspector — v1.6.3 makes imports more reliable. See why connection (Connect Boards) and mirror columns are excluded, plus the full version history." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://mondayinspector.eu/changelog.html" />
+  <meta property="og:image" content="https://mondayinspector.eu/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Monday.com Inspector" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Changelog &amp; Release Notes — Monday.com Inspector" />
+  <meta name="twitter:description" content="What's new in Monday.com Inspector. v1.6.3 makes imports more reliable by focusing on native column data." />
+  <meta name="twitter:image" content="https://mondayinspector.eu/og-image.png" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Sam @ Fruition Services" />
+  <meta name="theme-color" content="#7c5cfc" />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Why were Connect Boards and Dependency columns removed from the importer in v1.6.3?", "acceptedAnswer": { "@type": "Answer", "text": "A connection column's value is a set of references to item IDs that live on a different board (or on the separate subitem board). When you import into a fresh or different board those source IDs don't exist in the destination, and there is no reliable way to remap them — resolving by item name breaks on duplicate names, renamed items, or a linked board your API token can't read. Excluding them gives cleaner mapping and removes the 'every row fails on the Connect Boards column' errors." } },
+      { "@type": "Question", "name": "Can I still import into a Connect Boards (board_relation) column?", "acceptedAnswer": { "@type": "Answer", "text": "No. Connection columns (Connect Boards / board_relation and Dependency) and computed columns (mirror, formula, lookup) are excluded from import as of v1.6.3. Import your native column data with Monday.com Inspector, then recreate the board connections inside monday.com once the items exist." } },
+      { "@type": "Question", "name": "Why can't mirror columns be imported?", "acceptedAnswer": { "@type": "Answer", "text": "Mirror, formula and lookup columns are computed by monday.com from connected or other columns — there is no value to write, so monday.com recomputes them automatically. The importer filters them out for that reason." } }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mondayinspector.eu/" },
+      { "@type": "ListItem", "position": 2, "name": "Changelog & Release Notes", "item": "https://mondayinspector.eu/changelog.html" }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260502b" />
+  <style>
+    .article-hero { background: #fff; padding: 64px 0 48px; border-bottom: 1px solid #e4e4e7; }
+    .article-hero h1 { font-size: clamp(1.875rem, 3.5vw, 2.75rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin: 16px 0 18px; }
+    .article-hero .lead { font-size: 1.0625rem; color: #52525b; line-height: 1.75; max-width: 680px; }
+    .article-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #71717a; flex-wrap: wrap; margin-top: 20px; }
+    .article-meta span { display: flex; align-items: center; gap: 5px; }
+    .release { padding: 32px 0; border-bottom: 1px solid #e4e4e7; }
+    .release:last-child { border-bottom: 0; }
+    .release-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+    .release-head h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .release-date { font-size: 13px; color: #71717a; }
+    .release-tagline { font-size: 1.0625rem; color: #3f3f46; font-weight: 600; margin: 4px 0 14px; }
+    .release ul { margin: 0 0 8px; padding-left: 20px; }
+    .release li { margin-bottom: 8px; color: #52525b; line-height: 1.7; }
+    .release.featured { background: #faf8ff; border: 1px solid #e7defb; border-radius: 16px; padding: 28px 28px 24px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/"><img src="icon.png" class="nav-logo-img" alt="">monday<span style="color:#7c5cfc">.inspector</span></a>
+    <ul class="nav-links">
+      <li><a href="/#features">Features</a></li>
+      <li><a href="import-subitems-monday.html">Import Subitems</a></li>
+      <li><a href="monday-csv-import-guide.html">CSV Guide</a></li>
+      <li><a href="monday-bulk-update.html">Bulk Update</a></li>
+      <li><a href="monday-import-images-from-excel.html">Excel Images</a></li>
+      <li><a href="monday-graphql-query-guide.html">GraphQL</a></li>
+      <li><a href="changelog.html" class="active">Changelog</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome</a>
+  </div>
+</nav>
+
+<!-- Article Hero -->
+<div class="article-hero">
+  <div class="container-sm">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Changelog</span>
+    </nav>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="badge badge-brand">Release notes</span>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Latest · v1.6.3</span>
+    </div>
+    <h1>Changelog &amp; Release Notes</h1>
+    <p class="lead">Every notable change to Monday.com Inspector — the free Chrome &amp; Firefox extension for importing, bulk-updating, and querying monday.com boards. Newest releases first.</p>
+    <div class="article-meta">
+      <span>📅 Updated June 2026</span>
+      <span>✍️ Sam @ Fruition Services</span>
+      <span>🛠️ Current version: v1.6.3</span>
+    </div>
+  </div>
+</div>
+
+<!-- Releases -->
+<div class="container-sm" style="padding:48px 0 24px">
+
+  <!-- v1.6.3 (featured, detailed) -->
+  <section class="release featured" id="v1-6-3">
+    <div class="release-head">
+      <h2>v1.6.3</h2>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Latest</span>
+      <span class="release-date">June 2026</span>
+    </div>
+    <p class="release-tagline">More reliable imports — the Importer now focuses on native, column-level data.</p>
+
+    <p style="color:#52525b;line-height:1.75;margin-bottom:14px">The biggest change in this release is what the Importer <em>won't</em> try to do anymore. <strong>Connection columns</strong> (Connect Boards / <code>board_relation</code> and Dependency) and <strong>computed columns</strong> (mirror, formula, lookup) are now excluded from import. They no longer appear as mapping targets in step 3, and any matching file columns are listed under the "hidden columns" disclosure instead of failing silently.</p>
+
+    <h3 style="font-size:1.05rem;font-weight:700;margin:18px 0 8px">Why we made this change</h3>
+    <ul>
+      <li><strong>Connection columns point at other boards.</strong> A Connect Boards or Dependency value isn't data — it's a list of references to <em>item IDs that live on a different board</em> (or on the separate subitem board). When you import into a fresh or different board, those source IDs don't exist in the destination, and there's no reliable way to remap them.</li>
+      <li><strong>Resolving by name was brittle.</strong> The previous approach looked up linked items by name. That broke on duplicate names, renamed items, or a linked board your API token couldn't read — producing confusing "every row failed on the Connect Boards column" errors.</li>
+      <li><strong>Mirror, formula and lookup are computed.</strong> Their values are calculated by monday.com from connected or other columns, so there is simply nothing to write — monday recomputes them on its own.</li>
+    </ul>
+
+    <h3 style="font-size:1.05rem;font-weight:700;margin:18px 0 8px">What this means for you</h3>
+    <ul>
+      <li><strong>Cleaner column mapping.</strong> Only columns the API can actually write show up, so the mapping table stays focused.</li>
+      <li><strong>No more whole-import failures</strong> caused by a single unresolvable connection column.</li>
+      <li><strong>Recreate links in monday after import.</strong> Import all your native data (status, people, dates, text, numbers, dropdowns, timelines, and more), then add the board connections inside monday.com once the items exist.</li>
+    </ul>
+
+    <div class="callout callout-info" style="margin-top:16px">
+      <div class="callout-title">ℹ Columns excluded from import</div>
+      <p><strong>Connection:</strong> Connect Boards (<code>board_relation</code>), Dependency. &nbsp;<strong>Computed / read-only:</strong> mirror, formula, lookup, auto-number, creation log, last updated, item ID, button, file. Everything else — the 18+ native writable column types — imports as usual. <a href="monday-csv-import-guide.html">See the full column-type guide →</a></p>
+    </div>
+
+    <p style="color:#71717a;font-size:13px;margin-top:14px">Builds on v1.6.2 (smart import error recovery) and v1.6.0 (bulk Excel image upload to File columns).</p>
+  </section>
+
+  <!-- v1.6.2 -->
+  <section class="release" id="v1-6-2">
+    <div class="release-head">
+      <h2>v1.6.2</h2>
+      <span class="release-date">May 2026</span>
+    </div>
+    <p class="release-tagline">Smart import error recovery.</p>
+    <ul>
+      <li>When an import finishes with failures, a recovery banner <strong>names the column(s) most likely causing them</strong> and offers a one-click "Skip these columns &amp; re-run".</li>
+      <li>Per-row error messages show monday.com's exact response, with a "Copy all errors" button for the whole list.</li>
+      <li>A "Back to column mapping" shortcut, so a single bad column never blocks the rest of your data.</li>
+    </ul>
+  </section>
+
+  <!-- v1.6.1 -->
+  <section class="release" id="v1-6-1">
+    <div class="release-head">
+      <h2>v1.6.1</h2>
+      <span class="release-date">May 2026</span>
+    </div>
+    <p class="release-tagline">Connect Boards diagnostics.</p>
+    <ul>
+      <li>Added specific, per-row error messages for Connect Boards / Dependency failures and a skip-Connect-Boards escape hatch.</li>
+      <li class="" style="color:#71717a"><em>Superseded by v1.6.3</em>, which removes connection columns from import entirely — so these failures no longer occur.</li>
+    </ul>
+  </section>
+
+  <!-- v1.6.0 -->
+  <section class="release" id="v1-6-0">
+    <div class="release-head">
+      <h2>v1.6.0</h2>
+      <span class="release-date">April 2026</span>
+    </div>
+    <p class="release-tagline">Excel Image Importer — the feature monday.com never built.</p>
+    <ul>
+      <li>Drop an <code>.xlsx</code> with images pasted into cells — every image is extracted, anchored to its row, and uploaded to a monday.com File column.</li>
+      <li>Two modes: attach images to existing items (match by name or ID), or create brand-new items from each row with the image attached.</li>
+      <li>Works on monday.com's "Export to Excel" output and hand-built spreadsheets. <a href="monday-import-images-from-excel.html">Full guide →</a></li>
+    </ul>
+  </section>
+
+  <!-- v1.5.x -->
+  <section class="release" id="v1-5">
+    <div class="release-head">
+      <h2>v1.5.x</h2>
+      <span class="release-date">2026</span>
+    </div>
+    <p class="release-tagline">GraphQL Query Inspector, multi-level boards &amp; more column types.</p>
+    <ul>
+      <li>Full-page GraphQL workspace with 14 ready-made templates, a saved-query library, table + JSON results, a complexity meter, and CSV/JSON export. <a href="monday-graphql-query-guide.html">GraphQL guide →</a></li>
+      <li>Auto-detection of classic vs multi-level boards (monday API 2026-04) across the schema viewer, query inspector, and importer.</li>
+      <li>Added rating, country, hour, week, location, and world-clock column support to the importer.</li>
+    </ul>
+  </section>
+
+</div>
+
+<!-- CTA -->
+<section style="background:#fafafa;padding:64px 0">
+  <div class="container-sm">
+    <div class="cta-banner">
+      <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-.025em">Get the latest version</h2>
+      <p style="color:rgba(255,255,255,.8);font-size:1rem;margin-bottom:28px">Free Chrome extension. No account needed. No row limits. Updates automatically.</p>
+      <a class="btn btn-xl btn-on-dark" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — It's Free</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="nav-logo" href="/" style="color:#f4f4f5;text-decoration:none"><img src="icon.png" class="nav-logo-img" alt=""><span style="color:#e8e4f5">monday</span><span style="color:#a78bfa">.inspector</span></a>
+        <p>The free Chrome extension that gives monday.com the power features it's missing.</p>
+      </div>
+      <div><p class="footer-col-title">Product</p><ul class="footer-links"><li><a href="/#features">Features</a></li><li><a href="/#comparison">vs. Native</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/changelog.html">Changelog</a></li></ul></div>
+      <div><p class="footer-col-title">Guides</p><ul class="footer-links"><li><a href="import-subitems-monday.html">Import Subitems</a></li><li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li><li><a href="monday-bulk-update.html">Bulk Update Guide</a></li><li><a href="monday-import-images-from-excel.html">Excel Images</a></li><li><a href="monday-graphql-query-guide.html">GraphQL Tutorial</a></li></ul></div>
+      <div><p class="footer-col-title">Company</p><ul class="footer-links"><li><a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer">Fruition Services</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="mailto:sam@fruitionservices.io">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 Fruition Services. All rights reserved.</span><span>Free &amp; Open Source</span></div>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}}),{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const nav=document.getElementById('site-nav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
+</script>
+</body>
+</html>

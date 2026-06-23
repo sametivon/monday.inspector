@@ -32,13 +32,13 @@ from `public/manifest.firefox.json`.
 ### Package + submit to AMO
 ```powershell
 # From the repo root in PowerShell
-Compress-Archive -Path "dist-firefox\*" -DestinationPath "monday-inspector-firefox-v1.5.4.zip" -Force
+Compress-Archive -Path "dist-firefox\*" -DestinationPath "monday-inspector-firefox-v1.6.3.zip" -Force
 ```
 
 Then:
 1. Sign in at [addons.mozilla.org/developers/](https://addons.mozilla.org/developers/) (free Mozilla account)
 2. **Submit a new add-on** → On this site
-3. Upload `monday-inspector-firefox-v1.5.4.zip`
+3. Upload `monday-inspector-firefox-v1.6.3.zip`
 4. Choose **listed** distribution (public listing on AMO)
 5. Reuse `store/description.txt`, the same screenshots, and `https://mondayinspector.eu/privacy.html` as the privacy policy URL
 6. Source code: AMO requires source for any extension that uses minified or
@@ -77,7 +77,7 @@ Edge is Chromium under the hood and accepts Chrome Web Store extensions
 directly. Two options:
 
 ### Option A — keep one codebase, list separately
-1. Use the same `monday-inspector-v1.5.4.zip` we submitted to Chrome.
+1. Use the same `monday-inspector-v1.6.3.zip` we submitted to Chrome.
 2. Sign in at [Microsoft Partner Center → Edge Add-ons](https://partner.microsoft.com/dashboard/microsoftedge).
 3. **Create new extension** → upload the Chrome zip.
 4. Reuse the Chrome listing copy + screenshots + privacy URL.
