@@ -181,6 +181,52 @@ describe("parseMondayExport", () => {
     expect(result.parentHeaders).toEqual(["Name", "Status", "Owner"]);
   });
 
+  it("treats monday's auto-injected promo cells in col C as empty so board+group rows still classify", () => {
+    // Real exports from monday.com (2026+) place a marketing CTA in
+    // column C on the board-name and group-name rows. e.g.
+    //   R0:  A="Project Portfolio Test"        C="This spreadsheet was created using monday.com"
+    //   R1:  A="1240 - Acumen Casework"        C="Try it free →"
+    //   R2:  parent headers
+    //   R3+: items
+    // Pre-fix this dumped EVERY item into "(No Group)" because the
+    // classifier saw nonEmpty=2 on R0/R1 and routed them to parent_item.
+    const rows = [
+      ["Project Portfolio Test", "", "This spreadsheet was created using monday.com"],
+      ["1240 - Acumen Casework", "", "Try it free →"],
+      ["Name", "Subitems", "Status", "Phase"],
+      ["Phase 0 - Validation", "", "Completed", "Phase 0"],
+      ["Subitems", "Name", "Owner", "Status"],
+      ["", "Project Ideation", "alice", "100%"],
+      ["Phase 1 - Concepts", "", "Completed", "Phase 1"],
+      ["", "", ""],
+      ["1283 - Adirondack", "", "Try it free →"],
+      ["Name", "Subitems", "Status", "Phase"],
+      ["Phase 0 - Validation", "", "Not Started", "Phase 0"],
+    ];
+    const result = parseMondayExport(rows, "real.xlsx", "fallback");
+    expect(result.boardName).toBe("Project Portfolio Test");
+    // Two groups, NOT items dumped under (No Group)
+    expect(result.groups.map((g) => g.groupName)).toEqual([
+      "1240 - Acumen Casework",
+      "1283 - Adirondack",
+    ]);
+    expect(result.groups[0].items.map((i) => i.name)).toEqual([
+      "Phase 0 - Validation",
+      "Phase 1 - Concepts",
+    ]);
+    expect(result.groups[1].items.map((i) => i.name)).toEqual([
+      "Phase 0 - Validation",
+    ]);
+    // Promo cell must NOT be turned into a column value on the parent.
+    for (const grp of result.groups) {
+      for (const item of grp.items) {
+        for (const v of Object.values(item.values)) {
+          expect(v.toLowerCase()).not.toContain("try it free");
+        }
+      }
+    }
+  });
+
   it("keeps widest set of subitem headers across groups", () => {
     const rows = [
       ["Board"],

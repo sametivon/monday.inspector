@@ -179,6 +179,59 @@ describe("runFullMondayExportImport — monday classic export path", () => {
     expect(createItemBody.variables.groupId).toBe("grp-NEW");
   });
 
+  it("creates groups in REVERSE source order so monday's top-insertion preserves source order on the board", async () => {
+    // Source has 3 distinct groups (A, B, C). monday's create_group puts
+    // each new group at the TOP of the board, so if we created them in
+    // source order the final board reads C, B, A (reversed). Instead the
+    // orchestrator iterates in reverse: C is created first (lands at top),
+    // then B (now above C), then A (now above B) → board reads A, B, C.
+    const multiGroupFixture = {
+      kind: "monday_export" as const,
+      boardName: "P",
+      fileName: "p.xlsx",
+      parentHeaders: ["Status"],
+      subitemHeaders: [],
+      groups: [
+        { groupName: "GroupA", items: [{ name: "a1", values: { Status: "Done" }, subitems: [] }] },
+        { groupName: "GroupB", items: [{ name: "b1", values: { Status: "Done" }, subitems: [] }] },
+        { groupName: "GroupC", items: [{ name: "c1", values: { Status: "Done" }, subitems: [] }] },
+      ],
+      flatSubitems: [],
+      rowCount: 3,
+    };
+    const fetchMock = makeFetchResponses([
+      { ok: true, body: { data: { boards: [{ groups: [] }] } } },
+      { ok: true, body: { data: { create_group: { id: "gC", title: "GroupC" } } } },
+      { ok: true, body: { data: { create_group: { id: "gB", title: "GroupB" } } } },
+      { ok: true, body: { data: { create_group: { id: "gA", title: "GroupA" } } } },
+      { ok: true, body: { data: { create_item: { id: "i1", name: "a1" } } } },
+      { ok: true, body: { data: { create_item: { id: "i2", name: "b1" } } } },
+      { ok: true, body: { data: { create_item: { id: "i3", name: "c1" } } } },
+    ]);
+    vi.stubGlobal("fetch", fetchMock);
+
+    await runFullMondayExportImport(
+      "tok",
+      multiGroupFixture,
+      [{ fileColumn: "Status", mondayColumnId: "status" }],
+      [],
+      "board-1",
+      BOARD_COLUMNS,
+      SUBITEM_COLUMNS,
+      { onRowUpdate: () => {}, onBatchComplete: () => {} },
+    );
+
+    // Verify create_group fired in REVERSE source order: C, then B, then A
+    const createdInOrder: string[] = [];
+    for (const call of fetchMock.mock.calls) {
+      const body = JSON.parse((call[1] as { body: string }).body);
+      if (body.query.includes("create_group")) {
+        createdInOrder.push(body.variables.groupName);
+      }
+    }
+    expect(createdInOrder).toEqual(["GroupC", "GroupB", "GroupA"]);
+  });
+
   it("skips the create_group call when the target board already has the group", async () => {
     // Sanity guard: don't burn a create_group call when the group is
     // already there. Only fetchBoardGroups → create_item × 1 → create_subitem × 2.
