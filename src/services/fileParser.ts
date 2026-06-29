@@ -119,7 +119,7 @@ async function parseXLSX(file: File): Promise<ParsedFile> {
 
 type RawRow = string[];
 
-function getRawRows(sheet: XLSX.WorkSheet): RawRow[] {
+export function getRawRows(sheet: XLSX.WorkSheet): RawRow[] {
   const ref = sheet["!ref"];
   if (!ref) return [];
 
@@ -144,20 +144,22 @@ function getRawRows(sheet: XLSX.WorkSheet): RawRow[] {
       const addr = XLSX.utils.encode_cell({ r, c });
       const cell = sheet[addr];
       if (cell) {
-        // Format dates properly (Excel serial dates are numbers 40000–60000).
-        // Prefer the cell's pre-formatted text (cell.w) which is what monday
-        // ships in its exports; fall back to SSF.format if available; final
-        // fallback is the raw numeric value as a string.
+        // Excel serial dates are numbers in the 40000–60000 band. Emit an
+        // unambiguous ISO yyyy-mm-dd built from the SERIAL — NOT the cell's
+        // pre-formatted text (cell.w). monday exports format dates as
+        // D/M/YYYY, so a value like "03/11/2025" reads as US M/D downstream
+        // and flips 3 Nov → 11 Mar. The serial number carries no such
+        // ambiguity, so converting it directly is always correct.
         if (cell.t === "n" && cell.v > 40000 && cell.v < 60000) {
-          if (cell.w) {
+          const ssf = (
+            XLSX as { SSF?: { format: (fmt: string, v: unknown) => string } }
+          ).SSF;
+          if (ssf?.format) {
+            row.push(ssf.format("yyyy-mm-dd", cell.v));
+          } else if (cell.w) {
+            // No SSF available (shouldn't happen with the full xlsx build) —
+            // fall back to the formatted text, then the raw serial.
             row.push(String(cell.w));
-          } else if ((XLSX as { SSF?: { format: (fmt: string, v: unknown) => string } }).SSF?.format) {
-            row.push(
-              (XLSX as { SSF: { format: (fmt: string, v: unknown) => string } }).SSF.format(
-                "yyyy-mm-dd",
-                cell.v,
-              ),
-            );
           } else {
             row.push(String(cell.v));
           }

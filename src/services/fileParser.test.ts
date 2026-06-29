@@ -1,15 +1,60 @@
 import { describe, expect, it } from "vitest";
+import * as XLSX from "xlsx";
 import {
+  getRawRows,
   isMondayExport,
   isMondayMultiLevelExport,
   parseMondayExport,
 } from "./fileParser";
+
+// Excel serial number for a UTC date (1900 date system; correct for any
+// post-1900-02 date, which is all real project data).
+function excelSerial(y: number, m: number, d: number): number {
+  return (Date.UTC(y, m - 1, d) - Date.UTC(1899, 11, 30)) / 86_400_000;
+}
 
 // Tests for the monday.com hierarchical export parser.
 //
 // Feeding in raw rows lets us exercise the row-classifier state machine
 // without wiring up the XLSX parser itself — the raw-row shape is what
 // `getRawRows()` produces when reading a real monday export sheet.
+
+describe("getRawRows — Excel date serials", () => {
+  // Regression: monday exports store dates as serials styled D/M/YYYY, so
+  // the formatted text for 3-Nov-2025 is "03/11/2025". Reading that text and
+  // parsing it downstream flipped it to 11-Mar (US M/D). We must instead read
+  // the serial and emit unambiguous ISO yyyy-mm-dd.
+  it("converts a DD/MM-formatted serial (day <= 12) to the correct ISO date", () => {
+    const sheet: XLSX.WorkSheet = {
+      "!ref": "A1:A1",
+      A1: { t: "n", v: excelSerial(2025, 11, 3), w: "03/11/2025" },
+    };
+    expect(getRawRows(sheet)[0][0]).toBe("2025-11-03"); // 3 Nov, NOT 11 Mar
+  });
+
+  it("handles an unambiguous day (> 12) serial too", () => {
+    const sheet: XLSX.WorkSheet = {
+      "!ref": "A1:A1",
+      A1: { t: "n", v: excelSerial(2025, 12, 25), w: "25/12/2025" },
+    };
+    expect(getRawRows(sheet)[0][0]).toBe("2025-12-25");
+  });
+
+  it("leaves non-date numbers and text untouched", () => {
+    const sheet: XLSX.WorkSheet = {
+      "!ref": "A1:C1",
+      A1: { t: "n", v: 100, w: "100" }, // small number, not a date serial
+      B1: { t: "s", v: "Phase 0 - Validation" },
+      C1: { t: "n", v: 45000, w: "45000" }, // in band but emitted as ISO date
+    };
+    const row = getRawRows(sheet)[0];
+    expect(row[0]).toBe("100");
+    expect(row[1]).toBe("Phase 0 - Validation");
+    // C is in the date band, so it is treated as a date serial (pre-existing
+    // heuristic). Just assert it is a valid ISO date string, not a raw number.
+    expect(row[2]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+});
 
 describe("isMondayExport", () => {
   it("returns true when both parent+subitem header rows exist", () => {
