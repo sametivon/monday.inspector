@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    /* the R3F ambient background is fixed behind everything */
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: rgba(62, 123, 250, 0.16);
+  }
+}
+
+@layer components {
+  /* Glass surface — used by nav, cards, floating panels */
+  .glass {
+    background: rgba(255, 255, 255, 0.66);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow:
+      0 8px 32px rgba(35, 55, 110, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(120, 140, 170, 0.14);
+    box-shadow: 0 20px 50px rgba(35, 55, 110, 0.12);
+  }
+  .hairline {
+    border: 1px solid rgba(120, 140, 170, 0.12);
+  }
+  .text-gradient {
+    background: linear-gradient(120deg, #3e7bfa 0%, #6161ff 55%, #8a63ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Calm long-form article typography (guides, changelog, privacy) */
+  .prose-calm {
+    @apply text-[15.5px] leading-[1.8] text-muted;
+  }
+  .prose-calm h2 {
+    @apply mt-14 mb-4 font-display text-[1.6rem] font-extrabold tracking-tight text-ink;
+  }
+  .prose-calm h3 {
+    @apply mt-9 mb-3 font-display text-[1.15rem] font-bold text-ink;
+  }
+  .prose-calm p {
+    @apply mb-5;
+  }
+  .prose-calm ul {
+    @apply mb-6 flex list-none flex-col gap-2.5 pl-0;
+  }
+  .prose-calm li {
+    @apply relative pl-6;
+  }
+  .prose-calm li::before {
+    content: "";
+    @apply absolute left-0 top-[0.68em] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-brand/60;
+  }
+  .prose-calm strong {
+    @apply font-semibold text-ink;
+  }
+  .prose-calm a {
+    @apply font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:decoration-brand;
+  }
+  .prose-calm code {
+    @apply rounded-md bg-surface px-1.5 py-0.5 font-mono text-[13px] text-brand;
+  }
+}
+
+/* Lenis smooth-scroll baseline */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
