@@ -1,0 +1,265 @@
+{
+  "import-subitems-monday": {
+    "title": "How to Import Subitems in Monday.com (2026 Step-by-Step Guide)",
+    "description": "Monday.com doesn't support importing subitems natively. Learn how to import subitems from CSV into monday.com in 5 steps using the free Monday.com Inspector Chrome extension.",
+    "h1": "How to Import Subitems in Monday.com (2026 Step-by-Step Guide)",
+    "lead": "Monday.com's native import only creates top-level items — it has no built-in support for importing subitems and no clean handling of multi-level boards. This guide shows you how to import both from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.6.3 with the full-page Importer, multi-level board awareness, and smart error recovery.",
+    "meta": [
+      "📅 Updated June 2026",
+      "✍️ Sam @ Fruition Services",
+      "🕐 7 min read",
+      "🛠️ Covers v1.6.3"
+    ],
+    "toc": [
+      {
+        "href": "#the-problem",
+        "label": "Why monday.com can't do it"
+      },
+      {
+        "href": "#the-solution",
+        "label": "The solution: Inspector"
+      },
+      {
+        "href": "#step-by-step",
+        "label": "Step-by-step guide"
+      },
+      {
+        "href": "#step-1",
+        "label": "Step 1: Prepare your CSV"
+      },
+      {
+        "href": "#step-2",
+        "label": "Step 2: Install Inspector"
+      },
+      {
+        "href": "#step-3",
+        "label": "Step 3: Open your board"
+      },
+      {
+        "href": "#step-4",
+        "label": "Step 4: Upload &amp; map columns"
+      },
+      {
+        "href": "#step-5",
+        "label": "Step 5: Start &amp; track progress"
+      },
+      {
+        "href": "#column-types",
+        "label": "Supported column types"
+      },
+      {
+        "href": "#connect-boards",
+        "label": "Connect Boards &amp; Dependency (excluded)"
+      },
+      {
+        "href": "#error-recovery",
+        "label": "If your import shows errors"
+      },
+      {
+        "href": "#read-only",
+        "label": "Read-only types we filter"
+      },
+      {
+        "href": "#multi-level",
+        "label": "Multi-level boards"
+      },
+      {
+        "href": "#tips",
+        "label": "Tips for success"
+      },
+      {
+        "href": "#faq",
+        "label": "FAQ"
+      }
+    ],
+    "ldjson": [
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"HowTo\",\r\n    \"name\": \"How to Import Subitems in Monday.com\",\r\n    \"description\": \"Step-by-step guide to importing subitems into monday.com from a CSV or Excel file using the free Monday.com Inspector Chrome extension.\",\r\n    \"totalTime\": \"PT10M\",\r\n    \"tool\": { \"@type\": \"HowToTool\", \"name\": \"Monday.com Inspector Chrome Extension\" },\r\n    \"step\": [\r\n      { \"@type\": \"HowToStep\", \"position\": 1, \"name\": \"Prepare your CSV file\", \"text\": \"Create a CSV with at least two columns: one for the parent item name (or ID), and one for the subitem name. Add any other columns you want to import.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 2, \"name\": \"Install Monday.com Inspector\", \"text\": \"Install the free Monday.com Inspector Chrome extension from the Chrome Web Store.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 3, \"name\": \"Open your monday.com board\", \"text\": \"Navigate to your monday.com board, click the extension icon in the toolbar, and click Open Inspector Panel.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 4, \"name\": \"Upload and map columns\", \"text\": \"Go to the Import tab, upload your CSV file, and map file columns to board columns. The tool auto-matches columns with the same name.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 5, \"name\": \"Start the import\", \"text\": \"Click Start Import. Watch live progress with a percentage bar, ETA, and per-row status. Errors are listed with exact details.\" }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"FAQPage\",\r\n    \"mainEntity\": [\r\n      { \"@type\": \"Question\", \"name\": \"Can monday.com import subitems natively?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No. Monday.com's native CSV import only creates top-level items. It has no built-in way to create subitems from a file. Monday.com Inspector is a free Chrome extension that solves this limitation.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"What CSV format do I need to import subitems into monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Your CSV needs at least a column for the parent item name (or ID) and a column for the subitem name. You can also include any other subitem columns: status, assignee, date, timeline, etc.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I import parent items and subitems at the same time?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. Monday.com Inspector supports full two-phase import: it first creates parent items (with their column values), then creates subitems underneath them.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Does monday.com Inspector work with monday.com board exports?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. Upload a monday.com XLSX board export and the tool auto-detects the format, preserving groups, parent items, and subitems. You can migrate a board between workspaces in minutes.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Is there a row limit for importing subitems?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No. Monday.com Inspector has no row limits. You can import thousands of subitems in a single operation. The tool handles batching and rate limits automatically.\" } }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"BreadcrumbList\",\r\n    \"itemListElement\": [\r\n      { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://mondayinspector.eu/\" },\r\n      { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"How to Import Subitems in Monday.com\", \"item\": \"https://mondayinspector.eu/import-subitems-monday.html\" }\r\n    ]\r\n  }"
+    ]
+  },
+  "monday-csv-import-guide": {
+    "title": "Monday.com CSV Import Guide (2026): Formats, Limits &amp; Best Practices",
+    "description": "Complete guide to monday.com CSV import: supported formats, column types, row limits, subitems, and how Monday.com Inspector extends native import capabilities for free.",
+    "h1": "Monday.com CSV Import: Complete Guide (2026)",
+    "lead": "Everything you need to know about importing CSV and Excel data into monday.com — what the native import supports, where it falls short, and how to handle subitems, complex column types, and large files with Monday.com Inspector.",
+    "meta": [
+      "📅 Updated April 2026",
+      "✍️ Sam @ Fruition Services",
+      "🕐 7 min read"
+    ],
+    "toc": [
+      {
+        "href": "#native-import",
+        "label": "Native Import: What It Supports"
+      },
+      {
+        "href": "#comparison",
+        "label": "Native vs Inspector Comparison"
+      },
+      {
+        "href": "#csv-format",
+        "label": "How to Format Your CSV"
+      },
+      {
+        "href": "#basic-rules",
+        "label": "Basic CSV Rules"
+      },
+      {
+        "href": "#column-formats",
+        "label": "Column Type Formats"
+      },
+      {
+        "href": "#subitem-format",
+        "label": "Subitem CSV Format"
+      },
+      {
+        "href": "#step-by-step",
+        "label": "Step-by-Step Import Guide"
+      },
+      {
+        "href": "#tips",
+        "label": "Best Practices"
+      },
+      {
+        "href": "#faq",
+        "label": "FAQ"
+      }
+    ],
+    "ldjson": [
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"HowTo\",\r\n    \"name\": \"How to Import CSV into Monday.com\",\r\n    \"description\": \"Step-by-step guide to importing CSV and Excel files into monday.com, including advanced options like subitems and bulk column updates using Monday.com Inspector.\",\r\n    \"totalTime\": \"PT8M\",\r\n    \"tool\": { \"@type\": \"HowToTool\", \"name\": \"Monday.com Inspector Chrome Extension\" },\r\n    \"step\": [\r\n      { \"@type\": \"HowToStep\", \"position\": 1, \"name\": \"Prepare your CSV file\", \"text\": \"Format your CSV with a header row. Column names should match monday.com column titles exactly for auto-mapping. Use UTF-8 encoding.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 2, \"name\": \"Choose your import method\", \"text\": \"For top-level items without subitems, use monday.com native import. For subitems, multi-column types, or large files, use Monday.com Inspector.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 3, \"name\": \"Install Monday.com Inspector\", \"text\": \"Install the free Monday.com Inspector Chrome extension from the Chrome Web Store. No account needed.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 4, \"name\": \"Open the Import tab\", \"text\": \"Navigate to your monday.com board, open Inspector, and click the Import tab. Upload your CSV or XLSX file.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 5, \"name\": \"Map columns and import\", \"text\": \"Map your file columns to board columns. Toggle subitems if your file has them. Click Start Import and watch live progress.\" }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"FAQPage\",\r\n    \"mainEntity\": [\r\n      { \"@type\": \"Question\", \"name\": \"What CSV format does monday.com accept?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com accepts CSV files with a header row in the first row. Columns should be separated by commas. The file must use UTF-8 encoding. Column names should match your board's column titles for automatic mapping.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Is there a row limit for monday.com CSV import?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com's native import has an undocumented row limit, and large files may time out or fail. Monday.com Inspector has no row limit — it batches and rate-limits automatically, handling thousands of rows reliably.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I import multiple column types from CSV into monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com's native import supports a limited set of column types. Monday.com Inspector supports all major column types including Status, People, Date, Timeline, Dropdown, Checkbox, Link, Phone, Email, Rating, and Numbers.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I import subitems from a CSV into monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No, monday.com's native CSV import does not support subitems. Use Monday.com Inspector to import subitems from CSV — it creates parent items and their subitems in a single import operation.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I import a monday.com board export back into monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. Monday.com Inspector can re-import a monday.com XLSX board export, preserving groups, parent items, and subitems. This makes it easy to copy or migrate boards between workspaces.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"What is the best way to format dates in a monday.com CSV import?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Use ISO 8601 date format: YYYY-MM-DD (e.g., 2026-04-15). For timeline columns, use two date columns: start date and end date, both in YYYY-MM-DD format.\" } }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"BreadcrumbList\",\r\n    \"itemListElement\": [\r\n      { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://mondayinspector.eu/\" },\r\n      { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Monday.com CSV Import Guide\", \"item\": \"https://mondayinspector.eu/monday-csv-import-guide.html\" }\r\n    ]\r\n  }"
+    ]
+  },
+  "monday-bulk-update": {
+    "title": "Monday.com Bulk Update Items (2026): The Complete Guide",
+    "description": "Learn how to bulk update monday.com items — status, assignee, dates, and more — without clicking one by one. Free Chrome extension, no limits, works on any board.",
+    "h1": "Monday.com Bulk Update Items (2026 Guide)",
+    "lead": "Monday.com's built-in bulk actions let you change one column at a time — and only for items you can manually select. This guide shows you how to bulk update hundreds of items across multiple columns at once, from a CSV file, using the free Monday.com Inspector extension.",
+    "meta": [
+      "📅 Updated April 2026",
+      "✍️ Sam @ Fruition Services",
+      "🕐 6 min read"
+    ],
+    "toc": [
+      {
+        "href": "#the-problem",
+        "label": "Native Bulk Action Limits"
+      },
+      {
+        "href": "#solution",
+        "label": "The Inspector Solution"
+      },
+      {
+        "href": "#use-cases",
+        "label": "Common Use Cases"
+      },
+      {
+        "href": "#prepare-csv",
+        "label": "Prepare Your CSV"
+      },
+      {
+        "href": "#find-item-ids",
+        "label": "Get Item IDs"
+      },
+      {
+        "href": "#csv-structure",
+        "label": "Build the Update CSV"
+      },
+      {
+        "href": "#step-by-step",
+        "label": "Step-by-Step Guide"
+      },
+      {
+        "href": "#supported-columns",
+        "label": "Supported Column Types"
+      },
+      {
+        "href": "#tips",
+        "label": "Best Practices"
+      },
+      {
+        "href": "#faq",
+        "label": "FAQ"
+      }
+    ],
+    "ldjson": [
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"HowTo\",\r\n    \"name\": \"How to Bulk Update Items in Monday.com\",\r\n    \"description\": \"Step-by-step guide to updating hundreds of monday.com items at once using the free Monday.com Inspector Chrome extension.\",\r\n    \"totalTime\": \"PT5M\",\r\n    \"tool\": { \"@type\": \"HowToTool\", \"name\": \"Monday.com Inspector Chrome Extension\" },\r\n    \"step\": [\r\n      { \"@type\": \"HowToStep\", \"position\": 1, \"name\": \"Prepare your update file\", \"text\": \"Create a CSV with an Item ID column (or item name) and the columns you want to update. Only include columns that need changing.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 2, \"name\": \"Install Monday.com Inspector\", \"text\": \"Install the free Monday.com Inspector Chrome extension from the Chrome Web Store. No account needed.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 3, \"name\": \"Open Inspector on your board\", \"text\": \"Navigate to your monday.com board, click the extension icon, and open the Inspector Panel.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 4, \"name\": \"Upload and configure update\", \"text\": \"Go to the Import tab, upload your CSV, and enable Update Mode. Map the ID column and the columns to update.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 5, \"name\": \"Run the bulk update\", \"text\": \"Click Start Update. Watch live per-row progress. Rows that fail show the exact error so you can fix and retry.\" }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"FAQPage\",\r\n    \"mainEntity\": [\r\n      { \"@type\": \"Question\", \"name\": \"Can monday.com bulk update items natively?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com has a limited bulk action feature in the board view that lets you select multiple items and change a single column at a time. It doesn't support updating from a file, updating multiple columns at once, or updating subitems. Monday.com Inspector fills this gap.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"What columns can I bulk update in monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com Inspector supports bulk updating Status, People, Date, Timeline, Dropdown, Checkbox, Text, Numbers, Link, Phone, Email, and Rating columns — for both parent items and subitems.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I bulk update subitems in monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. Monday.com Inspector supports bulk updating subitems. Include the subitem ID column in your CSV update file and enable subitem mode. You can update any subitem column type.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"How do I find item IDs in monday.com for bulk update?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"You can find item IDs by exporting your board (Board menu → Export → Excel). The export includes item IDs in a column. You can also use Monday.com Inspector's Schema tab to query item IDs via the GraphQL engine.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Is there a limit to how many items I can bulk update?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com Inspector has no row limit for bulk updates. It handles batching and monday.com API rate limits automatically, so you can safely update thousands of items.\" } }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"BreadcrumbList\",\r\n    \"itemListElement\": [\r\n      { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://mondayinspector.eu/\" },\r\n      { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Monday.com Bulk Update Guide\", \"item\": \"https://mondayinspector.eu/monday-bulk-update.html\" }\r\n    ]\r\n  }"
+    ]
+  },
+  "monday-graphql-query-guide": {
+    "title": "Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)",
+    "description": "Run real GraphQL queries against monday.com without writing custom code. Covers the GraphQL API basics, the new multi-level boards (API 2026-04), 14 ready-to-use query templates, and how to use them inside the Monday.com Inspector Query Inspector.",
+    "h1": "Monday.com GraphQL API: Tutorial + 14 Query Templates",
+    "lead": "Monday.com's REST-style v1 API is gone — every integration now talks to a single GraphQL endpoint at https://api.monday.com/v2. This guide walks you through the basics, shows the 14 ready-to-run query templates bundled with Monday.com Inspector, and covers the new multi-level board support introduced in API version 2026-04. No coding required.",
+    "meta": [
+      "📅 May 2026",
+      "✍️ Sam @ Fruition Services",
+      "🕐 9 min read",
+      "🛠️ Covers API 2026-04"
+    ],
+    "toc": [
+      {
+        "href": "#why",
+        "label": "Why use the API"
+      },
+      {
+        "href": "#setup",
+        "label": "First-run setup"
+      },
+      {
+        "href": "#basics",
+        "label": "GraphQL basics"
+      },
+      {
+        "href": "#templates",
+        "label": "14 templates"
+      },
+      {
+        "href": "#multi-level",
+        "label": "Multi-level boards"
+      },
+      {
+        "href": "#complexity",
+        "label": "Complexity budget"
+      },
+      {
+        "href": "#saved",
+        "label": "Saved queries"
+      },
+      {
+        "href": "#hand-off",
+        "label": "Inline → full page"
+      },
+      {
+        "href": "#faq",
+        "label": "FAQ"
+      }
+    ],
+    "ldjson": [
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"TechArticle\",\r\n    \"headline\": \"Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)\",\r\n    \"description\": \"Beginner-friendly monday.com GraphQL tutorial. Covers the API basics, the multi-level boards model (2026-04), and 14 ready-to-run query templates including boards, items, subitems, users, workspaces, and audit queries.\",\r\n    \"author\": { \"@type\": \"Organization\", \"name\": \"Fruition Services\", \"url\": \"https://www.fruitionservices.io\" },\r\n    \"image\": \"https://mondayinspector.eu/og-image.png\",\r\n    \"datePublished\": \"2026-05-02\",\r\n    \"dateModified\": \"2026-05-02\",\r\n    \"publisher\": { \"@type\": \"Organization\", \"name\": \"Monday.com Inspector\", \"url\": \"https://mondayinspector.eu\" },\r\n    \"mainEntityOfPage\": \"https://mondayinspector.eu/monday-graphql-query-guide.html\"\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"BreadcrumbList\",\r\n    \"itemListElement\": [\r\n      { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://mondayinspector.eu/\" },\r\n      { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Monday.com GraphQL API Guide\", \"item\": \"https://mondayinspector.eu/monday-graphql-query-guide.html\" }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"FAQPage\",\r\n    \"mainEntity\": [\r\n      { \"@type\": \"Question\", \"name\": \"Do I need to be a developer to use monday.com's GraphQL API?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No. With the Query Inspector you pick a template, plug in your board ID, and run. No code, no setup. The 14 starter templates cover boards, items, subitems, users, workspaces, and audit queries. You can save your own customised queries to a local library.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"How do I get a monday.com API token?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"In monday.com, click your avatar (top right) → Admin → API. Generate a personal API v2 token and copy it. Paste it into Monday.com Inspector's first-run setup card. The token is stored in chrome.storage.local and is only ever sent to https://api.monday.com/v2.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"What's the difference between API version 2024-10 and 2026-04?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"API 2026-04 unlocks multi-level boards — up to 5 nested levels on the same board, with rolled-up parent values. The hierarchy_types argument and the BatteryValue rollup column type are 2026-04+ features. Monday.com Inspector ships with API-Version 2026-04 and falls back gracefully on tenants on older versions.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I run mutations from the Query Inspector?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. The Query Inspector executes any valid monday.com GraphQL operation — queries and mutations both. The complexity meter shows you the cost before each run so you don't blow your account's budget.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"How does the complexity budget work?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com gives every account a complexity budget that resets per minute. Each query consumes points based on the number of fields and items it touches. The Query Inspector shows your remaining budget in a pill next to every run, and templates are tagged 'heavy' when they're known to be expensive.\" } }\r\n    ]\r\n  }"
+    ]
+  },
+  "monday-import-images-from-excel": {
+    "title": "Bulk Import Images from Excel into Monday.com (2026 Guide)",
+    "description": "Monday.com has no native way to bulk-import images from Excel into a File column. This free Chrome extension extracts embedded images from .xlsx, anchors them to rows, and uploads them to monday.com items at scale — no manual drag-and-drop required.",
+    "h1": "Bulk Import Images from Excel into Monday.com",
+    "lead": "Monday.com has no native way to bulk-upload images from Excel into a File column. If you have product photos, screenshots, signatures, or before/after shots sitting in a spreadsheet, the only built-in path is dragging each image into each item by hand. This guide shows you how to do it in one pass — using the free Monday.com Inspector extension's new Image Importer.",
+    "meta": [
+      "📅 Published May 2026",
+      "✍️ Sam @ Fruition Services",
+      "🕐 7 min read"
+    ],
+    "toc": [],
+    "ldjson": [
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"HowTo\",\r\n    \"name\": \"How to Bulk Import Images from Excel into Monday.com\",\r\n    \"description\": \"Step-by-step guide to attaching Excel-embedded images to monday.com items in bulk using the free Monday.com Inspector Chrome extension.\",\r\n    \"totalTime\": \"PT7M\",\r\n    \"tool\": { \"@type\": \"HowToTool\", \"name\": \"Monday.com Inspector Chrome Extension\" },\r\n    \"step\": [\r\n      { \"@type\": \"HowToStep\", \"position\": 1, \"name\": \"Prepare your Excel file\", \"text\": \"Open Excel. Make sure every row has a column with the matching monday.com item name or item ID. Paste or Insert each image into the row using Excel's image-in-cell feature so the image is anchored to that row.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 2, \"name\": \"Install Monday.com Inspector\", \"text\": \"Install the free Monday.com Inspector Chrome extension from the Chrome Web Store. No account needed.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 3, \"name\": \"Open the Image Importer\", \"text\": \"Click the extension icon in Chrome and choose Image Importer. The tool opens as a full-page wizard.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 4, \"name\": \"Connect and pick your board\", \"text\": \"Paste your monday.com API token. Enter the board ID where items live. The wizard shows the file columns it found on that board.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 5, \"name\": \"Upload your .xlsx\", \"text\": \"Drop the Excel file. The tool extracts every embedded image, anchors each to its row, and tells you how many it found.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 6, \"name\": \"Pick the match and target columns\", \"text\": \"Pick the spreadsheet column that holds the item name or ID, and the target file column on monday.com. The preview tells you how many uploads it can run.\" },\r\n      { \"@type\": \"HowToStep\", \"position\": 7, \"name\": \"Run the upload\", \"text\": \"Click Upload images. Watch live per-image status. Rate-limit handling, retries, and per-row error messages are built in.\" }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"FAQPage\",\r\n    \"mainEntity\": [\r\n      { \"@type\": \"Question\", \"name\": \"Can monday.com import images from Excel natively?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No. Monday.com's Excel exports strip embedded images entirely, and the native CSV/Excel importer has no way to populate File columns with images. The only built-in path is dragging each file into each item manually. The Monday.com Inspector Image Importer fills this gap — it extracts images from .xlsx and uploads them to the File column for matching items.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Does it work with images pasted into Excel cells?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. As long as the image is anchored to a row — which happens automatically when you paste, drop, or use Insert → Picture — Monday.com Inspector can read it. The xlsx file format stores anchored images in xl/media inside the package, and the tool reads them directly.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Does it work directly on monday.com's Export to Excel output?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. The Image Importer auto-detects monday.com's classic board export format (board name on row 1, group name on row 2, headers on row 3, items from row 4). It skips the preamble and interleaved subitem rows automatically and only matches images to parent items. Export your board, paste images into the rows, upload back.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Does it work with the new Excel image-in-cell IMAGE() function?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"The current version targets pasted/inserted anchored images (the universal Excel image format). IMAGE() function cells reference external URLs and are out of scope for the first release. If your Excel cells contain plain URLs, the importer can be extended to fetch them — open an issue if this is your case.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"How does it match images to monday.com items?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"You pick a spreadsheet column that identifies each item. You can match by item name (case-sensitive, the most natural choice) or item ID (the most reliable for items with duplicate names). The tool resolves names by paginating through every item on the board, so it scales to thousands of items.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"What file formats are supported for the images themselves?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Any image format Excel supports embedding — PNG, JPG/JPEG, GIF, BMP, and WebP. The original file extension and MIME type are preserved when uploading to monday.com.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Is there a row limit?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No row limit. Image uploads run in small concurrent batches with built-in rate-limit handling and exponential backoff for the monday.com API. Realistic throughput is around 60–120 images per minute, depending on image size and API budget.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Is my API token or my images sent anywhere except monday.com?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No. The tool runs entirely in your browser as a Chrome extension. The API token stays in chrome.storage on your machine. Images are uploaded directly to api.monday.com over HTTPS — never to any third-party server.\" } }\r\n    ]\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"BreadcrumbList\",\r\n    \"itemListElement\": [\r\n      { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://mondayinspector.eu/\" },\r\n      { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Import Images from Excel into Monday.com\", \"item\": \"https://mondayinspector.eu/monday-import-images-from-excel.html\" }\r\n    ]\r\n  }"
+    ]
+  }
+}

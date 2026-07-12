@@ -64,12 +64,15 @@
   .prose-calm ul {
     @apply mb-6 flex list-none flex-col gap-2.5 pl-0;
   }
-  .prose-calm li {
+  .prose-calm ul > li {
     @apply relative pl-6;
   }
-  .prose-calm li::before {
+  .prose-calm ul > li::before {
     content: "";
     @apply absolute left-0 top-[0.68em] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-brand/60;
+  }
+  .prose-calm ol > li {
+    @apply pl-1.5;
   }
   .prose-calm strong {
     @apply font-semibold text-ink;
@@ -79,6 +82,127 @@
   }
   .prose-calm code {
     @apply rounded-md bg-surface px-1.5 py-0.5 font-mono text-[13px] text-brand;
+  }
+  .prose-calm ol {
+    @apply mb-6 ml-5 flex list-decimal flex-col gap-2.5;
+  }
+  .prose-calm pre {
+    @apply my-6 overflow-x-auto rounded-2xl bg-ink p-5 font-mono text-[13px] leading-relaxed text-white/90;
+  }
+  .prose-calm pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+  .prose-calm table {
+    @apply my-6 w-full border-separate border-spacing-0 overflow-hidden rounded-2xl border border-hairline bg-white/70 text-[13.5px];
+  }
+  .prose-calm th {
+    @apply border-b border-hairline bg-mist px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted;
+  }
+  .prose-calm td {
+    @apply border-b border-hairline px-4 py-2.5 align-top;
+  }
+  .prose-calm tr:last-child td {
+    @apply border-b-0;
+  }
+  .prose-calm .check {
+    @apply font-bold text-emerald-600;
+  }
+  .prose-calm .cross {
+    @apply font-bold text-red-400;
+  }
+
+  /* Legacy guide building blocks, restyled to the new calm system */
+  .prose-calm .callout {
+    @apply my-7 rounded-2xl border border-hairline p-5;
+  }
+  .prose-calm .callout p {
+    @apply mb-0 text-[14px];
+  }
+  .prose-calm .callout-title {
+    @apply mb-1.5 text-[14px] font-bold text-ink;
+  }
+  .prose-calm .callout-brand { background: #f3eeff; }
+  .prose-calm .callout-info { background: #eef6ff; }
+  .prose-calm .callout-success { background: #eaf8f2; }
+  .prose-calm .callout-warning { background: #fff2ea; }
+
+  .prose-calm details.faq {
+    @apply mb-3 overflow-hidden rounded-2xl border border-hairline bg-white/70 backdrop-blur-sm;
+  }
+  .prose-calm details.faq summary {
+    @apply flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-[14.5px] font-semibold text-ink;
+  }
+  .prose-calm details.faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .prose-calm .faq-chevron {
+    @apply h-4 w-4 shrink-0 text-muted transition-transform duration-300;
+  }
+  .prose-calm details.faq[open] .faq-chevron {
+    transform: rotate(180deg);
+    @apply text-brand;
+  }
+  .prose-calm .faq-body {
+    @apply px-5 pb-4 text-[14px] leading-relaxed;
+  }
+
+  .prose-calm .step-row {
+    @apply mb-3 flex items-start gap-4 rounded-2xl border border-hairline bg-white/70 p-5 backdrop-blur-sm;
+  }
+  .prose-calm .step-row p {
+    @apply mb-0 text-[13.5px];
+  }
+  .prose-calm .step-row h3 {
+    @apply mt-0 mb-1;
+  }
+  .prose-calm .step-num {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[15px] font-bold text-white;
+    background: linear-gradient(135deg, #3e7bfa, #6161ff);
+  }
+
+  .prose-calm .card {
+    @apply rounded-2xl border border-hairline bg-white/70 p-5 backdrop-blur-sm;
+  }
+  .prose-calm .template-grid {
+    @apply my-6 grid gap-3 sm:grid-cols-2;
+  }
+  .prose-calm .template-card {
+    @apply m-0 rounded-2xl border border-hairline bg-white/70 p-4 backdrop-blur-sm;
+  }
+  .prose-calm .template-card-cat {
+    @apply mb-1 block text-[10.5px] font-bold uppercase tracking-wider text-brand;
+  }
+  .prose-calm .template-card-title {
+    @apply mb-1 block text-[14px] font-bold text-ink;
+  }
+  .prose-calm .template-card p {
+    @apply mb-0 text-[12.5px];
+  }
+
+  .prose-calm .related-card {
+    @apply mb-3 block rounded-2xl border border-hairline bg-white/70 p-5 !no-underline backdrop-blur-sm transition-shadow hover:shadow-soft;
+  }
+  .prose-calm .related-card h3 {
+    @apply mt-0 mb-1 text-[15px];
+  }
+  .prose-calm .related-card p {
+    @apply mb-0 text-[13px];
+  }
+
+  .prose-calm .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold;
+  }
+  .prose-calm .badge-brand {
+    @apply bg-softlavender text-brand-indigo;
+  }
+
+  .prose-calm a.btn {
+    @apply inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold !no-underline;
+  }
+  .prose-calm a.btn-primary {
+    @apply text-white;
+    background: linear-gradient(120deg, #3e7bfa, #6161ff);
+    box-shadow: 0 10px 30px rgba(62, 123, 250, 0.3);
   }
 }
 
