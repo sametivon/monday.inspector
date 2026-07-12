@@ -47,6 +47,39 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+
+  /* Calm long-form article typography (guides, changelog, privacy) */
+  .prose-calm {
+    @apply text-[15.5px] leading-[1.8] text-muted;
+  }
+  .prose-calm h2 {
+    @apply mt-14 mb-4 font-display text-[1.6rem] font-extrabold tracking-tight text-ink;
+  }
+  .prose-calm h3 {
+    @apply mt-9 mb-3 font-display text-[1.15rem] font-bold text-ink;
+  }
+  .prose-calm p {
+    @apply mb-5;
+  }
+  .prose-calm ul {
+    @apply mb-6 flex list-none flex-col gap-2.5 pl-0;
+  }
+  .prose-calm li {
+    @apply relative pl-6;
+  }
+  .prose-calm li::before {
+    content: "";
+    @apply absolute left-0 top-[0.68em] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-brand/60;
+  }
+  .prose-calm strong {
+    @apply font-semibold text-ink;
+  }
+  .prose-calm a {
+    @apply font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:decoration-brand;
+  }
+  .prose-calm code {
+    @apply rounded-md bg-surface px-1.5 py-0.5 font-mono text-[13px] text-brand;
+  }
 }
 
 /* Lenis smooth-scroll baseline */
