@@ -28,6 +28,10 @@
       alpha: true,
       antialias: true,
       powerPreference: "high-performance",
+      // Keep the last frame in the buffer so tab-capture / screenshots can
+      // read it (WebGL is otherwise invisible to DOM capture). Negligible
+      // cost for a single full-screen quad.
+      preserveDrawingBuffer: true,
     });
   } catch (err) {
     // WebGL unavailable — leave the CSS gradient fallback in place.
@@ -92,35 +96,39 @@
     "  vec2 uv=gl_FragCoord.xy/u_res.xy;",
     "  vec2 asp=vec2(u_res.x/u_res.y,1.0);",
     "  vec2 p=uv*asp;",
-    "  float t=u_time*0.05;",
+    "  float t=u_time*0.04;",
 
-    // domain warp → flowing, liquid motion
-    "  vec2 q=vec2(fbm(p*1.3+vec2(0.0,t)), fbm(p*1.3+vec2(5.2,t*0.8)));",
-    "  vec2 r=vec2(fbm(p*1.3+2.0*q+vec2(1.7,9.2)+t*0.4), fbm(p*1.3+2.0*q+vec2(8.3,2.8)+t*0.3));",
-    "  float n=fbm(p*1.3+2.4*r);",
+    // domain warp → flowing, liquid motion (low frequency = broad, soft blobs)
+    "  vec2 q=vec2(fbm(p*0.8+vec2(0.0,t)), fbm(p*0.8+vec2(5.2,t*0.8)));",
+    "  vec2 r=vec2(fbm(p*0.8+2.0*q+vec2(1.7,9.2)+t*0.4), fbm(p*0.8+2.0*q+vec2(8.3,2.8)+t*0.3));",
+    "  float n=fbm(p*0.8+2.2*r);",
     "  n=n*0.5+0.5;",
 
     // brand palette (near-white base keeps hero text readable)
-    "  vec3 base=vec3(0.980,0.976,1.000);",     // #fafaff
+    "  vec3 base=vec3(0.985,0.982,1.000);",     // near-white paper
     "  vec3 col1=vec3(0.486,0.361,0.988);",     // #7c5cfc
-    "  vec3 col2=vec3(0.655,0.545,0.980);",     // #a78bfa
-    "  vec3 col3=vec3(0.451,0.541,0.980);",     // periwinkle-blue
-    "  vec3 col4=vec3(0.847,0.882,1.000);",     // light blue
+    "  vec3 col2=vec3(0.667,0.573,0.984);",     // soft violet
+    "  vec3 col3=vec3(0.514,0.596,0.988);",     // periwinkle-blue
+    "  vec3 col4=vec3(0.870,0.902,1.000);",     // light blue
 
-    "  vec3 col=mix(col4,col2,smoothstep(0.20,0.55,n));",
-    "  col=mix(col,col1,smoothstep(0.50,0.82,n)*(0.55+0.45*length(q)));",
-    "  col=mix(col,col3,smoothstep(0.62,0.96,n)*0.5);",
+    "  vec3 col=mix(col4,col2,smoothstep(0.25,0.62,n));",
+    "  col=mix(col,col1,smoothstep(0.60,0.92,n)*0.55);",
+    "  col=mix(col,col3,smoothstep(0.55,0.95,n)*0.35);",
 
-    // lift toward base so it stays a soft pastel wash
-    "  col=mix(base,col,(0.50+0.30*n)*u_strength);",
+    // keep it a pale pastel so dark hero text stays crisp
+    "  col=mix(base,col,0.9);",
 
-    // cursor-follow glow
+    // gentle cursor glow
     "  float md=distance(uv,u_mouse);",
-    "  col+=(col1-base)*0.10*smoothstep(0.45,0.0,md)*u_strength;",
+    "  col=mix(col,col1,0.06*smoothstep(0.5,0.0,md)*u_strength);",
 
-    // radial edge fade → alpha, blends the canvas into the page
-    "  float d=distance(uv,vec2(0.5));",
-    "  float alpha=smoothstep(0.98,0.30,d)*0.92;",
+    // Wispy clouds, not a solid fill: only brighter noise regions get
+    // opacity, colour pools toward the left/right edges, and the centre
+    // (where the headline sits) fades to clean paper.
+    "  float clouds=smoothstep(0.30,0.80,n);",
+    "  float sides=smoothstep(0.10,0.42,abs(uv.x-0.5));",
+    "  float edge=smoothstep(1.05,0.25,distance(uv,vec2(0.5)));",
+    "  float alpha=clouds*edge*(0.28+0.55*sides)*0.85*u_strength;",
 
     "  gl_FragColor=vec4(col,alpha);",
     "}",
