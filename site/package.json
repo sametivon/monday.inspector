@@ -1,0 +1,35 @@
+{
+  "name": "monday-inspector-site",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Premium marketing site for Monday.com Inspector — React + R3F + Framer Motion + Lenis, statically prerendered.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite-react-ssg build",
+    "preview": "vite preview --port 4176"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.114.0",
+    "@react-three/fiber": "^8.17.10",
+    "framer-motion": "^11.11.0",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.14",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "three": "^0.169.0",
+    "vite-react-ssg": "^0.8.9"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@types/three": "^0.169.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.9"
+  }
+}
