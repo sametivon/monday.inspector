@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { revealUp, scaleIn, stagger, inView, useEntrance } from "@/lib/motion";
 
 const guides = [
-  { icon: "📥", t: "Import Subitems in monday.com", d: "The complete guide — CSV format, mapping, multi-level boards, live progress.", href: "/import-subitems-monday" },
-  { icon: "📄", t: "monday.com CSV Import Guide", d: "How to format your CSV and the 18 supported column types.", href: "/monday-csv-import-guide" },
-  { icon: "⚡", t: "Bulk Update Items", d: "Update hundreds of items at once — statuses, assignees, dates.", href: "/monday-bulk-update" },
-  { icon: "🔍", t: "GraphQL API + 14 Templates", d: "Run real queries without code — multi-level boards, complexity budget.", href: "/monday-graphql-query-guide" },
-  { icon: "🖼️", t: "Import Images from Excel", d: "Drop an .xlsx, get every embedded image into a File column.", href: "/monday-import-images-from-excel" },
-  { icon: "🗒️", t: "Changelog & release notes", d: "Everything new — newest releases first.", href: "/changelog" },
+  { icon: "📥", t: "Import Subitems in monday.com", d: "The complete guide — CSV format, mapping, multi-level boards, live progress.", href: "/import-subitems-monday.html" },
+  { icon: "📄", t: "monday.com CSV Import Guide", d: "How to format your CSV and the 18 supported column types.", href: "/monday-csv-import-guide.html" },
+  { icon: "⚡", t: "Bulk Update Items", d: "Update hundreds of items at once — statuses, assignees, dates.", href: "/monday-bulk-update.html" },
+  { icon: "🔍", t: "GraphQL API + 14 Templates", d: "Run real queries without code — multi-level boards, complexity budget.", href: "/monday-graphql-query-guide.html" },
+  { icon: "🖼️", t: "Import Images from Excel", d: "Drop an .xlsx, get every embedded image into a File column.", href: "/monday-import-images-from-excel.html" },
+  { icon: "🗒️", t: "Changelog & release notes", d: "Everything new — newest releases first.", href: "/changelog.html" },
 ];
 
 export default function Guides() {
