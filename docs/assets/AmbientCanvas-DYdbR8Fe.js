@@ -1,4 +1,4 @@
-import{a as je,g as sx,j as wn}from"./app-DFQwwNMX.js";/**
+import{a as je,g as sx,j as wn}from"./app-BMu9KKV3.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
