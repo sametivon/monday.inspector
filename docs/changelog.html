@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Changelog &amp; Release Notes — Monday.com Inspector</title>
-  <meta name="description" content="What's new in Monday.com Inspector. v1.6.3 makes imports more reliable by focusing on native column data — learn why Connect Boards and mirror columns are excluded from import, plus the full version history." />
+  <meta name="description" content="What's new in Monday.com Inspector. v1.6.4 fixes import date handling (UK day/month) and keeps the import error list always visible — plus the full version history." />
   <meta name="keywords" content="monday.com inspector changelog, monday.com inspector release notes, monday.com importer update, monday.com import connect boards, monday.com import mirror column, monday.com importer v1.6.3, monday.com extension version history" />
   <link rel="canonical" href="https://mondayinspector.eu/changelog.html" />
   <meta property="og:title" content="Changelog &amp; Release Notes — Monday.com Inspector" />
-  <meta property="og:description" content="What's new in Monday.com Inspector — v1.6.3 makes imports more reliable. See why connection (Connect Boards) and mirror columns are excluded, plus the full version history." />
+  <meta property="og:description" content="What's new in Monday.com Inspector — v1.6.4 fixes import date handling and keeps import errors always visible, plus the full version history." />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://mondayinspector.eu/changelog.html" />
   <meta property="og:image" content="https://mondayinspector.eu/og-image.png" />
@@ -18,7 +18,7 @@
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Changelog &amp; Release Notes — Monday.com Inspector" />
-  <meta name="twitter:description" content="What's new in Monday.com Inspector. v1.6.3 makes imports more reliable by focusing on native column data." />
+  <meta name="twitter:description" content="What's new in Monday.com Inspector. v1.6.4 fixes import date handling and keeps import errors always visible." />
   <meta name="twitter:image" content="https://mondayinspector.eu/og-image.png" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Sam @ Fruition Services" />
@@ -97,14 +97,14 @@
     </nav>
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <span class="badge badge-brand">Release notes</span>
-      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Latest · v1.6.3</span>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Latest · v1.6.4</span>
     </div>
     <h1>Changelog &amp; Release Notes</h1>
     <p class="lead">Every notable change to Monday.com Inspector — the free Chrome &amp; Firefox extension for importing, bulk-updating, and querying monday.com boards. Newest releases first.</p>
     <div class="article-meta">
-      <span>📅 Updated June 2026</span>
+      <span>📅 Updated July 2026</span>
       <span>✍️ Sam @ Fruition Services</span>
-      <span>🛠️ Current version: v1.6.3</span>
+      <span>🛠️ Current version: v1.6.4</span>
     </div>
   </div>
 </div>
@@ -112,11 +112,36 @@
 <!-- Releases -->
 <div class="container-sm" style="padding:48px 0 24px">
 
-  <!-- v1.6.3 (featured, detailed) -->
-  <section class="release featured" id="v1-6-3">
+  <!-- v1.6.4 (featured, detailed) -->
+  <section class="release featured" id="v1-6-4">
+    <div class="release-head">
+      <h2>v1.6.4</h2>
+      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Latest</span>
+      <span class="release-date">July 2026</span>
+    </div>
+    <p class="release-tagline">Correct import dates — and import errors you can actually see.</p>
+
+    <p style="color:#52525b;line-height:1.75;margin-bottom:14px">This release fixes two things that quietly bit real imports: dates landing on the wrong day, and error messages hiding when you needed them most.</p>
+
+    <h3 style="font-size:1.05rem;font-weight:700;margin:18px 0 8px">Dates now import on the right day</h3>
+    <ul>
+      <li><strong>UK day/month is now the default for ambiguous dates.</strong> monday.com's "Export to Excel" writes dates as <code>D/M/YYYY</code>. When both parts are 12 or lower (e.g. <code>03/04/2025</code>) the format is ambiguous — the importer used to guess US <code>M/D</code>, silently flipping roughly half of all dates on UK-locale boards. It now defaults to UK <code>D/M</code>, so <code>03/04</code> imports as <strong>3 April</strong>, not 4 March.</li>
+      <li><strong>Excel date serials import unambiguously.</strong> Raw Excel date numbers are now converted straight to ISO <code>YYYY-MM-DD</code>, so a date like 3 November no longer flips to 11 March on its way in.</li>
+    </ul>
+
+    <h3 style="font-size:1.05rem;font-weight:700;margin:18px 0 8px">Import errors stay visible</h3>
+    <ul>
+      <li><strong>The failure list is always on screen.</strong> It used to be tucked inside a collapsed panel that only appeared after the run finished. Now failing rows show live <em>as they happen</em> and stay visible afterwards, in a scrollable list with the "Copy all errors" button.</li>
+      <li><strong>No more blank errors.</strong> When monday.com returns a failure with no message, the row now says so explicitly instead of showing an empty cell.</li>
+    </ul>
+
+    <p style="color:#71717a;font-size:13px;margin-top:14px">Builds on v1.6.3 (native-column-only imports) and v1.6.2 (smart import error recovery).</p>
+  </section>
+
+  <!-- v1.6.3 (detailed) -->
+  <section class="release" id="v1-6-3">
     <div class="release-head">
       <h2>v1.6.3</h2>
-      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">Latest</span>
       <span class="release-date">June 2026</span>
     </div>
     <p class="release-tagline">More reliable imports — the Importer now focuses on native, column-level data.</p>
