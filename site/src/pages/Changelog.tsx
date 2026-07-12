@@ -34,6 +34,17 @@ const releases: Release[] = [
           <li>The failure list is always on screen — live during the run and after — with a copy-all button.</li>
           <li>Rows with no message from monday now say so, instead of showing an empty cell.</li>
         </ul>
+        <h3>Smarter export re-imports</h3>
+        <ul>
+          <li>
+            <strong>Missing groups are auto-created</strong> on the target board (in source
+            order), so items land in the right group instead of the default one.
+          </li>
+          <li>
+            <strong>monday's 2026 export format is handled</strong> — the marketing cells monday
+            now embeds in board/group rows no longer confuse the parser or collapse groups.
+          </li>
+        </ul>
       </>
     ),
   },
