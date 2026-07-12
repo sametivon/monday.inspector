@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import MagneticButton from "./MagneticButton";
-import FloatingPanels from "./FloatingPanels";
+import DevHeroPanels from "./DevHeroPanels";
 import { maskLine, revealUp, stagger, spring, useEntrance } from "@/lib/motion";
 
-const headline = ["Supercharge monday.com", "with the tools it's missing"];
+const headline = ["The DevTools", "for monday.com"];
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null);
@@ -41,7 +41,7 @@ export default function Hero() {
               <motion.span variants={maskLine} className="block">
                 {i === 1 ? (
                   <>
-                    with the tools <span className="text-gradient">it&apos;s missing</span>
+                    for <span className="text-gradient">monday.com</span>
                   </>
                 ) : (
                   line
@@ -58,8 +58,9 @@ export default function Hero() {
           transition={{ delay: 0.9 }}
           className="mx-auto mt-6 max-w-xl text-[1.05rem] leading-relaxed text-muted"
         >
-          Import subitems from CSV, bulk-update hundreds of items, run GraphQL queries and
-          inspect board schemas — all in a calm inline panel inside monday.com.
+          Inspect board schemas, run GraphQL queries, import subitems from CSV, bulk-update
+          hundreds of items and export anything — a precise, local-first toolkit that lives
+          right inside your boards.
         </motion.p>
 
         <motion.div
@@ -94,7 +95,7 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      <FloatingPanels />
+      <DevHeroPanels />
     </section>
   );
 }

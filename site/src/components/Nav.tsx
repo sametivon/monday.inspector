@@ -3,10 +3,11 @@ import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer
 import { spring } from "@/lib/motion";
 
 const links = [
+  { label: "Demo", href: "#demo" },
   { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how" },
+  { label: "Workflows", href: "#workflows" },
   { label: "Compare", href: "#compare" },
-  { label: "Guides", href: "#guides" },
+  { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
 ];
 
