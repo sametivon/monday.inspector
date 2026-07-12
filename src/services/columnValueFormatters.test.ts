@@ -59,9 +59,10 @@ describe("parseToYYYYMMDD", () => {
     expect(parseToYYYYMMDD("12/31/2024")).toBe("2024-12-31");
   });
 
-  it("defaults ambiguous dates to US format (MM/DD/YYYY)", () => {
-    // When both components <= 12 we can't tell, so we pick US.
-    expect(parseToYYYYMMDD("03/04/2024")).toBe("2024-03-04");
+  it("defaults ambiguous dates to UK format (DD/MM/YYYY)", () => {
+    // When both components <= 12 we can't tell. monday's classic XLSX
+    // export writes dates as D/M/YYYY, so we default to UK: 03/04 = 3 April.
+    expect(parseToYYYYMMDD("03/04/2024")).toBe("2024-04-03");
   });
 
   it("accepts dots and hyphens as separators", () => {
@@ -70,7 +71,8 @@ describe("parseToYYYYMMDD", () => {
   });
 
   it("pads single-digit month and day", () => {
-    expect(parseToYYYYMMDD("5/3/2024")).toBe("2024-05-03");
+    // Ambiguous → UK default (D/M): 5/3 = 5 March.
+    expect(parseToYYYYMMDD("5/3/2024")).toBe("2024-03-05");
   });
 
   it("handles verbose date strings via Date fallback", () => {

@@ -160,19 +160,23 @@ export function ProgressView({
         </div>
       )}
 
-      {failed.length > 0 && !running && (
-        <details style={{ marginTop: 12 }} open>
-          <summary
+      {/* Failure list — always visible (not collapsed inside a <details>)
+          so the user sees errors immediately as they accrue, live during
+          the run AND after. Earlier collapsed/!running variants hid errors
+          when the user needed them most. */}
+      {failed.length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <div
             style={{
-              cursor: "pointer",
               padding: "8px 10px",
               background: "hsl(0 84% 97%)",
               border: "1px solid hsl(0 84% 88%)",
-              borderRadius: "var(--qi-radius-sm)",
+              borderTopLeftRadius: "var(--qi-radius-sm)",
+              borderTopRightRadius: "var(--qi-radius-sm)",
+              borderBottom: "none",
               color: "hsl(0 70% 35%)",
               fontSize: 12.5,
               fontWeight: 600,
-              userSelect: "none",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -180,24 +184,29 @@ export function ProgressView({
             }}
           >
             <span>
-              {failed.length} row{failed.length !== 1 ? "s" : ""} failed — click to expand
+              {failed.length} row{failed.length !== 1 ? "s" : ""} failed
+              {running ? " so far" : ""}
             </span>
             <button
               type="button"
               className="qi-btn qi-btn-sm"
-              onClick={(e) => {
-                // Don't toggle the <details> when clicking copy.
-                e.preventDefault();
-                e.stopPropagation();
-                copyFailuresToClipboard(failed);
-              }}
+              onClick={() => copyFailuresToClipboard(failed)}
               title="Copy a summary of every failure (row, item, error) to the clipboard"
-              style={{ marginLeft: "auto" }}
             >
               📋 Copy all errors
             </button>
-          </summary>
-          <div className="imp-preview-wrap" style={{ marginTop: 6 }}>
+          </div>
+          <div
+            className="imp-preview-wrap"
+            style={{
+              maxHeight: 480,
+              overflow: "auto",
+              border: "1px solid hsl(0 84% 88%)",
+              borderTop: "none",
+              borderBottomLeftRadius: "var(--qi-radius-sm)",
+              borderBottomRightRadius: "var(--qi-radius-sm)",
+            }}
+          >
             <table className="imp-preview-table">
               <thead>
                 <tr>
@@ -222,7 +231,7 @@ export function ProgressView({
                           color: "hsl(0 70% 35%)",
                         }}
                       >
-                        {r.error}
+                        {r.error || "(no error message returned)"}
                       </code>
                     </td>
                   </tr>
@@ -241,7 +250,7 @@ export function ProgressView({
               Showing first 200 of {failed.length} errors.
             </div>
           )}
-        </details>
+        </div>
       )}
     </div>
   );

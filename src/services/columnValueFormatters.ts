@@ -74,8 +74,12 @@ export function parseToYYYYMMDD(val: string): string | null {
     if (bNum > 12 && aNum <= 12) {
       return `${yr}-${String(aNum).padStart(2, "0")}-${String(bNum).padStart(2, "0")}`;
     }
-    // Ambiguous (both <= 12): default to MM/DD/YYYY (US format)
-    return `${yr}-${String(aNum).padStart(2, "0")}-${String(bNum).padStart(2, "0")}`;
+    // Ambiguous (both <= 12): default to DD/MM/YYYY (UK / monday's
+    // export format). monday's classic XLSX export writes dates as
+    // D/M/YYYY, so "03/11/2025" is 3 November, not 11 March. Defaulting
+    // to US M/D would silently flip ~half of all imported dates on
+    // UK-locale boards.
+    return `${yr}-${String(bNum).padStart(2, "0")}-${String(aNum).padStart(2, "0")}`;
   }
 
   // Fallback: use Date constructor with UTC methods to avoid timezone off-by-one
