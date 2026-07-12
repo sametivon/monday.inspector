@@ -1,7 +1,7 @@
 # Chrome Web Store listing — Monday.com Inspector
 
 Ready-to-paste content for the Chrome Web Store Developer Dashboard.
-Keep this in sync with each release. Current version: **v1.6.3**.
+Keep this in sync with each release. Current version: **v1.6.4**.
 
 Dashboard: https://chrome.google.com/webstore/devconsole
 Listing: https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg
@@ -77,12 +77,14 @@ Website: https://mondayinspector.eu
 
 ---
 
-## What's new (version notes for v1.6.3)
+## What's new (version notes for v1.6.4)
 ```
-v1.6.3 — More reliable imports
-• The Importer now focuses on native, column-level data. Connection columns (Connect Boards / Dependency) and computed columns (mirror, formula, lookup, …) are excluded from import: their values point at items on other boards or are computed by monday, so they can't be reliably re-created on a fresh or different board. Recreate those links in monday after the import.
-• Result: cleaner mapping, no more "every row fails on the Connect Boards column" errors.
-• Builds on v1.6.2 (smart import error recovery), v1.6.0 (bulk Excel image upload to File columns).
+v1.6.4 — Correct import dates + errors you can actually see
+• Dates now import on the right day: ambiguous dates like 03/04 default to UK day/month (3 April) — matching monday's D/M/YYYY export format — and Excel date serials convert directly to ISO, so 3 Nov no longer flips to 11 Mar.
+• Import failures are always visible: failing rows show live during the run and stay on screen after, in a scrollable list with a copy-all button. Rows where monday returns no message now say so.
+• The Importer auto-creates missing groups on the target board (in source order), so items land in the right group instead of the default one.
+• Handles monday's 2026 export format: the marketing cells monday now embeds in board/group rows no longer confuse the parser.
+• Builds on v1.6.3 (native-column-only imports) and v1.6.2 (smart import error recovery).
 ```
 
 ---
@@ -146,7 +148,7 @@ https://mondayinspector.eu/privacy.html
 ---
 
 ## Pre-submit checklist
-- [ ] Upload `monday-inspector-v1.6.3.zip` (manifest at root, description ≤132 chars)
+- [ ] Upload `monday-inspector-v1.6.4.zip` (manifest at root, description ≤132 chars)
 - [ ] Paste Summary + Detailed description
 - [ ] Set category = Workflow & Planning
 - [ ] Add 1–5 screenshots (1280×800)
