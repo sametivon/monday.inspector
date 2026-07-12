@@ -315,3 +315,97 @@ pre .kw { color: #818cf8; } pre .str { color: #4ade80; } pre .cm { color: #6b728
   .sec-head { margin-bottom: 40px; }
   .btn-xl { padding: 13px 24px; font-size: 15px; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   v1.7 Site polish — three.js gradient hero + richer accents
+   Appended (not woven in) so existing rules stay untouched.
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── three.js gradient mesh canvas ──────────────────────
+   Sits behind hero content. The host section must be
+   position:relative and its content wrapper z-index >= 1. */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+  /* CSS fallback if WebGL/JS never paints the canvas */
+  background:
+    radial-gradient(60% 55% at 72% 8%, #efe9ff 0%, transparent 60%),
+    radial-gradient(50% 50% at 20% 90%, #dfe9ff 0%, transparent 62%);
+}
+/* Once three.js owns the canvas we don't need the CSS stand-in */
+.hero-canvas.webgl-live { background: none; }
+.hero > .container,
+.article-hero > .container,
+.article-hero > .container-sm { position: relative; z-index: 1; }
+
+/* A hairline of brand color under the hero grid for depth */
+.hero, .article-hero { position: relative; }
+
+/* ─── Aurora orbs (decorative, cheap, GPU-friendly) ─────── */
+.aurora { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; z-index: 0; animation: aurora-float 18s ease-in-out infinite; }
+.aurora-1 { width: 460px; height: 460px; background: radial-gradient(circle, #c9b8ff, transparent 68%); top: -160px; right: -60px; }
+.aurora-2 { width: 380px; height: 380px; background: radial-gradient(circle, #bcd4ff, transparent 68%); bottom: -140px; left: -70px; animation-delay: -7s; }
+.aurora-3 { width: 300px; height: 300px; background: radial-gradient(circle, #ffd0f0, transparent 70%); top: 30%; left: 42%; opacity: .35; animation-delay: -12s; }
+@keyframes aurora-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(26px, -22px) scale(1.06); }
+  66%      { transform: translate(-20px, 18px) scale(0.96); }
+}
+
+/* ─── Gradient text: allow a static (non-shimmer) variant ── */
+.text-gradient-blue {
+  background: linear-gradient(120deg, #6366f1 0%, #7c5cfc 45%, #38bdf8 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Glass panel (for floating product mockups) ────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 20px 60px rgba(76, 29, 149, 0.12);
+}
+
+/* ─── Card: animated gradient top-accent on hover ───────── */
+.card { position: relative; overflow: hidden; }
+.card::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: linear-gradient(90deg, #7c5cfc, #a78bfa, #38bdf8);
+  transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
+}
+.card:hover::after { transform: scaleX(1); }
+
+/* ─── Colorful section eyebrow chips ────────────────────── */
+.badge-gradient {
+  background: linear-gradient(120deg, #7c5cfc, #6366f1);
+  color: #fff !important; border: none;
+  box-shadow: 0 3px 10px rgba(124, 92, 252, 0.28);
+}
+
+/* ─── Gradient divider (richer than the plain .hr) ──────── */
+.hr-glow { height: 2px; max-width: 460px; margin: 0 auto; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #c4b5fd, #7c5cfc, #c4b5fd, transparent); opacity: .55; }
+
+/* ─── Logo / trust marquee ──────────────────────────────── */
+.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.marquee-track { display: flex; gap: 56px; width: max-content; animation: marquee 32s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-item { font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: #9a93b3; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ─── Nav CTA gets a subtle glow to pull the eye ────────── */
+.site-nav .btn-primary { box-shadow: 0 4px 14px rgba(124, 92, 252, 0.28); }
+
+/* ─── Reduced-motion: stop all decorative animation ─────── */
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient, .aurora, .marquee-track { animation: none !important; }
+  .reveal { transition: none !important; opacity: 1 !important; transform: none !important; }
+  html { scroll-behavior: auto; }
+}
