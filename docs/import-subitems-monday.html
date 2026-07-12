@@ -115,6 +115,7 @@
 
 <!-- Article Hero -->
 <div class="article-hero">
+  <canvas class="hero-canvas" data-strength="0.7" aria-hidden="true"></canvas>
   <div class="container-sm">
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="/">Home</a><span class="breadcrumb-sep">›</span>
@@ -458,5 +459,7 @@
   const nav=document.getElementById('site-nav');
   window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
 </script>
+<script src="vendor/three.min.js" defer></script>
+<script src="js/hero-gradient.js" defer></script>
 </body>
 </html>
