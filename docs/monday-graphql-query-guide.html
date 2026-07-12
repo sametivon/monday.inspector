@@ -1,33 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)</title>
-  <meta name="description" content="Run real GraphQL queries against monday.com without writing custom code. Covers the GraphQL API basics, the new multi-level boards (API 2026-04), 14 ready-to-use query templates, and how to use them inside the Monday.com Inspector Query Inspector." />
-  <meta name="keywords" content="monday.com graphql, monday.com api, monday.com graphql tutorial, monday.com query examples, monday.com api playground, monday.com developer tools, monday.com inspector, multi-level boards api, monday.com 2026-04 api" />
-  <link rel="canonical" href="https://mondayinspector.eu/monday-graphql-query-guide.html" />
-  <meta property="og:title" content="Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)" />
-  <meta property="og:description" content="Run real GraphQL queries against monday.com — beginner-friendly tutorial, 14 ready-made templates, multi-level boards coverage." />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://mondayinspector.eu/monday-graphql-query-guide.html" />
-  <meta property="og:image" content="https://mondayinspector.eu/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content="Monday.com Inspector" />
-  <meta property="og:locale" content="en_US" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Monday.com GraphQL API — Tutorial + 14 Query Templates" />
-  <meta name="twitter:description" content="Beginner-friendly monday.com GraphQL guide with ready-made query templates." />
-  <meta name="twitter:image" content="https://mondayinspector.eu/og-image.png" />
-  <meta name="robots" content="index, follow" />
-  <meta name="author" content="Sam @ Fruition Services" />
-  <meta name="theme-color" content="#7c5cfc" />
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon.png" />
-
-  <script type="application/ld+json">
-  {
+<!DOCTYPE html><html lang="en"><head><title data-rh="true">Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)</title><meta data-rh="true" name="description" content="Run real GraphQL queries against monday.com without writing custom code. Covers the GraphQL API basics, the new multi-level boards (API 2026-04), 14 ready-to-use query templates, and how to use them inside the Monday.com Inspector Query Inspector."><meta data-rh="true" property="og:title" content="Monday.com GraphQL API: Tutorial + 14 Query Templates"><meta data-rh="true" property="og:description" content="Run real GraphQL queries against monday.com without writing custom code. Covers the GraphQL API basics, the new multi-level boards (API 2026-04), 14 ready-to-use query templates, and how to use them inside the Monday.com Inspector Query Inspector."><meta data-rh="true" property="og:type" content="article"><meta data-rh="true" property="og:url" content="https://mondayinspector.eu/monday-graphql-query-guide.html"><meta data-rh="true" property="og:image" content="https://mondayinspector.eu/og-image.png"><meta data-rh="true" name="twitter:card" content="summary_large_image"><link data-rh="true" rel="canonical" href="https://mondayinspector.eu/monday-graphql-query-guide.html"><script data-rh="true" type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)",
@@ -38,22 +9,14 @@
     "dateModified": "2026-05-02",
     "publisher": { "@type": "Organization", "name": "Monday.com Inspector", "url": "https://mondayinspector.eu" },
     "mainEntityOfPage": "https://mondayinspector.eu/monday-graphql-query-guide.html"
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
+  }</script><script data-rh="true" type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mondayinspector.eu/" },
       { "@type": "ListItem", "position": 2, "name": "Monday.com GraphQL API Guide", "item": "https://mondayinspector.eu/monday-graphql-query-guide.html" }
     ]
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
+  }</script><script data-rh="true" type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
@@ -63,84 +26,20 @@
       { "@type": "Question", "name": "Can I run mutations from the Query Inspector?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Query Inspector executes any valid monday.com GraphQL operation — queries and mutations both. The complexity meter shows you the cost before each run so you don't blow your account's budget." } },
       { "@type": "Question", "name": "How does the complexity budget work?", "acceptedAnswer": { "@type": "Answer", "text": "Monday.com gives every account a complexity budget that resets per minute. Each query consumes points based on the number of fields and items it touches. The Query Inspector shows your remaining budget in a pill next to every run, and templates are tagged 'heavy' when they're known to be expensive." } }
     ]
-  }
-  </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260712a" />
-  <style>
-    .article-hero { background: #fff; padding: 64px 0 48px; border-bottom: 1px solid #e4e4e7; }
-    .article-hero h1 { font-size: clamp(1.875rem, 3.5vw, 2.75rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin: 16px 0 18px; }
-    .article-hero .lead { font-size: 1.0625rem; color: #52525b; line-height: 1.75; max-width: 720px; }
-    .article-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #71717a; flex-wrap: wrap; margin-top: 20px; }
-    .article-meta span { display: flex; align-items: center; gap: 5px; }
-    .article-layout { display: grid; grid-template-columns: 1fr 280px; gap: 56px; align-items: flex-start; padding: 56px 0 96px; }
-    .article-toc { position: sticky; top: 88px; background: #fff; border: 1px solid #e4e4e7; border-radius: 14px; padding: 24px; }
-    .article-toc h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #52525b; margin-bottom: 16px; }
-    .article-toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 10px; }
-    .article-toc ol li { counter-increment: toc; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
-    .article-toc ol li::before { content: counter(toc); width: 20px; height: 20px; border-radius: 50%; background: #ede9fe; color: #7c5cfc; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .article-toc ol li a { color: #52525b; text-decoration: none; line-height: 1.5; }
-    .article-toc ol li a:hover { color: #7c5cfc; }
-    .related-card { display: block; background: #f5f3ff; border: 1px solid #c4b5fd40; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.2s; margin-top: 12px; }
-    .related-card:hover { background: #ede9fe; border-color: #c4b5fd; }
-    .related-card h4 { font-size: 13px; font-weight: 600; color: #09090b; margin-bottom: 3px; }
-    .related-card p { font-size: 12px; color: #71717a; }
-    .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 24px; }
-    .template-card { background: #fafafa; border: 1px solid #e4e4e7; border-radius: 10px; padding: 14px; }
-    .template-card-title { font-size: 13px; font-weight: 700; color: #18181b; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-    .template-card-cat { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 999px; background: #ede9fe; color: #7c5cfc; }
-    .template-card p { font-size: 12.5px; color: #52525b; line-height: 1.55; margin: 0; }
-    @media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } .article-toc { display: none; } .template-grid { grid-template-columns: 1fr; } }
-  </style>
-</head>
-<body>
-
-<nav class="site-nav" id="site-nav">
-  <div class="nav-inner">
-    <a class="nav-logo" href="/"><img src="icon.png" class="nav-logo-img" alt="">monday<span style="color:#7c5cfc">.inspector</span></a>
-    <ul class="nav-links">
-      <li><a href="/#features">Features</a></li>
-      <li><a href="import-subitems-monday.html">Import Subitems</a></li>
-      <li><a href="monday-csv-import-guide.html">CSV Guide</a></li>
-      <li><a href="monday-bulk-update.html">Bulk Update</a></li>
-      <li><a href="monday-import-images-from-excel.html">Excel Images</a></li>
-      <li><a href="monday-graphql-query-guide.html" class="active">GraphQL</a></li>
-      <li><a href="changelog.html">Changelog</a></li>
-      <li><a href="/#faq">FAQ</a></li>
-    </ul>
-    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome</a>
-  </div>
-</nav>
-
-<div class="article-hero">
-  <canvas class="hero-canvas" data-strength="0.7" aria-hidden="true"></canvas>
-  <div class="container-sm">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
-      <span>Monday.com GraphQL Guide</span>
-    </nav>
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-      <span class="badge badge-brand">Guide · 9 min read</span>
-      <span class="badge" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">v1.6.3 · API 2026-04</span>
-    </div>
-    <h1>Monday.com GraphQL API: Tutorial + 14 Query Templates</h1>
-    <p class="lead">Monday.com's REST-style v1 API is gone — every integration now talks to a single GraphQL endpoint at <code>https://api.monday.com/v2</code>. This guide walks you through the basics, shows the <strong>14 ready-to-run query templates</strong> bundled with Monday.com Inspector, and covers the new multi-level board support introduced in API version <strong>2026-04</strong>. No coding required.</p>
-    <div class="article-meta">
-      <span>📅 May 2026</span>
-      <span>✍️ Sam @ Fruition Services</span>
-      <span>🕐 9 min read</span>
-      <span>🛠️ Covers API 2026-04</span>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="article-layout">
-    <article class="prose">
-
-      <h2 id="why">Why use the GraphQL API at all?</h2>
+  }</script>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FAFBFC">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Inter+Tight:wght@500;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <title>Monday.com Inspector — the tools monday.com is missing</title>
+    <script type="module" crossorigin="" src="/assets/app-DqyUmjOI.js"></script>
+    <link rel="stylesheet" crossorigin="" href="/assets/app-D6gnhmsS.css">
+  </head>
+  <body>
+    <div id="root" data-server-rendered="true"><div aria-hidden="true" class="fixed inset-0 -z-10" style="background:radial-gradient(60% 50% at 22% 20%, #E7F1FF 0%, transparent 60%),radial-gradient(50% 45% at 82% 26%, #F3EEFF 0%, transparent 60%),radial-gradient(55% 50% at 60% 96%, #EAF8F2 0%, transparent 60%), #FAFBFC"></div><header class="fixed inset-x-0 top-0 z-50 flex justify-center px-4" style="opacity:0;transform:translateY(-80px)"><nav class="glass flex items-center justify-between gap-6 rounded-full px-4 sm:px-5"><a href="/" class="group flex items-center gap-2 pl-1"><img src="/icon.png" alt="" class="h-7 w-7 rounded-lg"><span class="font-display text-[15px] font-extrabold tracking-tight text-ink">monday<span class="text-brand-indigo">.inspector</span></span></a><div class="relative hidden items-center gap-1 md:flex"><a href="#features" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">Features</a><a href="#how" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">How it works</a><a href="#compare" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">Compare</a><a href="#guides" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">Guides</a><a href="#faq" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">FAQ</a></div><a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-semibold text-white shadow-[0_8px_22px_rgba(62,123,250,.32)]" style="background:linear-gradient(120deg,#3E7BFA,#6161FF)">Add to Chrome</a></nav></header><main class="relative z-10"><div class="px-6 pb-24 pt-36 sm:pt-40"><header class="mx-auto max-w-4xl"><div class="mb-5 flex flex-wrap items-center gap-2 text-[13px] text-muted" style="opacity:0;filter:blur(10px);transform:translateY(26px)"><a href="/" class="font-medium text-brand hover:underline">Home</a><span>›</span><span>Guides</span></div><span class="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur" style="opacity:0;filter:blur(10px);transform:translateY(26px)">Guide</span><h1 class="font-display text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.12] tracking-tightest text-ink" style="opacity:0;filter:blur(10px);transform:translateY(26px)">Monday.com GraphQL API: Tutorial + 14 Query Templates</h1><p class="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-muted" style="opacity:0;filter:blur(10px);transform:translateY(26px)">Monday.com's REST-style v1 API is gone — every integration now talks to a single GraphQL endpoint at https://api.monday.com/v2. This guide walks you through the basics, shows the 14 ready-to-run query templates bundled with Monday.com Inspector, and covers the new multi-level board support introduced in API version 2026-04. No coding required.</p><div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-muted" style="opacity:0;filter:blur(10px);transform:translateY(26px)"><span>📅 May 2026</span><span>✍️ Sam @ Fruition Services</span><span>🕐 9 min read</span><span>🛠️ Covers API 2026-04</span></div></header><div class="mx-auto mt-12 grid max-w-6xl items-start gap-10 lg:grid-cols-[minmax(0,1fr)_240px]" style="opacity:0;transform:translateY(24px)"><article class="prose-calm min-w-0 max-w-3xl"><h2 id="why">Why use the GraphQL API at all?</h2>
       <p>Most monday.com users never touch the API — and that's fine for day-to-day work. But there's a long list of tasks the UI either makes painful or doesn't expose at all:</p>
       <ul>
         <li><strong>Audit who changed what, when.</strong> The UI doesn't have a workspace-wide audit log; the API does.</li>
@@ -164,7 +63,7 @@
       </ol>
       <p>The token is stored locally via <code>chrome.storage.local</code> and is never sent anywhere except <code>https://api.monday.com/v2</code> — the extension is open source and we run no servers. <a href="privacy.html">Privacy policy →</a></p>
 
-      <div style="margin:20px 0">
+      <div>
         <a class="btn btn-primary btn-lg" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Install Monday.com Inspector — Free</a>
       </div>
 
@@ -305,127 +204,45 @@
       <p>The inline Inspector panel inside monday.com has a Query tab too — perfect for quick checks while you're on a board. When you need more room (big results, saved templates, etc.), hit the <strong>↗ Full Inspector</strong> button at the top of the inline Query tab. It opens the full page with your current draft already loaded via URL params.</p>
 
       <h2 id="faq">FAQ</h2>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
-        <details class="faq" open>
-          <summary>Do I need to be a developer to use monday.com's GraphQL API?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+      <div>
+        <details class="faq" open="">
+          <summary>Do I need to be a developer to use monday.com's GraphQL API?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary>
           <div class="faq-body">No. With the Query Inspector you pick a template, plug in your board ID, and run. No code, no setup. The 14 starter templates cover boards, items, subitems, users, workspaces, and audit queries.</div>
         </details>
         <details class="faq">
-          <summary>How do I get a monday.com API token?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <summary>How do I get a monday.com API token?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary>
           <div class="faq-body">In monday.com, click your avatar (top right) → Admin → API. Generate a personal API v2 token and copy it. Paste it into Monday.com Inspector's first-run setup card. The token is stored locally via <code>chrome.storage.local</code> and is only ever sent to <code>https://api.monday.com/v2</code>.</div>
         </details>
         <details class="faq">
-          <summary>What's the difference between API version 2024-10 and 2026-04?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <summary>What's the difference between API version 2024-10 and 2026-04?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary>
           <div class="faq-body">API 2026-04 unlocks multi-level boards — up to 5 nested levels on the same board, with rolled-up parent values. The <code>hierarchy_types</code> argument and the <code>BatteryValue</code> rollup column type are 2026-04+ features. Monday.com Inspector ships with API-Version 2026-04 and falls back gracefully on tenants on older versions.</div>
         </details>
         <details class="faq">
-          <summary>Can I run mutations from the Query Inspector?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <summary>Can I run mutations from the Query Inspector?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary>
           <div class="faq-body">Yes. The Query Inspector executes any valid monday.com GraphQL operation — queries and mutations both. The complexity meter shows you the cost before each run so you don't blow your account's budget.</div>
         </details>
         <details class="faq">
-          <summary>How does the complexity budget work?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <summary>How does the complexity budget work?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary>
           <div class="faq-body">Monday.com gives every account a complexity budget that resets per minute. Each query consumes points based on the number of fields and items it touches. The Query Inspector shows your remaining budget in a pill next to every run, and templates are tagged 'heavy' when they're known to be expensive.</div>
         </details>
         <details class="faq">
-          <summary>Where can I read the official monday.com API docs?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></summary>
+          <summary>Where can I read the official monday.com API docs?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></summary>
           <div class="faq-body">Monday.com publishes its API reference at <a href="https://developer.monday.com/api-reference/" target="_blank" rel="noopener noreferrer">developer.monday.com</a>. The Query Inspector links straight to it from the top bar.</div>
         </details>
       </div>
 
-      <div class="callout callout-brand" style="margin-top:32px">
+      <div class="callout callout-brand">
         <div class="callout-title">🚀 Ready to run your first query?</div>
         <p>Install Monday.com Inspector for free. The Query Inspector launcher is right inside the popup — no monday.com board required to open it.</p>
-        <div style="margin-top:14px">
+        <div>
           <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — It's Free</a>
         </div>
       </div>
 
       <h2 id="related">Related Guides</h2>
-      <p>More monday.com automation reading:</p>
-    </article>
+      <p>More monday.com automation reading:</p></article><aside class="hidden lg:block"><nav class="sticky top-28 rounded-2xl border border-hairline bg-white/70 p-5 backdrop-blur-sm"><div class="mb-3 text-[11px] font-bold uppercase tracking-wider text-muted">On this page</div><ol class="flex flex-col gap-2"><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">1</span><a href="#why" class="text-muted transition-colors hover:text-ink">Why use the API</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">2</span><a href="#setup" class="text-muted transition-colors hover:text-ink">First-run setup</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">3</span><a href="#basics" class="text-muted transition-colors hover:text-ink">GraphQL basics</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">4</span><a href="#templates" class="text-muted transition-colors hover:text-ink">14 templates</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">5</span><a href="#multi-level" class="text-muted transition-colors hover:text-ink">Multi-level boards</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">6</span><a href="#complexity" class="text-muted transition-colors hover:text-ink">Complexity budget</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">7</span><a href="#saved" class="text-muted transition-colors hover:text-ink">Saved queries</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">8</span><a href="#hand-off" class="text-muted transition-colors hover:text-ink">Inline → full page</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">9</span><a href="#faq" class="text-muted transition-colors hover:text-ink">FAQ</a></li></ol></nav></aside></div></div></main><footer class="relative mt-10 overflow-hidden"><div class="absolute inset-0 -z-10" style="background:radial-gradient(60% 120% at 50% 0%, #EEF6FF 0%, transparent 60%), #FAFBFC"></div><div class="mx-auto max-w-6xl px-6 py-20"><div class="glass rounded-3xl px-8 py-14 text-center"><h2 class="font-display text-[clamp(1.75rem,3.5vw,2.75rem)] font-extrabold tracking-tightest text-ink">Stop fighting monday.com's limits</h2><p class="mx-auto mt-4 max-w-md text-[1.05rem] text-muted">Import subitems, bulk-update, run queries. Everything you wish monday.com had — free, right now.</p><div class="mt-8 flex justify-center"><a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_12px_34px_rgba(62,123,250,.38)]" style="background:linear-gradient(120deg,#3E7BFA,#6161FF)">Add to Chrome — it's free →</a></div></div><div class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-hairline pt-8 text-[13px] text-muted sm:flex-row"><div class="flex items-center gap-2"><img src="/icon.png" alt="" class="h-6 w-6 rounded-md"><span class="font-display font-bold text-ink">monday<span class="text-brand-indigo">.inspector</span></span></div><div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2"><a href="/changelog.html" class="hover:text-ink">Changelog</a><a href="/privacy.html" class="hover:text-ink">Privacy</a><a href="https://github.com/sametivon/monday.inspector" target="_blank" rel="noopener noreferrer" class="hover:text-ink">GitHub</a><a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer" class="hover:text-ink">Fruition Services</a></div><span>© 2026 Fruition Services</span></div></div></footer><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null,\"0-7\":null},\"actionData\":null,\"errors\":null}");</script></div>
+<script>window.__VITE_REACT_SSG_HASH__ = 'hb8dxpaj1a'</script>
 
-    <aside>
-      <div class="article-toc">
-        <h3>On this page</h3>
-        <ol>
-          <li><a href="#why">Why use the API</a></li>
-          <li><a href="#setup">First-run setup</a></li>
-          <li><a href="#basics">GraphQL basics</a></li>
-          <li><a href="#templates">14 templates</a></li>
-          <li><a href="#multi-level">Multi-level boards</a></li>
-          <li><a href="#complexity">Complexity budget</a></li>
-          <li><a href="#saved">Saved queries</a></li>
-          <li><a href="#hand-off">Inline → full page</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ol>
-        <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e4e4e7">
-          <p style="font-size:11.5px;font-weight:700;color:#52525b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Related guides</p>
-          <a class="related-card" href="import-subitems-monday.html"><h4>Import Subitems Guide</h4><p>CSV → monday.com subitems, all column types</p></a>
-          <a class="related-card" href="monday-csv-import-guide.html"><h4>CSV Import Complete Guide</h4><p>Formatting, column types, comparison table</p></a>
-          <a class="related-card" href="monday-bulk-update.html"><h4>Bulk Update Guide</h4><p>Update hundreds of items at once</p></a>
-        </div>
-        <div style="margin-top:20px">
-          <a class="btn btn-primary" style="width:100%;justify-content:center" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — Free</a>
-        </div>
-      </div>
-    </aside>
-  </div>
-</div>
+  
 
-<section style="background:#fff;padding:48px 0;border-top:1px solid #e4e4e7">
-  <div class="container-sm">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-      <a href="import-subitems-monday.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
-        <div style="font-size:20px;margin-bottom:8px">📥</div>
-        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Import Subitems in Monday.com</h3>
-        <p style="font-size:12.5px;color:#71717a">Step-by-step CSV → subitem import</p>
-      </a>
-      <a href="monday-csv-import-guide.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
-        <div style="font-size:20px;margin-bottom:8px">📄</div>
-        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">CSV Import Complete Guide</h3>
-        <p style="font-size:12.5px;color:#71717a">Format, column types, native vs Inspector</p>
-      </a>
-      <a href="monday-bulk-update.html" style="display:block;background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:all .2s" onmouseover="this.style.borderColor='#c4b5fd';this.style.background='#f5f3ff'" onmouseout="this.style.borderColor='#e4e4e7';this.style.background='#fafafa'">
-        <div style="font-size:20px;margin-bottom:8px">⚡</div>
-        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Bulk Update Items in Monday.com</h3>
-        <p style="font-size:12.5px;color:#71717a">Update hundreds of items at once</p>
-      </a>
-    </div>
-  </div>
-</section>
-
-<section style="background:#fafafa;padding:64px 0">
-  <div class="container-sm">
-    <div class="cta-banner">
-      <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-.025em">Run your first GraphQL query in 60 seconds</h2>
-      <p style="color:rgba(255,255,255,.8);font-size:1rem;margin-bottom:28px">Free Chrome extension. No coding required. 14 starter templates ready to go.</p>
-      <a class="btn btn-xl btn-on-dark" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome — It's Free</a>
-    </div>
-  </div>
-</section>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a class="nav-logo" href="/" style="color:#f4f4f5;text-decoration:none"><img src="icon.png" class="nav-logo-img" alt=""><span style="color:#e8e4f5">monday</span><span style="color:#a78bfa">.inspector</span></a>
-        <p>The free Chrome extension that gives monday.com the power features it's missing.</p>
-      </div>
-      <div><p class="footer-col-title">Product</p><ul class="footer-links"><li><a href="/#features">Features</a></li><li><a href="/#comparison">vs. Native</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/changelog.html">Changelog</a></li></ul></div>
-      <div><p class="footer-col-title">Guides</p><ul class="footer-links"><li><a href="import-subitems-monday.html">Import Subitems</a></li><li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li><li><a href="monday-bulk-update.html">Bulk Update</a></li><li><a href="monday-import-images-from-excel.html">Excel Images</a></li><li><a href="monday-graphql-query-guide.html">GraphQL Guide</a></li></ul></div>
-      <div><p class="footer-col-title">Company</p><ul class="footer-links"><li><a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer">Fruition Services</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="mailto:sam@fruitionservices.io">Contact</a></li></ul></div>
-    </div>
-    <div class="footer-bottom"><span>&copy; 2026 Fruition Services. All rights reserved.</span><span>Free &amp; Open Source</span></div>
-  </div>
-</footer>
-
-<script>
-  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}}),{threshold:.08});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  const nav=document.getElementById('site-nav');
-  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>10),{passive:true});
-</script>
-<script src="vendor/three.min.js?v=20260712a" defer></script>
-<script src="js/hero-gradient.js?v=20260712a" defer></script>
-</body>
-</html>
+</body></html>

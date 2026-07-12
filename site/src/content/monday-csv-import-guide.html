@@ -1,0 +1,232 @@
+<h2 id="native-import">Monday.com Native CSV Import: What It Supports</h2>
+      <p>Monday.com has a built-in import feature accessible from the board header (the <strong>+</strong> button or "More" → "Import"). It accepts CSV and Excel (.xlsx) files and can create new items in a board. Here's what the native import handles well:</p>
+      <ul>
+        <li><strong>Top-level items</strong> — creates a new item per row</li>
+        <li><strong>Text and numbers columns</strong> — maps directly from CSV values</li>
+        <li><strong>Item names</strong> — first column or a designated name column</li>
+        <li><strong>Groups</strong> — can assign rows to an existing board group</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ Key native import limitations</div>
+        <p>Monday.com native import does <strong>not</strong> support subitems, complex column types (People, Status, Dropdown, Timeline, Checkbox), or row counts over a few hundred reliably. For those cases, use Monday.com Inspector.</p>
+      </div>
+
+      <h2 id="comparison">Native Import vs. Monday.com Inspector — Full Comparison</h2>
+      <p>The table below compares what monday.com's built-in CSV import handles versus what Monday.com Inspector adds on top.</p>
+
+      <div>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>monday.com Native</th>
+              <th>Monday.com Inspector</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Import top-level items</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Import subitems</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Text &amp; number columns</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Status column</td><td class="cross">Limited</td><td class="check">✓</td></tr>
+            <tr><td>People column</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Date column</td><td class="cross">Limited</td><td class="check">✓</td></tr>
+            <tr><td>Timeline column</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Dropdown column</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Checkbox column</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Link / URL column</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Phone &amp; Email columns</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Rating column</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Re-import board export (.xlsx)</td><td class="cross">Partial</td><td class="check">✓ Full fidelity</td></tr>
+            <tr><td>Large files (1000+ rows)</td><td class="cross">May time out</td><td class="check">✓ Unlimited</td></tr>
+            <tr><td>Progress visibility</td><td class="cross">Spinner only</td><td class="check">✓ Per-row status</td></tr>
+            <tr><td>Error details per row</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Cost</td><td class="check">Free (built-in)</td><td class="check">Free extension</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="csv-format">How to Format Your CSV for Monday.com</h2>
+      <p>Whether you're using monday.com's native import or Monday.com Inspector, your CSV file needs to follow a few rules to import cleanly.</p>
+
+      <h3 id="basic-rules">Basic CSV Rules</h3>
+      <ul>
+        <li><strong>Header row first:</strong> The first row must be a header row with column names.</li>
+        <li><strong>UTF-8 encoding:</strong> Save as UTF-8 (not Windows-1252 or Latin-1) to avoid special character issues.</li>
+        <li><strong>Comma-delimited:</strong> Standard CSV uses commas. If your data contains commas, wrap the field in double quotes.</li>
+        <li><strong>One item per row:</strong> Each data row creates one item (or one subitem if using the subitem import mode).</li>
+        <li><strong>Column names match:</strong> When column names in the file match column titles in your board exactly, they auto-map on import.</li>
+      </ul>
+
+      <h3 id="column-formats">Column Type Formatting Reference</h3>
+      <p>Monday.com Inspector parses common formats for each column type. Use these formats in your CSV to ensure clean imports:</p>
+
+      <div>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Column Type</th>
+              <th>Accepted CSV Format</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Text</td><td>Any string</td><td><code>Project Alpha launch</code></td></tr>
+            <tr><td>Numbers</td><td>Numeric value (integer or decimal)</td><td><code>1250.50</code></td></tr>
+            <tr><td>Status</td><td>Label text (must match board label)</td><td><code>In Progress</code></td></tr>
+            <tr><td>People</td><td>Full name or email address</td><td><code>jane@acme.com</code></td></tr>
+            <tr><td>Date</td><td>ISO 8601: YYYY-MM-DD</td><td><code>2026-04-15</code></td></tr>
+            <tr><td>Timeline</td><td>Two columns: start date + end date (YYYY-MM-DD)</td><td><code>2026-04-01</code> / <code>2026-04-30</code></td></tr>
+            <tr><td>Dropdown</td><td>Label text (must match dropdown option)</td><td><code>High Priority</code></td></tr>
+            <tr><td>Checkbox</td><td><code>true</code> / <code>false</code> or <code>1</code> / <code>0</code></td><td><code>true</code></td></tr>
+            <tr><td>Email</td><td>Email address</td><td><code>sam@acme.com</code></td></tr>
+            <tr><td>Phone</td><td>Phone number string</td><td><code>+1 555 123 4567</code></td></tr>
+            <tr><td>Link / URL</td><td>Full URL (optionally: URL,Label)</td><td><code>https://example.com,Visit</code></td></tr>
+            <tr><td>Rating</td><td>Integer 1–5</td><td><code>4</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">ℹ Connection &amp; computed columns are excluded</div>
+        <p>The Importer writes <strong>native column data only</strong>. These column types are filtered out automatically and won't appear as mapping targets:</p>
+        <ul>
+          <li><strong>Connect Boards (board_relation)</strong> and <strong>Dependency</strong> — their values are references to item IDs on <em>other</em> boards. When you import into a fresh or different board those IDs don't exist in the destination and can't be remapped reliably, so the link can't be recreated from a spreadsheet.</li>
+          <li><strong>Mirror, formula, lookup, auto-number, creation log, item_id, button, file</strong> — computed or read-only; monday.com doesn't accept writes to them.</li>
+        </ul>
+        <p>Import everything else, then recreate any board connections inside monday.com once the items exist.</p>
+      </div>
+
+      <h3 id="subitem-format">Subitem CSV Format</h3>
+      <p>To import subitems using Monday.com Inspector, your CSV needs at minimum:</p>
+      <ol>
+        <li>A <strong>parent item</strong> column — item name or item ID of the parent</li>
+        <li>A <strong>subitem name</strong> column — the name of each subitem to create</li>
+        <li>Any additional subitem columns you want to populate</li>
+      </ol>
+
+      <pre><code>Parent Item,Subitem Name,Status,Assignee,Due Date
+Website Redesign,Define scope,Done,jane@acme.com,2026-04-01
+Website Redesign,Design wireframes,In Progress,bob@acme.com,2026-04-10
+Website Redesign,Development sprint 1,Working on it,sam@acme.com,2026-04-20
+Mobile App,Create backlog,Done,jane@acme.com,2026-03-15
+Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
+
+      <div class="callout callout-info">
+        <div class="callout-title">💡 Auto-creates parent items</div>
+        <p>If a parent item from the "Parent Item" column doesn't exist on the board yet, Monday.com Inspector will create it automatically before adding the subitems. Great for full board migrations.</p>
+      </div>
+
+      <h2 id="step-by-step">Step-by-Step: CSV Import with Monday.com Inspector</h2>
+
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Install Monday.com Inspector</h3>
+          <p>Install the free <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Monday.com Inspector Chrome extension</a>. No account or sign-up required. Works on any monday.com account.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Prepare your CSV file</h3>
+          <p>Follow the formatting rules above. Make sure your header row matches your board's column names, use the correct date format (YYYY-MM-DD), and save as UTF-8.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Open Inspector on your board</h3>
+          <p>Navigate to your monday.com board. Click the Monday.com Inspector icon in the Chrome toolbar. Click <strong>Open Inspector Panel</strong>. The panel appears on the right side of the board.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Upload and map columns</h3>
+          <p>Click the <strong>Import</strong> tab. Drag and drop your CSV (or click to browse). The tool auto-maps columns where names match. Review any un-mapped columns and assign them manually from the dropdown. Toggle <strong>Import Subitems</strong> if your file includes a parent-child structure.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div>
+          <h3>Start import and monitor progress</h3>
+          <p>Click <strong>Start Import</strong>. The progress panel shows total rows, rows succeeded (green), rows failed (red), and remaining rows (gray). You see per-row status in real-time. If any rows fail, the error is shown inline — fix and re-import just the failed rows.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-brand">
+        <div class="callout-title">🚀 Ready to import your CSV?</div>
+        <p>Monday.com Inspector is free and takes 30 seconds to install. <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome →</a></p>
+      </div>
+
+      <h2 id="tips">Best Practices for Monday.com CSV Import</h2>
+      <ul>
+        <li><strong>Test with 5–10 rows first.</strong> Run a small test import before committing hundreds of rows. Verify that column mapping is correct and values appear as expected.</li>
+        <li><strong>Match status labels exactly.</strong> Status column values must match an existing label on your board (case-insensitive). If the label doesn't exist, the field is left blank.</li>
+        <li><strong>Use ISO dates.</strong> Always use YYYY-MM-DD for date columns. Regional date formats (DD/MM/YYYY, MM/DD/YYYY) may be misinterpreted.</li>
+        <li><strong>Use email for People columns.</strong> Matching by email address is more reliable than full name, especially for teams with duplicate names.</li>
+        <li><strong>Don't include IDs for new items.</strong> If you're creating new items, omit or leave blank any "Item ID" column — monday.com assigns IDs automatically.</li>
+        <li><strong>Keep an error log.</strong> After import, review the failed-rows report in the Inspector panel and export it to fix issues before re-importing.</li>
+      </ul>
+
+      <h2 id="faq">Frequently Asked Questions</h2>
+
+      <details class="faq">
+        <summary>What CSV format does monday.com accept?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Monday.com accepts standard UTF-8 comma-delimited CSV files with a header row. Column names should match board column titles for auto-mapping. For best results, use a modern spreadsheet editor (Google Sheets, Excel, LibreOffice) to export the file as "CSV (UTF-8)".</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Is there a row limit for monday.com CSV import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Monday.com's native import can be unreliable above a few hundred rows and may time out on large files. Monday.com Inspector has no row limit — it handles batching and rate limiting internally, so you can safely import thousands of rows in a single operation.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Can I import multiple column types (Status, People, Date) from CSV?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Yes, with Monday.com Inspector. The native import has very limited column type support, but the Inspector handles Status, People, Date, Timeline, Dropdown, Checkbox, Link, Phone, Email, Rating, and Numbers columns — for both parent items and subitems.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Can I import subitems from a CSV into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Not with the native import — it only creates top-level items. Monday.com Inspector supports subitem import: include a "parent item" column (item name or ID) and a "subitem name" column in your CSV, enable the subitem toggle, and the extension creates the full hierarchy. <a href="import-subitems-monday.html">Full subitem import guide →</a></p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>How do I format dates for monday.com CSV import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Always use ISO 8601 format: <code>YYYY-MM-DD</code> (e.g., <code>2026-04-15</code>). For timeline columns, use two date columns — one for the start date and one for the end date, both in YYYY-MM-DD format. Avoid regional date formats (DD/MM/YYYY or MM/DD/YYYY) as they can be misinterpreted.</p>
+        </div>
+      </details>
+
+      <details class="faq">
+        <summary>Can I re-import a monday.com board export back into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="faq-body">
+          <p>Yes. Monday.com Inspector can import a monday.com XLSX board export with full fidelity — preserving groups, parent items, subitems, and all supported column types. This is the fastest way to copy or migrate a board between workspaces or accounts.</p>
+        </div>
+      </details>
+
+      <!-- Bottom related guides -->
+      <h2 id="related">Related Guides</h2>
+      <div>
+        <a href="import-subitems-monday.html" class="related-card">
+          <h4>How to Import Subitems in Monday.com</h4>
+          <p>5-step guide with CSV templates and column type reference.</p>
+        </a>
+        <a href="monday-bulk-update.html" class="related-card">
+          <h4>Monday.com Bulk Update Items</h4>
+          <p>Update hundreds of items at once — status, assignee, dates, and more.</p>
+        </a>
+      </div>

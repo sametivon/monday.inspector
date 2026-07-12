@@ -1,33 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Monday.com CSV Import Guide (2026): Formats, Limits &amp; Best Practices</title>
-  <meta name="description" content="Complete guide to monday.com CSV import: supported formats, column types, row limits, subitems, and how Monday.com Inspector extends native import capabilities for free." />
-  <meta name="keywords" content="monday.com csv import, monday.com import csv, monday import from csv, monday.com spreadsheet import, monday.com bulk import, csv format monday.com" />
-  <link rel="canonical" href="https://mondayinspector.eu/monday-csv-import-guide.html" />
-  <meta property="og:title" content="Monday.com CSV Import Guide — Formats, Limits &amp; Best Practices (2026)" />
-  <meta property="og:description" content="Everything you need to know about monday.com CSV import: what works, what doesn't, and how to do more with Monday.com Inspector." />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://mondayinspector.eu/monday-csv-import-guide.html" />
-  <meta property="og:image" content="https://mondayinspector.eu/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content="Monday.com Inspector" />
-  <meta property="og:locale" content="en_US" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Monday.com CSV Import Guide — Formats, Limits &amp; Best Practices" />
-  <meta name="twitter:description" content="Everything about monday.com CSV import: formats, limits, best practices, and how to import subitems." />
-  <meta name="twitter:image" content="https://mondayinspector.eu/og-image.png" />
-  <meta name="robots" content="index, follow" />
-  <meta name="author" content="Sam @ Fruition Services" />
-  <meta name="theme-color" content="#7c5cfc" />
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon.png" />
-
-  <script type="application/ld+json">
-  {
+<!DOCTYPE html><html lang="en"><head><title data-rh="true">Monday.com CSV Import Guide (2026): Formats, Limits &amp;amp; Best Practices</title><meta data-rh="true" name="description" content="Complete guide to monday.com CSV import: supported formats, column types, row limits, subitems, and how Monday.com Inspector extends native import capabilities for free."><meta data-rh="true" property="og:title" content="Monday.com CSV Import: Complete Guide (2026)"><meta data-rh="true" property="og:description" content="Complete guide to monday.com CSV import: supported formats, column types, row limits, subitems, and how Monday.com Inspector extends native import capabilities for free."><meta data-rh="true" property="og:type" content="article"><meta data-rh="true" property="og:url" content="https://mondayinspector.eu/monday-csv-import-guide.html"><meta data-rh="true" property="og:image" content="https://mondayinspector.eu/og-image.png"><meta data-rh="true" name="twitter:card" content="summary_large_image"><link data-rh="true" rel="canonical" href="https://mondayinspector.eu/monday-csv-import-guide.html"><script data-rh="true" type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "HowTo",
     "name": "How to Import CSV into Monday.com",
@@ -41,11 +12,7 @@
       { "@type": "HowToStep", "position": 4, "name": "Open the Import tab", "text": "Navigate to your monday.com board, open Inspector, and click the Import tab. Upload your CSV or XLSX file." },
       { "@type": "HowToStep", "position": 5, "name": "Map columns and import", "text": "Map your file columns to board columns. Toggle subitems if your file has them. Click Start Import and watch live progress." }
     ]
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
+  }</script><script data-rh="true" type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
@@ -56,90 +23,27 @@
       { "@type": "Question", "name": "Can I import a monday.com board export back into monday.com?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Monday.com Inspector can re-import a monday.com XLSX board export, preserving groups, parent items, and subitems. This makes it easy to copy or migrate boards between workspaces." } },
       { "@type": "Question", "name": "What is the best way to format dates in a monday.com CSV import?", "acceptedAnswer": { "@type": "Answer", "text": "Use ISO 8601 date format: YYYY-MM-DD (e.g., 2026-04-15). For timeline columns, use two date columns: start date and end date, both in YYYY-MM-DD format." } }
     ]
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
+  }</script><script data-rh="true" type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://mondayinspector.eu/" },
       { "@type": "ListItem", "position": 2, "name": "Monday.com CSV Import Guide", "item": "https://mondayinspector.eu/monday-csv-import-guide.html" }
     ]
-  }
-  </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260712a" />
-  <style>
-    .article-hero { background: #fff; padding: 64px 0 48px; border-bottom: 1px solid #e4e4e7; }
-    .article-hero h1 { font-size: clamp(1.875rem, 3.5vw, 2.75rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin: 16px 0 18px; }
-    .article-hero .lead { font-size: 1.0625rem; color: #52525b; line-height: 1.75; max-width: 680px; }
-    .article-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #71717a; flex-wrap: wrap; margin-top: 20px; }
-    .article-meta span { display: flex; align-items: center; gap: 5px; }
-    .article-layout { display: grid; grid-template-columns: 1fr 280px; gap: 56px; align-items: flex-start; padding: 56px 0 96px; }
-    .article-toc { position: sticky; top: 88px; background: #fff; border: 1px solid #e4e4e7; border-radius: 14px; padding: 24px; }
-    .article-toc h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #52525b; margin-bottom: 16px; }
-    .article-toc ol { list-style: none; counter-reset: toc; display: flex; flex-direction: column; gap: 10px; }
-    .article-toc ol li { counter-increment: toc; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
-    .article-toc ol li::before { content: counter(toc); width: 20px; height: 20px; border-radius: 50%; background: #ede9fe; color: #7c5cfc; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .article-toc ol li a { color: #52525b; text-decoration: none; line-height: 1.5; }
-    .article-toc ol li a:hover { color: #7c5cfc; }
-    .related-card { display: block; background: #f5f3ff; border: 1px solid #c4b5fd40; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.2s; margin-top: 12px; }
-    .related-card:hover { background: #ede9fe; border-color: #c4b5fd; }
-    .related-card h4 { font-size: 13px; font-weight: 600; color: #09090b; margin-bottom: 3px; }
-    .related-card p { font-size: 12px; color: #71717a; }
-    @media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } .article-toc { display: none; } }
-  </style>
-</head>
-<body>
-
-<nav class="site-nav" id="site-nav">
-  <div class="nav-inner">
-    <a class="nav-logo" href="/"><img src="icon.png" class="nav-logo-img" alt="">monday<span style="color:#7c5cfc">.inspector</span></a>
-    <ul class="nav-links">
-      <li><a href="/#features">Features</a></li>
-      <li><a href="import-subitems-monday.html">Import Subitems</a></li>
-      <li><a href="monday-csv-import-guide.html" class="active">CSV Guide</a></li>
-      <li><a href="monday-bulk-update.html">Bulk Update</a></li>
-      <li><a href="monday-import-images-from-excel.html">Excel Images</a></li>
-      <li><a href="monday-graphql-query-guide.html">GraphQL</a></li>
-      <li><a href="changelog.html">Changelog</a></li>
-      <li><a href="/#faq">FAQ</a></li>
-    </ul>
-    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome</a>
-  </div>
-</nav>
-
-<!-- Article Hero -->
-<div class="article-hero">
-  <canvas class="hero-canvas" data-strength="0.7" aria-hidden="true"></canvas>
-  <div class="container-sm">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
-      <span>Monday.com CSV Import Guide</span>
-    </nav>
-    <div class="badge badge-brand" style="margin-bottom:16px">Guide · 7 min read</div>
-    <h1>Monday.com CSV Import: Complete Guide (2026)</h1>
-    <p class="lead">Everything you need to know about importing CSV and Excel data into monday.com — what the native import supports, where it falls short, and how to handle subitems, complex column types, and large files with Monday.com Inspector.</p>
-    <div class="article-meta">
-      <span>📅 Updated April 2026</span>
-      <span>✍️ Sam @ Fruition Services</span>
-      <span>🕐 7 min read</span>
-    </div>
-  </div>
-</div>
-
-<!-- Article Layout -->
-<div class="container">
-  <div class="article-layout">
-
-    <!-- Main content -->
-    <article class="prose">
-
-      <h2 id="native-import">Monday.com Native CSV Import: What It Supports</h2>
+  }</script>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FAFBFC">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Inter+Tight:wght@500;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <title>Monday.com Inspector — the tools monday.com is missing</title>
+    <script type="module" crossorigin="" src="/assets/app-DqyUmjOI.js"></script>
+    <link rel="stylesheet" crossorigin="" href="/assets/app-D6gnhmsS.css">
+  </head>
+  <body>
+    <div id="root" data-server-rendered="true"><div aria-hidden="true" class="fixed inset-0 -z-10" style="background:radial-gradient(60% 50% at 22% 20%, #E7F1FF 0%, transparent 60%),radial-gradient(50% 45% at 82% 26%, #F3EEFF 0%, transparent 60%),radial-gradient(55% 50% at 60% 96%, #EAF8F2 0%, transparent 60%), #FAFBFC"></div><header class="fixed inset-x-0 top-0 z-50 flex justify-center px-4" style="opacity:0;transform:translateY(-80px)"><nav class="glass flex items-center justify-between gap-6 rounded-full px-4 sm:px-5"><a href="/" class="group flex items-center gap-2 pl-1"><img src="/icon.png" alt="" class="h-7 w-7 rounded-lg"><span class="font-display text-[15px] font-extrabold tracking-tight text-ink">monday<span class="text-brand-indigo">.inspector</span></span></a><div class="relative hidden items-center gap-1 md:flex"><a href="#features" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">Features</a><a href="#how" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">How it works</a><a href="#compare" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">Compare</a><a href="#guides" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">Guides</a><a href="#faq" class="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-muted transition-colors hover:text-ink">FAQ</a></div><a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-semibold text-white shadow-[0_8px_22px_rgba(62,123,250,.32)]" style="background:linear-gradient(120deg,#3E7BFA,#6161FF)">Add to Chrome</a></nav></header><main class="relative z-10"><div class="px-6 pb-24 pt-36 sm:pt-40"><header class="mx-auto max-w-4xl"><div class="mb-5 flex flex-wrap items-center gap-2 text-[13px] text-muted" style="opacity:0;filter:blur(10px);transform:translateY(26px)"><a href="/" class="font-medium text-brand hover:underline">Home</a><span>›</span><span>Guides</span></div><span class="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur" style="opacity:0;filter:blur(10px);transform:translateY(26px)">Guide</span><h1 class="font-display text-[clamp(1.9rem,4vw,3rem)] font-extrabold leading-[1.12] tracking-tightest text-ink" style="opacity:0;filter:blur(10px);transform:translateY(26px)">Monday.com CSV Import: Complete Guide (2026)</h1><p class="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-muted" style="opacity:0;filter:blur(10px);transform:translateY(26px)">Everything you need to know about importing CSV and Excel data into monday.com — what the native import supports, where it falls short, and how to handle subitems, complex column types, and large files with Monday.com Inspector.</p><div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-muted" style="opacity:0;filter:blur(10px);transform:translateY(26px)"><span>📅 Updated April 2026</span><span>✍️ Sam @ Fruition Services</span><span>🕐 7 min read</span></div></header><div class="mx-auto mt-12 grid max-w-6xl items-start gap-10 lg:grid-cols-[minmax(0,1fr)_240px]" style="opacity:0;transform:translateY(24px)"><article class="prose-calm min-w-0 max-w-3xl"><h2 id="native-import">Monday.com Native CSV Import: What It Supports</h2>
       <p>Monday.com has a built-in import feature accessible from the board header (the <strong>+</strong> button or "More" → "Import"). It accepts CSV and Excel (.xlsx) files and can create new items in a board. Here's what the native import handles well:</p>
       <ul>
         <li><strong>Top-level items</strong> — creates a new item per row</li>
@@ -156,13 +60,13 @@
       <h2 id="comparison">Native Import vs. Monday.com Inspector — Full Comparison</h2>
       <p>The table below compares what monday.com's built-in CSV import handles versus what Monday.com Inspector adds on top.</p>
 
-      <div style="overflow-x:auto; margin: 24px 0;">
+      <div>
         <table class="comp-table">
           <thead>
             <tr>
-              <th style="width:36%">Feature</th>
-              <th style="background:#fef3c7;color:#92400e">monday.com Native</th>
-              <th style="background:#f0fdf4;color:#14532d">Monday.com Inspector</th>
+              <th>Feature</th>
+              <th>monday.com Native</th>
+              <th>Monday.com Inspector</th>
             </tr>
           </thead>
           <tbody>
@@ -202,7 +106,7 @@
       <h3 id="column-formats">Column Type Formatting Reference</h3>
       <p>Monday.com Inspector parses common formats for each column type. Use these formats in your CSV to ensure clean imports:</p>
 
-      <div style="overflow-x:auto; margin: 24px 0;">
+      <div>
         <table class="comp-table">
           <thead>
             <tr>
@@ -228,7 +132,7 @@
         </table>
       </div>
 
-      <div class="callout callout-info" style="margin-top: 18px">
+      <div class="callout callout-info">
         <div class="callout-title">ℹ Connection &amp; computed columns are excluded</div>
         <p>The Importer writes <strong>native column data only</strong>. These column types are filtered out automatically and won't appear as mapping targets:</p>
         <ul>
@@ -263,7 +167,7 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <div class="step-row">
         <div class="step-num">1</div>
         <div>
-          <h3 style="margin:0 0 6px;font-size:1.0625rem">Install Monday.com Inspector</h3>
+          <h3>Install Monday.com Inspector</h3>
           <p>Install the free <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Monday.com Inspector Chrome extension</a>. No account or sign-up required. Works on any monday.com account.</p>
         </div>
       </div>
@@ -271,7 +175,7 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <div class="step-row">
         <div class="step-num">2</div>
         <div>
-          <h3 style="margin:0 0 6px;font-size:1.0625rem">Prepare your CSV file</h3>
+          <h3>Prepare your CSV file</h3>
           <p>Follow the formatting rules above. Make sure your header row matches your board's column names, use the correct date format (YYYY-MM-DD), and save as UTF-8.</p>
         </div>
       </div>
@@ -279,7 +183,7 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <div class="step-row">
         <div class="step-num">3</div>
         <div>
-          <h3 style="margin:0 0 6px;font-size:1.0625rem">Open Inspector on your board</h3>
+          <h3>Open Inspector on your board</h3>
           <p>Navigate to your monday.com board. Click the Monday.com Inspector icon in the Chrome toolbar. Click <strong>Open Inspector Panel</strong>. The panel appears on the right side of the board.</p>
         </div>
       </div>
@@ -287,7 +191,7 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <div class="step-row">
         <div class="step-num">4</div>
         <div>
-          <h3 style="margin:0 0 6px;font-size:1.0625rem">Upload and map columns</h3>
+          <h3>Upload and map columns</h3>
           <p>Click the <strong>Import</strong> tab. Drag and drop your CSV (or click to browse). The tool auto-maps columns where names match. Review any un-mapped columns and assign them manually from the dropdown. Toggle <strong>Import Subitems</strong> if your file includes a parent-child structure.</p>
         </div>
       </div>
@@ -295,14 +199,14 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <div class="step-row">
         <div class="step-num">5</div>
         <div>
-          <h3 style="margin:0 0 6px;font-size:1.0625rem">Start import and monitor progress</h3>
+          <h3>Start import and monitor progress</h3>
           <p>Click <strong>Start Import</strong>. The progress panel shows total rows, rows succeeded (green), rows failed (red), and remaining rows (gray). You see per-row status in real-time. If any rows fail, the error is shown inline — fix and re-import just the failed rows.</p>
         </div>
       </div>
 
       <div class="callout callout-brand">
         <div class="callout-title">🚀 Ready to import your CSV?</div>
-        <p>Monday.com Inspector is free and takes 30 seconds to install. <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer" style="font-weight:600;color:#7c5cfc">Add to Chrome →</a></p>
+        <p>Monday.com Inspector is free and takes 30 seconds to install. <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Add to Chrome →</a></p>
       </div>
 
       <h2 id="tips">Best Practices for Monday.com CSV Import</h2>
@@ -318,50 +222,50 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
       <h2 id="faq">Frequently Asked Questions</h2>
 
       <details class="faq">
-        <summary>What CSV format does monday.com accept?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary>What CSV format does monday.com accept?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path></svg></summary>
         <div class="faq-body">
           <p>Monday.com accepts standard UTF-8 comma-delimited CSV files with a header row. Column names should match board column titles for auto-mapping. For best results, use a modern spreadsheet editor (Google Sheets, Excel, LibreOffice) to export the file as "CSV (UTF-8)".</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Is there a row limit for monday.com CSV import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary>Is there a row limit for monday.com CSV import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path></svg></summary>
         <div class="faq-body">
           <p>Monday.com's native import can be unreliable above a few hundred rows and may time out on large files. Monday.com Inspector has no row limit — it handles batching and rate limiting internally, so you can safely import thousands of rows in a single operation.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Can I import multiple column types (Status, People, Date) from CSV?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary>Can I import multiple column types (Status, People, Date) from CSV?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path></svg></summary>
         <div class="faq-body">
           <p>Yes, with Monday.com Inspector. The native import has very limited column type support, but the Inspector handles Status, People, Date, Timeline, Dropdown, Checkbox, Link, Phone, Email, Rating, and Numbers columns — for both parent items and subitems.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Can I import subitems from a CSV into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary>Can I import subitems from a CSV into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path></svg></summary>
         <div class="faq-body">
           <p>Not with the native import — it only creates top-level items. Monday.com Inspector supports subitem import: include a "parent item" column (item name or ID) and a "subitem name" column in your CSV, enable the subitem toggle, and the extension creates the full hierarchy. <a href="import-subitems-monday.html">Full subitem import guide →</a></p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>How do I format dates for monday.com CSV import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary>How do I format dates for monday.com CSV import?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path></svg></summary>
         <div class="faq-body">
           <p>Always use ISO 8601 format: <code>YYYY-MM-DD</code> (e.g., <code>2026-04-15</code>). For timeline columns, use two date columns — one for the start date and one for the end date, both in YYYY-MM-DD format. Avoid regional date formats (DD/MM/YYYY or MM/DD/YYYY) as they can be misinterpreted.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Can I re-import a monday.com board export back into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary>Can I re-import a monday.com board export back into monday.com?<svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path></svg></summary>
         <div class="faq-body">
           <p>Yes. Monday.com Inspector can import a monday.com XLSX board export with full fidelity — preserving groups, parent items, subitems, and all supported column types. This is the fastest way to copy or migrate a board between workspaces or accounts.</p>
         </div>
       </details>
 
       <!-- Bottom related guides -->
-      <h2 id="related" style="margin-top: 56px">Related Guides</h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+      <h2 id="related">Related Guides</h2>
+      <div>
         <a href="import-subitems-monday.html" class="related-card">
           <h4>How to Import Subitems in Monday.com</h4>
           <p>5-step guide with CSV templates and column type reference.</p>
@@ -370,130 +274,9 @@ Mobile App,Sprint planning,In Progress,bob@acme.com,2026-04-05</code></pre>
           <h4>Monday.com Bulk Update Items</h4>
           <p>Update hundreds of items at once — status, assignee, dates, and more.</p>
         </a>
-      </div>
+      </div></article><aside class="hidden lg:block"><nav class="sticky top-28 rounded-2xl border border-hairline bg-white/70 p-5 backdrop-blur-sm"><div class="mb-3 text-[11px] font-bold uppercase tracking-wider text-muted">On this page</div><ol class="flex flex-col gap-2"><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">1</span><a href="#native-import" class="text-muted transition-colors hover:text-ink">Native Import: What It Supports</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">2</span><a href="#comparison" class="text-muted transition-colors hover:text-ink">Native vs Inspector Comparison</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">3</span><a href="#csv-format" class="text-muted transition-colors hover:text-ink">How to Format Your CSV</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">4</span><a href="#basic-rules" class="text-muted transition-colors hover:text-ink">Basic CSV Rules</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">5</span><a href="#column-formats" class="text-muted transition-colors hover:text-ink">Column Type Formats</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">6</span><a href="#subitem-format" class="text-muted transition-colors hover:text-ink">Subitem CSV Format</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">7</span><a href="#step-by-step" class="text-muted transition-colors hover:text-ink">Step-by-Step Import Guide</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">8</span><a href="#tips" class="text-muted transition-colors hover:text-ink">Best Practices</a></li><li class="flex items-start gap-2 text-[13px]"><span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-softlavender text-[10px] font-bold text-brand-indigo">9</span><a href="#faq" class="text-muted transition-colors hover:text-ink">FAQ</a></li></ol></nav></aside></div></div></main><footer class="relative mt-10 overflow-hidden"><div class="absolute inset-0 -z-10" style="background:radial-gradient(60% 120% at 50% 0%, #EEF6FF 0%, transparent 60%), #FAFBFC"></div><div class="mx-auto max-w-6xl px-6 py-20"><div class="glass rounded-3xl px-8 py-14 text-center"><h2 class="font-display text-[clamp(1.75rem,3.5vw,2.75rem)] font-extrabold tracking-tightest text-ink">Stop fighting monday.com's limits</h2><p class="mx-auto mt-4 max-w-md text-[1.05rem] text-muted">Import subitems, bulk-update, run queries. Everything you wish monday.com had — free, right now.</p><div class="mt-8 flex justify-center"><a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_12px_34px_rgba(62,123,250,.38)]" style="background:linear-gradient(120deg,#3E7BFA,#6161FF)">Add to Chrome — it's free →</a></div></div><div class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-hairline pt-8 text-[13px] text-muted sm:flex-row"><div class="flex items-center gap-2"><img src="/icon.png" alt="" class="h-6 w-6 rounded-md"><span class="font-display font-bold text-ink">monday<span class="text-brand-indigo">.inspector</span></span></div><div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2"><a href="/changelog.html" class="hover:text-ink">Changelog</a><a href="/privacy.html" class="hover:text-ink">Privacy</a><a href="https://github.com/sametivon/monday.inspector" target="_blank" rel="noopener noreferrer" class="hover:text-ink">GitHub</a><a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer" class="hover:text-ink">Fruition Services</a></div><span>© 2026 Fruition Services</span></div></div></footer><script>window.__staticRouterHydrationData = JSON.parse("{\"loaderData\":{\"0\":null,\"0-5\":null},\"actionData\":null,\"errors\":null}");</script></div>
+<script>window.__VITE_REACT_SSG_HASH__ = 'hb8dxpaj1a'</script>
 
-    </article>
+  
 
-    <!-- Sidebar TOC -->
-    <aside>
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol>
-          <li><a href="#native-import">Native Import: What It Supports</a></li>
-          <li><a href="#comparison">Native vs Inspector Comparison</a></li>
-          <li><a href="#csv-format">How to Format Your CSV</a></li>
-          <li><a href="#basic-rules">Basic CSV Rules</a></li>
-          <li><a href="#column-formats">Column Type Formats</a></li>
-          <li><a href="#subitem-format">Subitem CSV Format</a></li>
-          <li><a href="#step-by-step">Step-by-Step Import Guide</a></li>
-          <li><a href="#tips">Best Practices</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ol>
-      </div>
-
-      <div style="margin-top: 24px">
-        <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 2L12.4 7.4L18 8.2L14 12.1L15.2 18L10 15.2L4.8 18L6 12.1L2 8.2L7.6 7.4Z" stroke="currentColor" stroke-width="1.75" fill="none"/></svg>
-          Add to Chrome — Free
-        </a>
-        <a href="import-subitems-monday.html" class="related-card">
-          <h4>Import Subitems Guide</h4>
-          <p>Subitems from CSV in 5 steps</p>
-        </a>
-        <a href="monday-bulk-update.html" class="related-card">
-          <h4>Bulk Update Guide</h4>
-          <p>Update hundreds of items at once</p>
-        </a>
-      </div>
-    </aside>
-
-  </div>
-</div>
-
-<!-- CTA Banner -->
-<section class="section-sm">
-  <div class="container">
-    <div class="cta-banner reveal">
-      <div class="dot-grid"></div>
-      <div style="position:relative;z-index:1;text-align:center">
-        <h2 style="font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;letter-spacing:-0.03em;color:#fff;margin-bottom:16px">Upgrade your monday.com CSV imports</h2>
-        <p style="color:rgba(255,255,255,0.75);margin-bottom:32px;font-size:1.0625rem">Subitems, all native column types, unlimited rows. Free Chrome extension.</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-          <a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" class="btn btn-lg btn-on-dark" target="_blank" rel="noopener noreferrer">Add to Chrome — Free</a>
-          <a href="import-subitems-monday.html" class="btn btn-lg btn-secondary" style="border-color:rgba(255,255,255,0.3);color:#fff">Subitem Import Guide →</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="nav-logo" style="margin-bottom:12px"><img src="icon.png" class="nav-logo-img" alt=""><span style="color:#e8e4f5">monday</span><span style="color:#a78bfa">.inspector</span></div>
-        <p style="font-size:13px;color:#a1a1aa;line-height:1.7;max-width:220px">Free Chrome extension for monday.com power users. No account needed.</p>
-        <div style="margin-top:16px;display:flex;gap:10px">
-          <a href="https://buymeacoffee.com/sametivon" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="background:#27272a;color:#e4e4e7;font-size:12px">☕ Buy me a coffee</a>
-        </div>
-      </div>
-      <div>
-        <div class="footer-heading">Product</div>
-        <ul class="footer-links">
-          <li><a href="/#features">Features</a></li>
-          <li><a href="/#comparison">Comparison</a></li>
-          <li><a href="/#faq">FAQ</a></li>
-          <li><a href="/changelog.html">Changelog</a></li>
-          <li><a href="https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg" target="_blank" rel="noopener noreferrer">Chrome Store</a></li>
-          <li><a href="https://github.com/sametivon/monday-inspector" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer-heading">Guides</div>
-        <ul class="footer-links">
-          <li><a href="import-subitems-monday.html">Import Subitems</a></li>
-          <li><a href="monday-csv-import-guide.html">CSV Import Guide</a></li>
-          <li><a href="monday-bulk-update.html">Bulk Update</a></li>
-          <li><a href="monday-import-images-from-excel.html">Excel Images</a></li>
-          <li><a href="monday-graphql-query-guide.html">GraphQL Tutorial</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer-heading">Company</div>
-        <ul class="footer-links">
-          <li><a href="https://www.linkedin.com/in/sametivon/" target="_blank" rel="noopener noreferrer">Sam @ Fruition</a></li>
-          <li><a href="https://calendly.com/sam-fruitionservices/30min" target="_blank" rel="noopener noreferrer">Book a call</a></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="mailto:sam@fruitionservices.io">Contact</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Monday.com Inspector · Built by <a href="https://www.linkedin.com/in/sametivon/" target="_blank" rel="noopener noreferrer">Sam @ Fruition Services</a></span>
-      <span>Not affiliated with monday.com</span>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Nav scroll shadow
-  const nav = document.getElementById('site-nav');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-
-  // Scroll reveal
-  const revealEls = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }), { threshold: 0.12 });
-  revealEls.forEach(el => io.observe(el));
-
-  // FAQ accordions
-  document.querySelectorAll('details.faq').forEach(detail => {
-    detail.addEventListener('toggle', () => {
-      document.querySelectorAll('details.faq').forEach(d => { if (d !== detail) d.removeAttribute('open'); });
-    });
-  });
-</script>
-<script src="vendor/three.min.js?v=20260712a" defer></script>
-<script src="js/hero-gradient.js?v=20260712a" defer></script>
-</body>
-</html>
+</body></html>
