@@ -403,6 +403,71 @@ pre .kw { color: #818cf8; } pre .str { color: #4ade80; } pre .cm { color: #6b728
 /* ─── Nav CTA gets a subtle glow to pull the eye ────────── */
 .site-nav .btn-primary { box-shadow: 0 4px 14px rgba(124, 92, 252, 0.28); }
 
+/* ═══════════════════════════════════════════════════════
+   v1.7 Layout uplift — colour, depth & richness across every
+   page (all class-based, so it lands site-wide via style.css)
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── Cards: real depth + a persistent left gradient rail ── */
+.card {
+  background: linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+  border-color: #ece9f6;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 14px rgba(16, 24, 40, 0.05);
+}
+.card:hover {
+  border-color: #c9bdfa;
+  box-shadow: 0 20px 44px rgba(124, 92, 252, 0.16);
+}
+/* keep the animated top-accent, but let cards read as coloured at rest too */
+
+/* ─── Colourful feature icon tiles (one hue per card) ─────
+   Uses nth-child so no HTML changes are needed. */
+.card-icon {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 6px 16px rgba(124, 92, 252, 0.14);
+}
+.feature-grid .card:nth-child(6n+1) .card-icon { background: linear-gradient(135deg, #ede9fe, #d9cffc); }
+.feature-grid .card:nth-child(6n+2) .card-icon { background: linear-gradient(135deg, #fde4f3, #fbc7e6); }
+.feature-grid .card:nth-child(6n+3) .card-icon { background: linear-gradient(135deg, #dff0ff, #b8e0fd); }
+.feature-grid .card:nth-child(6n+4) .card-icon { background: linear-gradient(135deg, #dcfce9, #b7f2ce); }
+.feature-grid .card:nth-child(6n+5) .card-icon { background: linear-gradient(135deg, #fef2ce, #fde08a); }
+.feature-grid .card:nth-child(6n+6) .card-icon { background: linear-gradient(135deg, #e3e7ff, #c5cefe); }
+.services-grid .card:nth-child(6n+1) .card-icon { background: linear-gradient(135deg, #ede9fe, #d9cffc); }
+.services-grid .card:nth-child(6n+2) .card-icon { background: linear-gradient(135deg, #dff0ff, #b8e0fd); }
+.services-grid .card:nth-child(6n+3) .card-icon { background: linear-gradient(135deg, #dcfce9, #b7f2ce); }
+.services-grid .card:nth-child(6n+4) .card-icon { background: linear-gradient(135deg, #fef2ce, #fde08a); }
+.services-grid .card:nth-child(6n+5) .card-icon { background: linear-gradient(135deg, #fde4f3, #fbc7e6); }
+.services-grid .card:nth-child(6n+6) .card-icon { background: linear-gradient(135deg, #e3e7ff, #c5cefe); }
+
+/* ─── Stat boxes: gradient numerals + soft tinted panel ──── */
+.stat-box {
+  background: linear-gradient(180deg, #ffffff 0%, #f7f4ff 100%);
+  border-color: #ece7fb;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 22px rgba(124, 92, 252, 0.06);
+}
+.stat-num {
+  background: linear-gradient(135deg, #7c5cfc 0%, #6366f1 60%, #38bdf8 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Section eyebrow chips read as gradient pills ──────── */
+.sec-head .eyebrow .badge-brand {
+  background: linear-gradient(120deg, #7c5cfc, #6366f1);
+  color: #fff; border-color: transparent;
+  box-shadow: 0 4px 12px rgba(124, 92, 252, 0.3);
+}
+
+/* ─── Guide cards: match the new card depth + accent ─────── */
+.guide-card { background: linear-gradient(180deg, #ffffff 0%, #fcfbff 100%); box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 4px 14px rgba(16,24,40,.05); }
+.guide-card:hover { box-shadow: 0 20px 44px rgba(124, 92, 252, 0.16); }
+.guide-card-icon { background: linear-gradient(135deg, #ede9fe, #d3c6fb); box-shadow: 0 6px 16px rgba(124, 92, 252, 0.16); }
+
+/* ─── Step numerals: gradient fill ──────────────────────── */
+.step-num { background: linear-gradient(135deg, #f1ecff, #e4dbfe); }
+
+/* ─── Soft tinted section dividers between white bands ───── */
+.section, .section-sm { position: relative; }
+
 /* ─── Reduced-motion: stop all decorative animation ─────── */
 @media (prefers-reduced-motion: reduce) {
   .text-gradient, .aurora, .marquee-track { animation: none !important; }
