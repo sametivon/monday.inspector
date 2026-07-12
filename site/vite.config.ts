@@ -13,8 +13,4 @@ export default defineConfig({
     outDir: resolve(__dirname, "../docs"),
     emptyOutDir: false, // keep hand-authored files we copy in via public/
   },
-  ssr: {
-    // three / R3F ship ESM that must be transformed for the SSG (Node) pass
-    noExternal: ["three", "@react-three/fiber", "@react-three/drei", "lenis", "gsap"],
-  },
 });
