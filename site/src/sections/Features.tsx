@@ -56,11 +56,11 @@ export default function Features() {
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mx-auto mb-16 max-w-2xl text-center"
+        className="mx-auto mb-10 max-w-2xl text-center"
       >
         <motion.span
           variants={revealUp}
-          className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur"
+          className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand"
         >
           Features
         </motion.span>

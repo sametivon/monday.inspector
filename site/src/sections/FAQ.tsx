@@ -15,7 +15,7 @@ function Item({ q, a }: { q: string; a: string }) {
   return (
     <motion.div
       variants={revealUp}
-      className="overflow-hidden rounded-2xl border border-hairline bg-white/70 backdrop-blur-sm"
+      className="overflow-hidden rounded-2xl border border-hairline bg-white/70"
     >
       <button
         onClick={() => setOpen((o) => !o)}
@@ -45,15 +45,15 @@ function Item({ q, a }: { q: string; a: string }) {
 export default function FAQ() {
   const entrance = useEntrance();
   return (
-    <section id="faq" className="relative mx-auto max-w-3xl px-6 py-24">
+    <section id="faq" className="relative mx-auto max-w-3xl px-6 py-14">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mb-12 text-center"
+        className="mb-10 text-center"
       >
-        <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur">
+        <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand">
           FAQ
         </motion.span>
         <motion.h2 variants={revealUp} className="font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-tight tracking-tightest text-ink">

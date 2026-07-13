@@ -14,7 +14,7 @@ const included = [
 export default function Pricing() {
   const entrance = useEntrance();
   return (
-    <section id="pricing" className="relative mx-auto max-w-3xl px-6 py-24">
+    <section id="pricing" className="relative mx-auto max-w-3xl px-6 py-14">
       <motion.div
         initial={entrance({ opacity: 0, y: 30 })}
         whileInView={{ opacity: 1, y: 0 }}

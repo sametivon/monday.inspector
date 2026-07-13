@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 
 /* ─────────────────────────────────────────────────────────────────────
    Hero product showcase: three floating "DevTools" panels running a
@@ -15,14 +15,17 @@ const STEP_MS = 1400;
 
 export default function DevHeroPanels() {
   const reduced = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  // Pause the loop (and its re-renders) whenever the hero is off-screen.
+  const onScreen = useInView(rootRef, { amount: 0.15 });
   // Reduced motion: park on a “everything visible” phase and never tick.
   const [phase, setPhase] = useState(reduced ? 5 : 0);
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !onScreen) return;
     const t = setInterval(() => setPhase((p) => (p + 1) % PHASES), STEP_MS);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, onScreen]);
 
   // pointer parallax
   const mx = useMotionValue(0);
@@ -49,7 +52,7 @@ export default function DevHeroPanels() {
   const exported = reduced || phase === 7;
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
+    <div ref={rootRef} aria-hidden className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
       {/* ── Left: Board / schema explorer ─────────────────────────── */}
       <motion.div
         style={{ x: lx, y: ly }}

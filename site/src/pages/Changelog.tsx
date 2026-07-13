@@ -84,7 +84,7 @@ export default function Changelog() {
             <div
               key={r.v}
               className={`rounded-3xl border border-hairline p-7 ${
-                r.latest ? "glass-panel" : "bg-white/60 backdrop-blur-sm"
+                r.latest ? "glass-panel" : "bg-white/75"
               }`}
             >
               <div className="mb-1 flex flex-wrap items-center gap-3">

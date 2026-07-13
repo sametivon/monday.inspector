@@ -62,7 +62,7 @@ export default function GuidePage({ slug }: { slug: string }) {
         ))}
       </Head>
 
-      <div className="px-6 pb-24 pt-36 sm:pt-40">
+      <div className="px-6 pb-16 pt-32 sm:pt-36">
         <motion.header
           variants={stagger(0.08)}
           initial={entrance("hidden")}
@@ -76,7 +76,7 @@ export default function GuidePage({ slug }: { slug: string }) {
           </motion.div>
           <motion.span
             variants={revealUp}
-            className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur"
+            className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand"
           >
             Guide
           </motion.span>
@@ -110,7 +110,7 @@ export default function GuidePage({ slug }: { slug: string }) {
 
           {toc.length > 0 && (
             <aside className="hidden lg:block">
-              <nav className="sticky top-28 rounded-2xl border border-hairline bg-white/70 p-5 backdrop-blur-sm">
+              <nav className="sticky top-28 rounded-2xl border border-hairline bg-white/70 p-5">
                 <div className="mb-3 text-[11px] font-bold uppercase tracking-wider text-muted">On this page</div>
                 <ol className="flex flex-col gap-2">
                   {toc.map((t, i) => (
