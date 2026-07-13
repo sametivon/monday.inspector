@@ -1,0 +1,66 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="assets.css">
+<style>
+  html,body { width:1280px; height:800px; }
+  body { padding:52px 72px; display:flex; flex-direction:column; justify-content:center; }
+  .head { display:flex; align-items:flex-start; justify-content:space-between; }
+  h1 { font-size:44px; font-weight:800; line-height:1.08; }
+  .sub { font-size:17px; margin-top:10px; }
+  .stage { position:relative; margin-top:34px; }
+  .win { width:1010px; margin:0 auto; }
+  .grid { display:grid; grid-template-columns:170px 1fr 360px; }
+  .rail { border-right:1px solid rgba(120,140,170,.14); padding:14px 10px; background:rgba(255,255,255,.6); }
+  .tab { padding:9px 13px; border-radius:9px; font-size:13.5px; color:#66758a; font-weight:500; margin-bottom:3px; }
+  .tab.on { background:#eef6ff; color:#17212d; font-weight:700; }
+  .conn { margin-top:14px; background:#eaf8f2; color:#0f9e64; font-size:10.5px; padding:7px 9px; border-radius:9px; font-weight:600; }
+  .main { padding:16px 18px; }
+  .search { display:flex; align-items:center; gap:8px; border:1px solid rgba(120,140,170,.18); background:#fff;
+    border-radius:11px; padding:9px 13px; font-size:13px; color:#17212d; margin-bottom:12px; }
+  .side { border-left:1px solid rgba(120,140,170,.14); padding:16px; }
+  .side h4 { font-size:12px; margin-bottom:9px; display:flex; }
+  .float { position:absolute; }
+</style></head><body>
+  <div class="head">
+    <div>
+      <h1 class="display">The DevTools <span class="grad-text">for monday.com</span></h1>
+      <div class="sub muted">Inspect boards, run GraphQL, import, bulk-update and export — right inside monday.com.</div>
+    </div>
+    <span class="chip"><span class="dot"></span>Free · Open source · No account</span>
+  </div>
+  <div class="stage">
+    <div class="window win">
+      <div class="winbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="url mono">monday.com › Inspector</span></div>
+      <div class="grid">
+        <div class="rail">
+          <div class="tab">Schema</div><div class="tab">Items</div><div class="tab on">Import</div><div class="tab">Query</div><div class="tab">Actions</div>
+          <div class="conn">● Connected · 6 boards</div>
+        </div>
+        <div class="main">
+          <div class="search">🔎&nbsp; market<span style="color:#3e7bfa">▍</span></div>
+          <table class="tbl">
+            <tr><th>Board</th><th>Status</th><th style="text-align:right">Items</th></tr>
+            <tr style="background:#eef6ff"><td><b>Marketing Plan</b> <span class="badge-brand" style="font-size:9px;padding:2px 8px">selected</span></td>
+              <td><span class="status"><i style="background:#3e7bfa"></i><span class="muted">Working on it</span></span></td><td class="mono" style="text-align:right">183</td></tr>
+            <tr><td>Market Research</td><td><span class="status"><i style="background:#12b76a"></i><span class="muted">Done</span></span></td><td class="mono" style="text-align:right">58</td></tr>
+            <tr><td>Sales Pipeline</td><td><span class="status"><i style="background:#12b76a"></i><span class="muted">Done</span></span></td><td class="mono" style="text-align:right">421</td></tr>
+            <tr><td>Q1 Roadmap</td><td><span class="status"><i style="background:#f04438"></i><span class="muted">Stuck</span></span></td><td class="mono" style="text-align:right">67</td></tr>
+          </table>
+        </div>
+        <div class="side">
+          <h4>Board detail <span class="badge-mint" style="margin-left:auto;font-size:10px;padding:3px 10px">✓ id copied</span></h4>
+          <div class="dark mono">{<br>
+            &nbsp;&nbsp;<span class="k">"id"</span>: <span class="n">5098431200</span>,<br>
+            &nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"Marketing Plan"</span>,<br>
+            &nbsp;&nbsp;<span class="k">"groups"</span>: [<span class="s">"Q1"</span>, <span class="s">"Q2"</span>],<br>
+            &nbsp;&nbsp;<span class="k">"columns"</span>: <span class="v">14</span>,<br>
+            &nbsp;&nbsp;<span class="k">"subitem_board"</span>: <span class="n">5098431217</span><br>}
+          </div>
+          <div class="panel" style="margin-top:12px;padding:10px 12px;display:flex;align-items:center;gap:9px">
+            <span class="badge-mint" style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%">✓</span>
+            <div><div style="font-size:12px;font-weight:700">Export complete</div>
+            <div class="mono muted" style="font-size:10px">183 rows → CSV</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body></html>

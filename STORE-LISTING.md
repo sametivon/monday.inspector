@@ -147,6 +147,21 @@ https://mondayinspector.eu/privacy.html
 
 ---
 
+## Graphic assets (ready to upload — `store-assets/out/`)
+| Asset | File | Size |
+|---|---|---|
+| Store icon | `store-icon-128.png` | 128×128 |
+| Screenshot 1 — overview | `screenshot-1-overview-1280x800.png` | 1280×800 |
+| Screenshot 2 — import subitems | `screenshot-2-import-1280x800.png` | 1280×800 |
+| Screenshot 3 — GraphQL | `screenshot-3-graphql-1280x800.png` | 1280×800 |
+| Screenshot 4 — schema + bulk | `screenshot-4-schema-1280x800.png` | 1280×800 |
+| Screenshot 5 — Excel images | `screenshot-5-images-1280x800.png` | 1280×800 |
+| Small promo tile | `promo-small-440x280.png` | 440×280 |
+| Marquee promo tile | `promo-marquee-1400x560.png` | 1400×560 |
+
+All 24-bit RGB (no alpha). Sources are HTML art-boards in `store-assets/src/` —
+edit and re-render with `bash store-assets/build.sh`.
+
 ## Pre-submit checklist
 - [ ] Upload `monday-inspector-v1.6.4.zip` (manifest at root, description ≤132 chars)
 - [ ] Paste Summary + Detailed description
