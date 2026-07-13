@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="relative mt-10 overflow-hidden">
+    <footer className="relative overflow-hidden">
       <div
         className="absolute inset-0 -z-10"
         style={{
@@ -8,8 +8,8 @@ export default function Footer() {
             "radial-gradient(60% 120% at 50% 0%, #EEF6FF 0%, transparent 60%), #FAFBFC",
         }}
       />
-      <div className="mx-auto max-w-6xl px-6 py-20">
-        <div className="glass rounded-3xl px-8 py-14 text-center">
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="glass rounded-3xl px-8 py-10 text-center">
           <h2 className="font-display text-[clamp(1.75rem,3.5vw,2.75rem)] font-extrabold tracking-tightest text-ink">
             Stop fighting monday.com&apos;s limits
           </h2>
@@ -30,7 +30,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-hairline pt-8 text-[13px] text-muted sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-hairline pt-6 text-[13px] text-muted sm:flex-row">
           <div className="flex items-center gap-2">
             <img src="/icon.png" alt="" className="h-6 w-6 rounded-md" />
             <span className="font-display font-bold text-ink">

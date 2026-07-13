@@ -11,7 +11,7 @@ const stats = [
 export default function Credibility() {
   const entrance = useEntrance();
   return (
-    <section className="relative mx-auto max-w-6xl px-6 py-14">
+    <section className="relative mx-auto max-w-6xl px-6 py-10">
       <motion.div
         initial={entrance({ opacity: 0, y: 30 })}
         whileInView={{ opacity: 1, y: 0 }}

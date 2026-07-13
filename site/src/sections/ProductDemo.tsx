@@ -48,13 +48,13 @@ export default function ProductDemo() {
   const rows = filtered ? BOARDS.filter((b) => b.match) : BOARDS;
 
   return (
-    <section ref={sectionRef} id="demo" className="relative mx-auto max-w-6xl px-6 py-14">
+    <section ref={sectionRef} id="demo" className="relative mx-auto max-w-6xl px-6 py-10">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mx-auto mb-10 max-w-2xl text-center"
+        className="mx-auto mb-8 max-w-2xl text-center"
       >
         <motion.span
           variants={revealUp}

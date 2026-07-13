@@ -45,13 +45,13 @@ function Item({ q, a }: { q: string; a: string }) {
 export default function FAQ() {
   const entrance = useEntrance();
   return (
-    <section id="faq" className="relative mx-auto max-w-3xl px-6 py-14">
+    <section id="faq" className="relative mx-auto max-w-3xl px-6 py-10">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mb-10 text-center"
+        className="mb-8 text-center"
       >
         <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand">
           FAQ

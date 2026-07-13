@@ -23,13 +23,13 @@ const solutions = [
 export default function ProblemSolution() {
   const entrance = useEntrance();
   return (
-    <section className="relative mx-auto max-w-6xl px-6 py-14">
+    <section className="relative mx-auto max-w-6xl px-6 py-10">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mx-auto mb-10 max-w-2xl text-center"
+        className="mx-auto mb-8 max-w-2xl text-center"
       >
         <motion.h2
           variants={revealUp}
