@@ -18,7 +18,7 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section ref={ref} className="relative overflow-hidden pt-32 pb-14 sm:pt-40">
+    <section ref={ref} className="relative overflow-hidden pt-28 pb-8 sm:pt-36">
       <motion.div style={{ y, opacity }} className="relative z-10 mx-auto max-w-5xl px-6 text-center">
         <motion.div
           initial={entrance({ opacity: 0, y: 12, filter: "blur(6px)" })}
