@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="assets.css">
+<style>
+  html,body { width:1280px; height:800px; }
+  body { padding:52px 72px; display:flex; flex-direction:column; justify-content:center; }
+  h1 { font-size:42px; font-weight:800; line-height:1.08; }
+  .sub { font-size:17px; margin-top:10px; }
+  .win { width:960px; margin:32px auto 0; }
+  .inner { padding:22px 26px; }
+  .steps { display:flex; gap:8px; margin-bottom:18px; }
+  .step { font-size:12px; font-weight:600; color:#66758a; padding:7px 14px; border-radius:999px; background:#f4f7fb; }
+  .step.on { background:linear-gradient(120deg,#3e7bfa,#6161ff); color:#fff; }
+  .filech { display:flex; align-items:center; gap:12px; border:1px solid rgba(120,140,170,.16); border-radius:12px; padding:12px 16px; background:#fff; margin-bottom:14px; }
+  .map { border:1px solid rgba(120,140,170,.16); border-radius:12px; overflow:hidden; }
+  .mrow { display:grid; grid-template-columns:180px 30px 1fr 110px; align-items:center; padding:10px 16px; border-top:1px solid rgba(120,140,170,.1); font-size:13px; background:#fff; }
+  .mrow:first-child { border-top:0; }
+  .pillcol { background:#f4f7fb; border-radius:8px; padding:6px 10px; font-size:12px; width:fit-content; }
+  .m { text-align:center; font-size:11px; padding:3px 0; }
+  .prog { margin-top:16px; }
+  .bar { height:9px; border-radius:6px; background:#ddeeff; overflow:hidden; }
+  .bar i { display:block; height:100%; width:73%; background:linear-gradient(90deg,#3e7bfa,#6161ff); border-radius:6px; }
+</style></head><body>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div><h1 class="display">Import <span class="grad-text">subitems</span> monday.com can't</h1>
+    <div class="sub muted">Parents + subitems from one CSV or Excel file — groups preserved, no row limits.</div></div>
+    <span class="chip"><span class="dot"></span>Smart error recovery</span>
+  </div>
+  <div class="window win">
+    <div class="winbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="url mono">Inspector › Import</span></div>
+    <div class="inner">
+      <div class="steps"><span class="step">1 · Upload</span><span class="step">2 · Detect</span><span class="step on">3 · Map columns</span><span class="step">4 · Import</span></div>
+      <div class="filech">📄 <div><div style="font-size:13.5px;font-weight:700">monday_export.xlsx</div>
+        <div class="muted" style="font-size:11px">142 rows · groups + parents + subitems detected</div></div>
+        <span class="badge-brand" style="margin-left:auto;font-size:10.5px;padding:5px 12px">Monday export</span></div>
+      <div class="map">
+        <div class="mrow"><b>Status</b><span class="muted">→</span><span class="pillcol">Status</span><span class="badge-mint m">matched</span></div>
+        <div class="mrow"><b>Assignee</b><span class="muted">→</span><span class="pillcol">People</span><span class="badge-mint m">matched</span></div>
+        <div class="mrow"><b>Due date</b><span class="muted">→</span><span class="pillcol">Timeline</span><span class="badge-mint m">matched</span></div>
+        <div class="mrow"><b>Subitem name</b><span class="muted">→</span><span class="pillcol">Subitems › Name</span><span class="badge-mint m">matched</span></div>
+      </div>
+      <div class="prog">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+          <b style="color:#2f6bed">73% — importing…</b><span class="mono muted">104 / 142 · ~38s left</span></div>
+        <div class="bar"><i></i></div>
+        <div class="muted" style="font-size:11.5px;margin-top:7px">✓ 104 created · 0 failed · failures stay visible as they happen</div>
+      </div>
+    </div>
+  </div>
+</body></html>

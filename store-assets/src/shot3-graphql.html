@@ -1,0 +1,69 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="assets.css">
+<style>
+  html,body { width:1280px; height:800px; }
+  body { padding:52px 72px; display:flex; flex-direction:column; justify-content:center; }
+  h1 { font-size:42px; font-weight:800; line-height:1.08; }
+  .sub { font-size:17px; margin-top:10px; }
+  .win { width:1030px; margin:32px auto 0; }
+  .grid { display:grid; grid-template-columns:200px 1fr 1fr; }
+  .rail { border-right:1px solid rgba(120,140,170,.14); background:rgba(255,255,255,.6); padding:14px 12px; }
+  .cat { font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:#9aa6b8; font-weight:700; margin:10px 4px 5px; }
+  .tpl { font-size:12px; color:#66758a; padding:7px 10px; border-radius:8px; }
+  .tpl.on { background:#eef6ff; color:#17212d; font-weight:600; border:1px solid #ddeeff; }
+  .qcol { border-right:1px solid rgba(120,140,170,.14); padding:14px; }
+  .qbar { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+  .run { background:linear-gradient(120deg,#3e7bfa,#6161ff); color:#fff; border-radius:8px; padding:6px 13px; font-size:12px; font-weight:700; }
+  .rescol { padding:14px; }
+  .tabs { display:flex; gap:7px; font-size:11px; margin-bottom:9px; }
+  .t { padding:5px 12px; border-radius:999px; color:#66758a; }
+  .t.on { background:#eef6ff; color:#2f6bed; font-weight:700; }
+  .meter { margin-top:11px; font-size:11px; }
+  .mbar { height:6px; border-radius:4px; background:#f4f7fb; margin-top:5px; overflow:hidden; }
+  .mbar i { display:block; height:100%; width:24%; background:linear-gradient(90deg,#12b76a,#3e7bfa); }
+</style></head><body>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div><h1 class="display">A real <span class="grad-text">GraphQL workspace</span></h1>
+    <div class="sub muted">14 templates, saved queries, table + JSON results and a complexity meter — no code required.</div></div>
+    <span class="chip"><span class="dot"></span>monday API 2026-04</span>
+  </div>
+  <div class="window win">
+    <div class="winbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="url mono">Inspector › Query</span></div>
+    <div class="grid">
+      <div class="rail">
+        <div class="cat">Templates · 14</div>
+        <div class="cat">Boards</div>
+        <div class="tpl on">List all my boards</div>
+        <div class="tpl">Board schema</div>
+        <div class="tpl">Multi-level boards</div>
+        <div class="cat">Items</div>
+        <div class="tpl">Find overdue items</div>
+        <div class="tpl">Items by status</div>
+      </div>
+      <div class="qcol">
+        <div class="qbar"><span class="run">▶ Run query</span><span class="chip" style="padding:4px 11px;font-size:11px">💾 Save</span>
+          <span class="badge-mint" style="margin-left:auto;font-size:10px;padding:4px 10px">200 · 88 ms</span></div>
+        <div class="dark mono" style="font-size:12.5px">
+          <span class="kw">query</span> ListBoards {<br>
+          &nbsp;&nbsp;<span class="k">boards</span>(limit: <span class="n">200</span>) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;id<br>&nbsp;&nbsp;&nbsp;&nbsp;name<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;items_count<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="k">groups</span> { id title }<br>
+          &nbsp;&nbsp;}<br>}
+        </div>
+        <div class="meter"><span class="muted">Complexity budget</span><span class="mono" style="float:right;color:#0f9e64">4 820 / 5 000 000</span>
+          <div class="mbar"><i></i></div></div>
+      </div>
+      <div class="rescol">
+        <div class="tabs"><span class="t on">Table · 42</span><span class="t">JSON</span><span class="t" style="margin-left:auto">⬇ CSV</span></div>
+        <table class="tbl">
+          <tr><th>id</th><th>name</th><th>items</th></tr>
+          <tr><td class="mono">1234</td><td>Marketing Plan</td><td class="mono">183</td></tr>
+          <tr><td class="mono">1235</td><td>Sales Pipeline</td><td class="mono">421</td></tr>
+          <tr><td class="mono">1236</td><td>Q1 Roadmap</td><td class="mono">67</td></tr>
+          <tr><td class="mono">1237</td><td>Design System</td><td class="mono">112</td></tr>
+          <tr><td class="mono">1238</td><td>Customer Research</td><td class="mono">58</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</body></html>

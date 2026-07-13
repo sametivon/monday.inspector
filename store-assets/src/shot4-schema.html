@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="assets.css">
+<style>
+  html,body { width:1280px; height:800px; }
+  body { padding:52px 72px; display:flex; flex-direction:column; justify-content:center; }
+  h1 { font-size:42px; font-weight:800; line-height:1.08; }
+  .sub { font-size:17px; margin-top:10px; }
+  .row { display:flex; gap:26px; justify-content:center; margin-top:32px; align-items:flex-start; }
+  .win { width:600px; }
+  .inner { padding:16px 18px; }
+  .srow { display:grid; grid-template-columns:1fr 140px 130px 84px; align-items:center; padding:9px 12px; border-top:1px solid rgba(120,140,170,.1); font-size:13px; background:#fff; }
+  .srow:first-of-type { border-top:0; }
+  .srow.hl { background:#eef6ff; }
+  .type { background:#f4f7fb; border-radius:7px; padding:4px 10px; font-size:11px; width:fit-content; }
+  .copy { font-size:10px; padding:3px 10px; text-align:center; }
+  .bulk { width:330px; }
+  .bulk .inner { padding:18px; }
+  .fld { border:1px solid rgba(120,140,170,.16); border-radius:10px; padding:9px 13px; font-size:13px; background:#fff; margin-bottom:9px; display:flex; justify-content:space-between; align-items:center; }
+  .apply { display:block; text-align:center; color:#fff; font-weight:700; font-size:13.5px; border-radius:10px; padding:11px;
+    background:linear-gradient(120deg,#3e7bfa,#6161ff); box-shadow:0 8px 22px rgba(62,123,250,.3); }
+</style></head><body>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div><h1 class="display">X-ray the <span class="grad-text">schema</span>. Fix in bulk.</h1>
+    <div class="sub muted">Every column id, type and setting — one click to copy. Then update hundreds of items at once.</div></div>
+    <span class="chip"><span class="dot"></span>Parents &amp; subitems</span>
+  </div>
+  <div class="row">
+    <div class="window win">
+      <div class="winbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="url mono">Inspector › Schema · board 5098431200</span></div>
+      <div class="inner">
+        <div class="srow" style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#66758a;font-weight:700;background:#f4f7fb;border-radius:9px 9px 0 0"><span>Column</span><span>id</span><span>type</span><span></span></div>
+        <div class="srow"><b>Status</b><span class="mono muted">status</span><span class="type">color</span><span class="copy badge-brand">copy</span></div>
+        <div class="srow hl"><b>Owner</b><span class="mono muted">person</span><span class="type">multiple-person</span><span class="copy badge-mint">✓ copied</span></div>
+        <div class="srow"><b>Due date</b><span class="mono muted">date4</span><span class="type">date</span><span class="copy badge-brand">copy</span></div>
+        <div class="srow"><b>Timeline</b><span class="mono muted">timeline</span><span class="type">timerange</span><span class="copy badge-brand">copy</span></div>
+        <div class="srow"><b>Budget</b><span class="mono muted">numbers</span><span class="type">numeric</span><span class="copy badge-brand">copy</span></div>
+        <div class="srow" style="color:#66758a"><span>▸ Subitems — 4 columns</span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+    <div class="window bulk">
+      <div class="winbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="url mono">Bulk update</span></div>
+      <div class="inner">
+        <div class="muted" style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px">260 items selected</div>
+        <div class="fld"><span>Column</span><b>Status</b></div>
+        <div class="fld"><span>New value</span><span class="status"><i style="background:#12b76a"></i><b>Done</b></span></div>
+        <a class="apply">Update 260 items →</a>
+        <div class="badge-mint" style="margin-top:10px;text-align:center;font-size:11px;padding:7px">✓ parents + subitems supported</div>
+      </div>
+    </div>
+  </div>
+</body></html>

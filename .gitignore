@@ -13,3 +13,4 @@ Thumbs.db
 *.tsbuildinfo
 landing/email-sequences.md
 video/
+store-assets/.render/

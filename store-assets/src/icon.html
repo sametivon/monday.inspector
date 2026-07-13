@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; }
+  html,body { width:512px; height:512px; background:#ffffff; overflow:hidden; }
+  .tile {
+    position:absolute; inset:16px; border-radius:112px;
+    background:
+      radial-gradient(120% 120% at 18% 8%, #5b8dfc 0%, #3e7bfa 42%, #6161ff 100%);
+    box-shadow: inset 0 3px 0 rgba(255,255,255,.28), inset 0 -10px 30px rgba(20,30,90,.22);
+  }
+  svg { position:absolute; inset:0; }
+</style></head><body>
+<div class="tile"></div>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <!-- board rows revealed inside the lens -->
+  <g>
+    <circle cx="232" cy="232" r="118" fill="rgba(255,255,255,.16)"/>
+    <rect x="164" y="180" width="136" height="26" rx="13" fill="#ffffff" opacity=".95"/>
+    <rect x="164" y="219" width="100" height="26" rx="13" fill="#ffffff" opacity=".62"/>
+    <rect x="164" y="258" width="118" height="26" rx="13" fill="#ffffff" opacity=".38"/>
+  </g>
+  <!-- magnifier -->
+  <circle cx="232" cy="232" r="118" stroke="#ffffff" stroke-width="30"/>
+  <line x1="318" y1="318" x2="398" y2="398" stroke="#ffffff" stroke-width="42" stroke-linecap="round"/>
+</svg>
+</body></html>
