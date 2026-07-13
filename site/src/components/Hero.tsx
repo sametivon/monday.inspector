@@ -18,13 +18,13 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section ref={ref} className="relative overflow-hidden pt-36 pb-24 sm:pt-44">
+    <section ref={ref} className="relative overflow-hidden pt-32 pb-14 sm:pt-40">
       <motion.div style={{ y, opacity }} className="relative z-10 mx-auto max-w-5xl px-6 text-center">
         <motion.div
           initial={entrance({ opacity: 0, y: 12, filter: "blur(6px)" })}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ ...spring, delay: 0.3 }}
-          className="mx-auto mb-7 inline-flex items-center gap-2 rounded-full border border-hairline bg-white/60 px-3.5 py-1.5 text-[12.5px] font-medium text-muted backdrop-blur"
+          className="mx-auto mb-7 inline-flex items-center gap-2 rounded-full border border-hairline bg-white/60 px-3.5 py-1.5 text-[12.5px] font-medium text-muted"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-brand" />
           Free · Open source · v1.6.4

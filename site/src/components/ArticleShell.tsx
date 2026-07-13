@@ -23,7 +23,7 @@ export default function ArticleShell({
 }) {
   const entrance = useEntrance();
   return (
-    <div className="px-6 pb-24 pt-36 sm:pt-40">
+    <div className="px-6 pb-16 pt-32 sm:pt-36">
       <motion.header
         variants={stagger(0.08)}
         initial={entrance("hidden")}
@@ -33,7 +33,7 @@ export default function ArticleShell({
         {badge && (
           <motion.span
             variants={revealUp}
-            className="mb-5 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur"
+            className="mb-5 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand"
           >
             {badge}
           </motion.span>

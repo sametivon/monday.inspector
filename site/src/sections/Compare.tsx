@@ -37,15 +37,15 @@ function Cell({ v }: { v: boolean | string }) {
 export default function Compare() {
   const entrance = useEntrance();
   return (
-    <section id="compare" className="relative mx-auto max-w-4xl px-6 py-24">
+    <section id="compare" className="relative mx-auto max-w-4xl px-6 py-14">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mx-auto mb-12 max-w-2xl text-center"
+        className="mx-auto mb-10 max-w-2xl text-center"
       >
-        <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur">
+        <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand">
           Compare
         </motion.span>
         <motion.h2 variants={revealUp} className="font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-tight tracking-tightest text-ink">

@@ -11,7 +11,7 @@ const stats = [
 export default function Credibility() {
   const entrance = useEntrance();
   return (
-    <section className="relative mx-auto max-w-6xl px-6 py-24">
+    <section className="relative mx-auto max-w-6xl px-6 py-14">
       <motion.div
         initial={entrance({ opacity: 0, y: 30 })}
         whileInView={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export default function Credibility() {
             <motion.div
               key={s.l}
               variants={scaleIn}
-              className="rounded-2xl border border-hairline bg-white/70 p-6 text-center backdrop-blur-sm"
+              className="rounded-2xl border border-hairline bg-white/70 p-6 text-center"
             >
               <div
                 className="font-display text-[1.9rem] font-extrabold tracking-tight"
@@ -87,7 +87,7 @@ export default function Credibility() {
             <motion.div
               key={t}
               variants={scaleIn}
-              className="flex items-start gap-3 rounded-2xl border border-hairline bg-white/70 p-5 backdrop-blur-sm"
+              className="flex items-start gap-3 rounded-2xl border border-hairline bg-white/70 p-5"
             >
               <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface text-brand">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">

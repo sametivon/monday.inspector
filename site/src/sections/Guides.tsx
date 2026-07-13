@@ -13,15 +13,15 @@ const guides = [
 export default function Guides() {
   const entrance = useEntrance();
   return (
-    <section id="guides" className="relative mx-auto max-w-6xl px-6 py-24">
+    <section id="guides" className="relative mx-auto max-w-6xl px-6 py-14">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mx-auto mb-14 max-w-2xl text-center"
+        className="mx-auto mb-10 max-w-2xl text-center"
       >
-        <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur">
+        <motion.span variants={revealUp} className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand">
           Guides
         </motion.span>
         <motion.h2 variants={revealUp} className="font-display text-[clamp(2rem,4vw,3rem)] font-extrabold leading-tight tracking-tightest text-ink">
@@ -43,7 +43,7 @@ export default function Guides() {
             variants={scaleIn}
             whileHover={{ y: -6 }}
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
-            className="group flex items-start gap-4 rounded-3xl border border-hairline bg-white/70 p-6 shadow-soft backdrop-blur-sm"
+            className="group flex items-start gap-4 rounded-3xl border border-hairline bg-white/70 p-6 shadow-soft"
           >
             <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface text-xl transition-transform group-hover:scale-110">
               {g.icon}

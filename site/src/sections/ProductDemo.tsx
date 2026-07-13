@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { revealUp, stagger, inView, useEntrance } from "@/lib/motion";
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -25,14 +25,17 @@ const LAST_PHASE = 13;
 export default function ProductDemo() {
   const entrance = useEntrance();
   const reduced = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  // Run the loop only while the section is actually on screen.
+  const onScreen = useInView(sectionRef, { amount: 0.2 });
   const [phase, setPhase] = useState(reduced ? 10 : 0);
 
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !onScreen) return;
     // Typing phases tick fast; inspect/export phases linger.
     const t = setInterval(() => setPhase((p) => (p + 1) % LAST_PHASE), 1150);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, onScreen]);
 
   const typed = reduced ? QUERY : QUERY.slice(0, Math.max(0, Math.min(phase, 6)));
   const filtered = reduced || phase >= 7;
@@ -45,17 +48,17 @@ export default function ProductDemo() {
   const rows = filtered ? BOARDS.filter((b) => b.match) : BOARDS;
 
   return (
-    <section id="demo" className="relative mx-auto max-w-6xl px-6 py-24">
+    <section ref={sectionRef} id="demo" className="relative mx-auto max-w-6xl px-6 py-14">
       <motion.div
         variants={stagger(0.08)}
         initial={entrance("hidden")}
         whileInView="show"
         viewport={inView}
-        className="mx-auto mb-14 max-w-2xl text-center"
+        className="mx-auto mb-10 max-w-2xl text-center"
       >
         <motion.span
           variants={revealUp}
-          className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand backdrop-blur"
+          className="mb-4 inline-block rounded-full bg-white/70 px-3 py-1 text-[12px] font-semibold uppercase tracking-wider text-brand"
         >
           See it in action
         </motion.span>

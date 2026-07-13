@@ -39,7 +39,7 @@ export default function TiltCard({
       style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
       whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      className={`group relative overflow-hidden rounded-3xl border border-hairline bg-white/80 p-6 shadow-soft backdrop-blur-sm transition-shadow hover:shadow-lift ${className}`}
+      className={`group relative overflow-hidden rounded-3xl border border-hairline bg-white/80 p-6 shadow-soft transition-shadow hover:shadow-lift ${className}`}
     >
       {/* moving light reflection */}
       <motion.div

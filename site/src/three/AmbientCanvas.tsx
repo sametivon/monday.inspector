@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 /* The actual WebGL layer. Imported lazily (client-only) so R3F/three/zustand
@@ -73,9 +73,18 @@ function GradientPlane() {
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
-  useFrame((_, delta) => {
-    uniforms.current.u_time.value += delta;
-  });
+  // Demand-mode rendering throttled to ~30fps: the gradient drifts too
+  // slowly for 60fps to be visible, and halving the render rate halves
+  // the GPU cost under every glass surface. Skips ticks on hidden tabs.
+  const { invalidate } = useThree();
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (document.hidden) return;
+      uniforms.current.u_time.value += 1 / 30;
+      invalidate();
+    }, 1000 / 30);
+    return () => clearInterval(id);
+  }, [invalidate]);
 
   return (
     <mesh>
@@ -95,10 +104,10 @@ export default function AmbientCanvas() {
     <Canvas
       className="!absolute inset-0"
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      dpr={[1, 1.75]}
+      dpr={[1, 1.25]}
       orthographic
       camera={{ position: [0, 0, 1], zoom: 1 }}
-      frameloop="always"
+      frameloop="demand"
     >
       <GradientPlane />
     </Canvas>
