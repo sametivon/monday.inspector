@@ -14,15 +14,15 @@
     <title>Monday.com Inspector — the tools monday.com is missing</title>
 
     <!-- Google Analytics 4 — ONE property across all shift-tab lab sites.
-         Replace G-XXXXXXXXXX with the real Measurement ID (GA Admin →
-         Data Streams). The same ID goes on shift-tab.eu so cross-domain
+         Measurement ID for the "All Studio Sites" stream (GA property:
+         shift-tab lab — all sites). Same ID on shift-tab.eu so cross-domain
          journeys (guide → hub → store) stitch into one session. -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5LSN4LBE71"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
       gtag("js", new Date());
-      gtag("config", "G-XXXXXXXXXX", {
+      gtag("config", "G-5LSN4LBE71", {
         // stitch sessions across the studio's domains
         linker: { domains: ["mondayinspector.eu", "shift-tab.eu", "mondayvirtual.eu"] },
       });
