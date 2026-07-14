@@ -8,8 +8,8 @@ export const BRAND = {
   website: "https://mondayinspector.eu",
   guidesUrl: "https://mondayinspector.eu/#guides",
   chromeStoreUrl: "https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg",
-  email: "hello@shift-tab.eu",
-  contactUrl: "mailto:hello@shift-tab.eu",
+  email: "hello-shift-tab@proton.me",
+  contactUrl: "mailto:hello-shift-tab@proton.me",
   buyMeACoffeeUrl: "https://buymeacoffee.com/sametivon",
 } as const;
 

@@ -103,13 +103,13 @@ MADE IN THE SHIFT-TAB LAB
 
 Monday.com Inspector is built by shift-tab lab — an independent software studio making tools for people who know their shortcuts. Explore the other products: https://shift-tab.eu
 
-Need custom monday.com tooling, automations or AI workflows for your team? The lab takes on a small number of client builds: hello@shift-tab.eu
+Need custom monday.com tooling, automations or AI workflows for your team? The lab takes on a small number of client builds: hello-shift-tab@proton.me
 
 
 SUPPORT
 
 • Website & guides: https://mondayinspector.eu
 • Report bugs: https://github.com/sametivon/monday.inspector/issues
-• Contact: hello@shift-tab.eu
+• Contact: hello-shift-tab@proton.me
 
 If this tool saves you time, consider buying me a coffee: https://buymeacoffee.com/sametivon

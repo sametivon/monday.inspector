@@ -125,7 +125,7 @@ For bug reports and feature requests, please use [GitHub Issues](https://github.
 
 ## Made in the shift-tab lab
 
-Built by [Sam](https://www.linkedin.com/in/sametivon/) @ [shift-tab lab](https://shift-tab.eu) — an independent software studio making tools for people who know their shortcuts. Need custom monday.com tooling, automations or AI workflows? Write to [hello@shift-tab.eu](mailto:hello@shift-tab.eu).
+Built by [Sam](https://www.linkedin.com/in/sametivon/) @ [shift-tab lab](https://shift-tab.eu) — an independent software studio making tools for people who know their shortcuts. Need custom monday.com tooling, automations or AI workflows? Write to [hello-shift-tab@proton.me](mailto:hello-shift-tab@proton.me).
 
 If you find this tool useful, consider supporting the development:
 
