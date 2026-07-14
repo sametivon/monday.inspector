@@ -123,9 +123,9 @@ For bug reports and feature requests, please use [GitHub Issues](https://github.
 
 ---
 
-## Built by Sam @ Fruition Services
+## Made in the shift-tab lab
 
-Built by [Sam](https://www.linkedin.com/in/sametivon/) @ [Fruition Services](https://www.fruitionservices.io) — Platinum monday.com consulting partner with 500+ implementations across Australia, US, and UK. Need help with monday.com implementation, CRM setup, workflow automation, or team training? [Book a consultation](https://calendly.com/sam-fruitionservices/30min).
+Built by [Sam](https://www.linkedin.com/in/sametivon/) @ [shift-tab lab](https://shift-tab.eu) — an independent software studio making tools for people who know their shortcuts. Need custom monday.com tooling, automations or AI workflows? Write to [hello@shift-tab.eu](mailto:hello@shift-tab.eu).
 
 If you find this tool useful, consider supporting the development:
 

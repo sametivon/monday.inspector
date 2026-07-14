@@ -18,7 +18,7 @@ export const Footer: React.FC = () => (
         </a>
         {" @ "}
         <a
-          href={BRAND.website}
+          href={BRAND.companyUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="font-semibold text-foreground/70 hover:text-primary transition-colors"
@@ -28,30 +28,28 @@ export const Footer: React.FC = () => (
       </p>
       <nav className="flex items-center gap-1 text-xs">
         <a
-          href={BRAND.website}
+          href={BRAND.companyUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline px-1.5 py-0.5 rounded transition-colors hover:bg-accent"
         >
-          Fruition Services
+          shift-tab lab
         </a>
         <span className="text-muted-foreground/40">·</span>
         <a
-          href={BRAND.consultationUrl}
+          href={BRAND.guidesUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline px-1.5 py-0.5 rounded transition-colors hover:bg-accent"
         >
-          Book a Consultation
+          Guides
         </a>
         <span className="text-muted-foreground/40">·</span>
         <a
-          href={BRAND.servicesUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={BRAND.contactUrl}
           className="text-primary hover:underline px-1.5 py-0.5 rounded transition-colors hover:bg-accent"
         >
-          Our Services
+          Contact
         </a>
       </nav>
       <Button asChild variant="outline" size="sm" className="bg-[#ffdd00] border-[#ffdd00] text-[#1a1a2e] hover:bg-[#ffe94a] hover:border-[#ffe94a] hover:text-[#1a1a2e] font-semibold shadow-sm">

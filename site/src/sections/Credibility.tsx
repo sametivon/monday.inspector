@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { revealUp, scaleIn, stagger, inView, useEntrance } from "@/lib/motion";
 
 const stats = [
-  { k: "Platinum", l: "monday.com Partner" },
-  { k: "500+", l: "implementations delivered" },
+  { k: "18+", l: "column types supported" },
+  { k: "14", l: "GraphQL query templates" },
   { k: "0", l: "servers see your data" },
   { k: "Free", l: "open source, forever" },
 ];
@@ -29,11 +29,11 @@ export default function Credibility() {
             Built by people who live in monday.com
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-[1.02rem] leading-relaxed text-muted">
-            Crafted by{" "}
-            <a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand">
-              Fruition Services
+            Made in the{" "}
+            <a href="https://shift-tab.eu" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand">
+              shift-tab lab
             </a>{" "}
-            — a Platinum monday.com Partner. Your API token never leaves your browser; nothing
+            — an independent software studio. Your API token never leaves your browser; nothing
             passes through a server we control.
           </p>
         </div>

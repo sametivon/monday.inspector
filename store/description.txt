@@ -99,18 +99,17 @@ Every line of code is on GitHub — inspect it, audit it, contribute:
 https://github.com/sametivon/monday.inspector
 
 
-BUILT BY A MONDAY.COM PARTNER
+MADE IN THE SHIFT-TAB LAB
 
-Made by Sam @ Fruition Services — Platinum monday.com consulting partner with 500+ implementations across Australia, US, and UK. Need help with board setup, CRM configuration, workflow automation, or team training?
+Monday.com Inspector is built by shift-tab lab — an independent software studio making tools for people who know their shortcuts. Explore the other products: https://shift-tab.eu
 
-Book a free consultation: https://calendly.com/sam-fruitionservices/30min
-Visit: https://www.fruitionservices.io
+Need custom monday.com tooling, automations or AI workflows for your team? The lab takes on a small number of client builds: hello@shift-tab.eu
 
 
 SUPPORT
 
 • Website & guides: https://mondayinspector.eu
 • Report bugs: https://github.com/sametivon/monday.inspector/issues
-• Contact: sam@fruitionservices.io
+• Contact: hello@shift-tab.eu
 
 If this tool saves you time, consider buying me a coffee: https://buymeacoffee.com/sametivon

@@ -77,7 +77,7 @@ export default function Changelog() {
         badge="Release notes"
         title="Changelog & release notes"
         lead="Every notable change to Monday.com Inspector — the free Chrome & Firefox extension for importing, bulk-updating and querying monday.com boards."
-        meta={["Updated July 2026", "Sam @ Fruition Services", "Current version: v1.6.4"]}
+        meta={["Updated July 2026", "Sam @ shift-tab lab", "Current version: v1.6.5"]}
       >
         <div className="flex flex-col gap-4">
           {releases.map((r) => (

@@ -60,21 +60,19 @@ export const WelcomeCard: React.FC = () => {
               </a>
               {" "}@{" "}
               <a
-                href={BRAND.website}
+                href={BRAND.companyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-medium"
               >
                 {BRAND.company}
               </a>
-              . Need custom workflows or implementation support?{" "}
+              . Questions or a feature idea?{" "}
               <a
-                href={BRAND.consultationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={BRAND.contactUrl}
                 className="text-primary hover:underline font-medium"
               >
-                Book a consultation
+                Write to the lab
               </a>
               .
             </p>

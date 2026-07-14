@@ -42,7 +42,7 @@ export default function Privacy() {
           </p>
           <h2>Contact</h2>
           <p>
-            Questions? Email <a href="mailto:sam@fruitionservices.io">sam@fruitionservices.io</a>.
+            Questions? Email <a href="mailto:hello@shift-tab.eu">hello@shift-tab.eu</a>.
           </p>
         </div>
       </ArticleShell>

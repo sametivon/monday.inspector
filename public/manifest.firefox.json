@@ -2,9 +2,9 @@
   "manifest_version": 3,
   "name": "Monday.com Inspector",
   "short_name": "monday.inspector",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "Inspect, query, edit & bulk-manage monday.com boards: GraphQL editor, schema viewer, CSV import, bulk update, Excel image upload.",
-  "author": "Fruition Services",
+  "author": "shift-tab lab",
   "homepage_url": "https://mondayinspector.eu",
   "browser_specific_settings": {
     "gecko": {

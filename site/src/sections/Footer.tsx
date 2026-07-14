@@ -41,9 +41,9 @@ export default function Footer() {
             <a href="/changelog.html" className="hover:text-ink">Changelog</a>
             <a href="/privacy.html" className="hover:text-ink">Privacy</a>
             <a href="https://github.com/sametivon/monday.inspector" target="_blank" rel="noopener noreferrer" className="hover:text-ink">GitHub</a>
-            <a href="https://www.fruitionservices.io" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Fruition Services</a>
+            <a href="https://shift-tab.eu" target="_blank" rel="noopener noreferrer" className="hover:text-ink">shift-tab lab</a>
           </div>
-          <span>© 2026 Fruition Services</span>
+          <span>© 2026 <a href="https://shift-tab.eu" target="_blank" rel="noopener noreferrer" className="hover:text-ink">shift-tab lab</a> · made in the lab</span>
         </div>
       </div>
     </footer>

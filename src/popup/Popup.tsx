@@ -287,12 +287,12 @@ export const Popup: React.FC = () => {
           </span>
           <span className="opacity-40">&middot;</span>
           <a
-            href={BRAND.consultationUrl}
+            href={BRAND.companyUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"
           >
-            Book a Consultation
+            {BRAND.company}
           </a>
         </div>
         <Button
