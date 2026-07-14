@@ -40,12 +40,12 @@ export default function Home() {
               "Free Chrome extension for monday.com: import subitems from CSV, bulk-upload images from Excel into File columns, bulk update items, run GraphQL queries, inspect board schemas.",
             applicationCategory: "BrowserExtension",
             operatingSystem: "Chrome",
-            softwareVersion: "1.6.4",
+            softwareVersion: "1.6.5",
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
             author: {
               "@type": "Organization",
-              name: "Fruition Services",
-              url: "https://mondayinspector.eu",
+              name: "shift-tab lab",
+              url: "https://shift-tab.eu",
             },
             url: "https://mondayinspector.eu",
             installUrl:

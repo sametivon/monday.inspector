@@ -6,7 +6,7 @@
     "lead": "Monday.com's native import only creates top-level items — it has no built-in support for importing subitems and no clean handling of multi-level boards. This guide shows you how to import both from a CSV or Excel file into any monday.com board using the free Monday.com Inspector Chrome extension. Updated for v1.6.3 with the full-page Importer, multi-level board awareness, and smart error recovery.",
     "meta": [
       "📅 Updated June 2026",
-      "✍️ Sam @ Fruition Services",
+      "✍️ Sam @ shift-tab lab",
       "🕐 7 min read",
       "🛠️ Covers v1.6.3"
     ],
@@ -85,7 +85,7 @@
     "lead": "Everything you need to know about importing CSV and Excel data into monday.com — what the native import supports, where it falls short, and how to handle subitems, complex column types, and large files with Monday.com Inspector.",
     "meta": [
       "📅 Updated April 2026",
-      "✍️ Sam @ Fruition Services",
+      "✍️ Sam @ shift-tab lab",
       "🕐 7 min read"
     ],
     "toc": [
@@ -139,7 +139,7 @@
     "lead": "Monday.com's built-in bulk actions let you change one column at a time — and only for items you can manually select. This guide shows you how to bulk update hundreds of items across multiple columns at once, from a CSV file, using the free Monday.com Inspector extension.",
     "meta": [
       "📅 Updated April 2026",
-      "✍️ Sam @ Fruition Services",
+      "✍️ Sam @ shift-tab lab",
       "🕐 6 min read"
     ],
     "toc": [
@@ -197,7 +197,7 @@
     "lead": "Monday.com's REST-style v1 API is gone — every integration now talks to a single GraphQL endpoint at https://api.monday.com/v2. This guide walks you through the basics, shows the 14 ready-to-run query templates bundled with Monday.com Inspector, and covers the new multi-level board support introduced in API version 2026-04. No coding required.",
     "meta": [
       "📅 May 2026",
-      "✍️ Sam @ Fruition Services",
+      "✍️ Sam @ shift-tab lab",
       "🕐 9 min read",
       "🛠️ Covers API 2026-04"
     ],
@@ -240,7 +240,7 @@
       }
     ],
     "ldjson": [
-      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"TechArticle\",\r\n    \"headline\": \"Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)\",\r\n    \"description\": \"Beginner-friendly monday.com GraphQL tutorial. Covers the API basics, the multi-level boards model (2026-04), and 14 ready-to-run query templates including boards, items, subitems, users, workspaces, and audit queries.\",\r\n    \"author\": { \"@type\": \"Organization\", \"name\": \"Fruition Services\", \"url\": \"https://www.fruitionservices.io\" },\r\n    \"image\": \"https://mondayinspector.eu/og-image.png\",\r\n    \"datePublished\": \"2026-05-02\",\r\n    \"dateModified\": \"2026-05-02\",\r\n    \"publisher\": { \"@type\": \"Organization\", \"name\": \"Monday.com Inspector\", \"url\": \"https://mondayinspector.eu\" },\r\n    \"mainEntityOfPage\": \"https://mondayinspector.eu/monday-graphql-query-guide.html\"\r\n  }",
+      "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"TechArticle\",\r\n    \"headline\": \"Monday.com GraphQL API: Tutorial + 14 Query Templates (2026 Guide)\",\r\n    \"description\": \"Beginner-friendly monday.com GraphQL tutorial. Covers the API basics, the multi-level boards model (2026-04), and 14 ready-to-run query templates including boards, items, subitems, users, workspaces, and audit queries.\",\r\n    \"author\": { \"@type\": \"Organization\", \"name\": \"shift-tab lab\", \"url\": \"https://shift-tab.eu\" },\r\n    \"image\": \"https://mondayinspector.eu/og-image.png\",\r\n    \"datePublished\": \"2026-05-02\",\r\n    \"dateModified\": \"2026-05-02\",\r\n    \"publisher\": { \"@type\": \"Organization\", \"name\": \"Monday.com Inspector\", \"url\": \"https://mondayinspector.eu\" },\r\n    \"mainEntityOfPage\": \"https://mondayinspector.eu/monday-graphql-query-guide.html\"\r\n  }",
       "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"BreadcrumbList\",\r\n    \"itemListElement\": [\r\n      { \"@type\": \"ListItem\", \"position\": 1, \"name\": \"Home\", \"item\": \"https://mondayinspector.eu/\" },\r\n      { \"@type\": \"ListItem\", \"position\": 2, \"name\": \"Monday.com GraphQL API Guide\", \"item\": \"https://mondayinspector.eu/monday-graphql-query-guide.html\" }\r\n    ]\r\n  }",
       "{\r\n    \"@context\": \"https://schema.org\",\r\n    \"@type\": \"FAQPage\",\r\n    \"mainEntity\": [\r\n      { \"@type\": \"Question\", \"name\": \"Do I need to be a developer to use monday.com's GraphQL API?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"No. With the Query Inspector you pick a template, plug in your board ID, and run. No code, no setup. The 14 starter templates cover boards, items, subitems, users, workspaces, and audit queries. You can save your own customised queries to a local library.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"How do I get a monday.com API token?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"In monday.com, click your avatar (top right) → Admin → API. Generate a personal API v2 token and copy it. Paste it into Monday.com Inspector's first-run setup card. The token is stored in chrome.storage.local and is only ever sent to https://api.monday.com/v2.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"What's the difference between API version 2024-10 and 2026-04?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"API 2026-04 unlocks multi-level boards — up to 5 nested levels on the same board, with rolled-up parent values. The hierarchy_types argument and the BatteryValue rollup column type are 2026-04+ features. Monday.com Inspector ships with API-Version 2026-04 and falls back gracefully on tenants on older versions.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"Can I run mutations from the Query Inspector?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Yes. The Query Inspector executes any valid monday.com GraphQL operation — queries and mutations both. The complexity meter shows you the cost before each run so you don't blow your account's budget.\" } },\r\n      { \"@type\": \"Question\", \"name\": \"How does the complexity budget work?\", \"acceptedAnswer\": { \"@type\": \"Answer\", \"text\": \"Monday.com gives every account a complexity budget that resets per minute. Each query consumes points based on the number of fields and items it touches. The Query Inspector shows your remaining budget in a pill next to every run, and templates are tagged 'heavy' when they're known to be expensive.\" } }\r\n    ]\r\n  }"
     ]
@@ -252,7 +252,7 @@
     "lead": "Monday.com has no native way to bulk-upload images from Excel into a File column. If you have product photos, screenshots, signatures, or before/after shots sitting in a spreadsheet, the only built-in path is dragging each image into each item by hand. This guide shows you how to do it in one pass — using the free Monday.com Inspector extension's new Image Importer.",
     "meta": [
       "📅 Published May 2026",
-      "✍️ Sam @ Fruition Services",
+      "✍️ Sam @ shift-tab lab",
       "🕐 7 min read"
     ],
     "toc": [],

@@ -51,7 +51,7 @@ program](https://blog.mozilla.org/addons/2019/06/12/recommended-extensions/).
 
 ### What's different between Chrome and Firefox
 - **Manifest** — only this differs:
-  - Firefox needs `browser_specific_settings.gecko.id` (`monday-inspector@fruitionservices.io`)
+  - Firefox needs `browser_specific_settings.gecko.id` (`monday-inspector@fruitionservices.io` — this is the extension's immutable AMO identifier, not branding; changing it would orphan existing installs, so it stays even though the company is now shift-tab lab)
   - Firefox needs `strict_min_version: "121.0"` (MV3 service-worker support
     landed in Firefox 121 — December 2023)
 - **Runtime APIs** — every `chrome.*` call we make

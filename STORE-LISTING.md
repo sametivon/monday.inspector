@@ -71,7 +71,7 @@ WHO IT'S FOR
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 monday.com admins, consultants, agencies, and developers who need to move faster than the native UI allows — board migrations, bulk data loads, image catalogues, and API exploration.
 
-Built by Fruition Services. Free & open source.
+Built by shift-tab lab. Free & open source.
 Website: https://mondayinspector.eu
 ```
 
