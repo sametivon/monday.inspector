@@ -294,6 +294,13 @@ export const Popup: React.FC = () => {
           >
             {BRAND.company}
           </a>
+          <span className="opacity-40">&middot;</span>
+          <a
+            href={BRAND.feedbackUrl}
+            className="text-primary hover:underline font-medium"
+          >
+            Feedback
+          </a>
         </div>
         <Button
           asChild
