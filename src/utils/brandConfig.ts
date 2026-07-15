@@ -10,6 +10,26 @@ export const BRAND = {
   chromeStoreUrl: "https://chromewebstore.google.com/detail/kmmmfnkjdcmemcmjipidodnipidadaeg",
   email: "hello-shift-tab@proton.me",
   contactUrl: "mailto:hello-shift-tab@proton.me",
+  // Voluntary, user-initiated feedback → straight to the inbox with a light
+  // template. No telemetry, no form service, no infrastructure: the extension
+  // stays "no analytics, no data collection" per the store disclosure. To move
+  // to a form later, swap this one URL for a Tally/Google Form link.
+  feedbackUrl:
+    "mailto:hello-shift-tab@proton.me" +
+    "?subject=" +
+    encodeURIComponent("Monday.com Inspector — feedback") +
+    "&body=" +
+    encodeURIComponent(
+      [
+        "What I was doing:",
+        "",
+        "What worked (or didn't):",
+        "",
+        "A feature I'd love:",
+        "",
+        "— sent from Monday.com Inspector",
+      ].join("\n")
+    ),
   buyMeACoffeeUrl: "https://buymeacoffee.com/sametivon",
 } as const;
 

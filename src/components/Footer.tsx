@@ -46,6 +46,13 @@ export const Footer: React.FC = () => (
         </a>
         <span className="text-muted-foreground/40">·</span>
         <a
+          href={BRAND.feedbackUrl}
+          className="text-primary hover:underline px-1.5 py-0.5 rounded transition-colors hover:bg-accent"
+        >
+          Feedback
+        </a>
+        <span className="text-muted-foreground/40">·</span>
+        <a
           href={BRAND.contactUrl}
           className="text-primary hover:underline px-1.5 py-0.5 rounded transition-colors hover:bg-accent"
         >
